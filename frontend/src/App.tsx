@@ -1,10 +1,18 @@
-import { useState } from 'react'
-import './App.css'
+import { useEffect, useState } from "react";
+import Navbar from "./components/Navbar";
+import LandingHero from "./components/LandingHero";
 
 function App() {
+  const [darkMode, setDarkMode] = useState(false);
+
+  useEffect(() => {
+    document.documentElement.classList.toggle("dark", darkMode);
+  }, [darkMode]);
+
   return (
-    <div className="text-4xl text-blue-600 font-bold p-4">
-      Tailwind is working!
+    <div className="font-sans bg-white dark:bg-gray-900 min-h-screen transition-colors">
+      <Navbar toggleTheme={() => setDarkMode(!darkMode)} />
+      <LandingHero />
     </div>
   );
 }

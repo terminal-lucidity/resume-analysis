@@ -1,17 +1,41 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import Navbar from "./components/Navbar";
 import LandingHero from "./components/LandingHero";
+import "./App.css";
 
 function App() {
-  const [darkMode, setDarkMode] = useState(false);
+  const [isDark, setIsDark] = useState(true); // Default to dark theme
 
+  // Initialize theme from localStorage or system preference
   useEffect(() => {
-    document.documentElement.classList.toggle("dark", darkMode);
-  }, [darkMode]);
+    const savedTheme = localStorage.getItem('theme');
+    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    
+    if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
+      setIsDark(true);
+      document.documentElement.classList.add('dark');
+    } else {
+      setIsDark(false);
+      document.documentElement.classList.remove('dark');
+    }
+  }, []);
+
+  const toggleTheme = () => {
+    const newTheme = !isDark;
+    setIsDark(newTheme);
+    
+    if (newTheme) {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
+  };
 
   return (
-    <div className="font-sans bg-white dark:bg-gray-900 min-h-screen transition-colors">
-      <Navbar toggleTheme={() => setDarkMode(!darkMode)} />
+    <div className="App">
+      <Navbar isDark={isDark} toggleTheme={toggleTheme} />
       <LandingHero />
     </div>
   );

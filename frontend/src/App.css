@@ -7,7 +7,7 @@
   --color-secondary: #64748b;
   --color-accent: #3b82f6;
 
-  /* Light theme colors */
+
   --color-background: #ffffff;
   --color-surface: #f8fafc;
   --color-text: #1e293b;
@@ -28,7 +28,7 @@
 
 /* Dark theme colors */
 .dark {
-  --color-background: #0f172a;
+  --color-background: #0a0b0d;
   --color-surface: #1e293b;
   --color-text: #f1f5f9;
   --color-text-secondary: #cbd5e1;

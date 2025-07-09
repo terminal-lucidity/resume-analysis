@@ -1,205 +1,165 @@
-/* App.css */
+/* App.css - Updated with Landing Hero Styles */
 
-/* Root variables for consistent theming */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root {
   --color-primary: #2563eb;
-  --color-primary-hover: #1d4ed8;
   --color-secondary: #64748b;
   --color-accent: #3b82f6;
 
+  --bg-light: #f0f4ff;
+  --bg-dark: #0f172a;
+  --bg-section-dark: #1e293b;
+  --bg-card-dark: #334155;
 
-  --color-background: #ffffff;
-  --color-surface: #f8fafc;
-  --color-text: #1e293b;
-  --color-text-secondary: #64748b;
-  --color-border: #e2e8f0;
+  --text-dark: #1e293b;
+  --text-light: #f1f5f9;
 
-  /* Transitions */
-  --transition-fast: 0.15s ease-in-out;
-  --transition-normal: 0.3s ease-in-out;
-  --transition-slow: 0.5s ease-in-out;
-
-  /* Shadows */
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  --transition-fast: 0.2s ease;
+  --transition-smooth: 0.3s ease;
 }
 
-/* Dark theme colors */
-.dark {
-  --color-background: #0a0b0d;
-  --color-surface: #1e293b;
-  --color-text: #f1f5f9;
-  --color-text-secondary: #cbd5e1;
-  --color-border: #334155;
+body {
+  font-family: 'Inter', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: white;
+  color: var(--text-dark);
+  transition: background-color var(--transition-smooth), color var(--transition-smooth);
 }
 
-/* App container */
-.App {
-  min-height: 100vh;
-  background-color: var(--color-background);
-  color: var(--color-text);
-  transition: background-color var(--transition-normal), color var(--transition-normal);
+.dark body {
+  background-color: var(--bg-dark);
+  color: var(--text-light);
 }
 
-/* Smooth scrolling */
-html {
-  scroll-behavior: smooth;
+.hero-background {
+  background: linear-gradient(to bottom, var(--bg-light), white);
 }
 
-/* Focus styles for accessibility */
-*:focus {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
+.dark .hero-background {
+  background: linear-gradient(to bottom, var(--bg-dark), var(--bg-section-dark));
 }
 
-/* Button focus styles */
-button:focus {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
+.heading-primary {
+  font-size: 2.25rem;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--text-dark);
 }
 
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
+.dark .heading-primary {
+  color: var(--text-light);
 }
 
-::-webkit-scrollbar-track {
-  background: var(--color-surface);
+.heading-accent {
+  color: var(--color-primary);
 }
 
-::-webkit-scrollbar-thumb {
-  background: var(--color-secondary);
-  border-radius: 4px;
+.dark .heading-accent {
+  color: #60a5fa;
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: var(--color-primary);
+.btn-primary {
+  background-color: var(--color-primary);
+  color: white;
+  padding: 1rem 2rem;
+  font-weight: 600;
+  border-radius: 0.5rem;
+  transition: transform var(--transition-fast), background-color var(--transition-fast);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-/* Animation utilities */
-.animate-fade-in {
-  animation: fadeIn 0.5s ease-in-out;
+.btn-primary:hover {
+  background-color: #1d4ed8;
+  transform: scale(1.05);
 }
 
-.animate-slide-up {
-  animation: slideUp 0.5s ease-out;
+.btn-secondary {
+  color: var(--text-dark);
+  border: 2px solid #cbd5e1;
+  padding: 1rem 2rem;
+  font-weight: 600;
+  border-radius: 0.5rem;
+  transition: border var(--transition-fast), color var(--transition-fast);
 }
 
-.animate-bounce-in {
-  animation: bounceIn 0.6s ease-out;
+.dark .btn-secondary {
+  color: var(--text-light);
+  border-color: #475569;
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
+.btn-secondary:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
 }
 
-@keyframes slideUp {
-  from {
-    transform: translateY(20px);
-    opacity: 0;
-  }
-
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
+.dark .btn-secondary:hover {
+  border-color: #60a5fa;
+  color: #60a5fa;
 }
 
-@keyframes bounceIn {
-  0% {
-    transform: scale(0.3);
-    opacity: 0;
-  }
-
-  50% {
-    transform: scale(1.05);
-  }
-
-  70% {
-    transform: scale(0.9);
-  }
-
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
+.card {
+  background-color: #f8fafc;
+  padding: 2rem;
+  border-radius: 1rem;
+  transition: box-shadow var(--transition-fast);
 }
 
-/* Hover effects */
-.hover-lift {
-  transition: transform var(--transition-fast);
+.card:hover {
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
 }
 
-.hover-lift:hover {
-  transform: translateY(-2px);
+.dark .card {
+  background-color: var(--bg-card-dark);
 }
 
-/* Loading states */
-.loading {
-  opacity: 0.6;
-  pointer-events: none;
+.cta-section {
+  background-color: var(--color-primary);
+  color: white;
+  text-align: center;
+  padding: 5rem 2rem;
 }
 
-.loading::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 20px;
-  height: 20px;
-  margin: -10px 0 0 -10px;
-  border: 2px solid var(--color-primary);
-  border-top: 2px solid transparent;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
+.dark .cta-section {
+  background-color: #1e40af;
 }
 
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-
-  100% {
-    transform: rotate(360deg);
-  }
+.footer {
+  background-color: #0f172a;
+  color: #94a3b8;
+  padding: 3rem 2rem;
+  font-size: 0.875rem;
 }
 
-/* Responsive typography */
+.footer a {
+  color: #94a3b8;
+  text-decoration: none;
+}
+
+.footer a:hover {
+  color: white;
+  transition: color var(--transition-smooth);
+}
+
+.footer h4,
+.footer h3 {
+  color: white;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
 @media (max-width: 640px) {
-  .responsive-text-xl {
-    font-size: 1.125rem;
-    line-height: 1.75rem;
+  .heading-primary {
+    font-size: 2rem;
   }
 
-  .responsive-text-2xl {
-    font-size: 1.25rem;
-    line-height: 1.75rem;
-  }
-
-  .responsive-text-3xl {
-    font-size: 1.5rem;
-    line-height: 2rem;
-  }
-}
-
-/* Print styles */
-@media print {
-  .no-print {
-    display: none !important;
-  }
-
-  * {
-    background: transparent !important;
-    color: black !important;
-    box-shadow: none !important;
-    text-shadow: none !important;
+  .btn-primary,
+  .btn-secondary {
+    width: 100%;
+    text-align: center;
   }
 }

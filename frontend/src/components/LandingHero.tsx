@@ -28,7 +28,7 @@ function LandingHero() {
             Vet your Resume,
           <span className="heading-accent block">Get Hired Faster.</span>
           </h1>
-          <p className="text-large mb-10 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-large mb-16 max-w-2xl mx-auto leading-relaxed">
           Upload your resume and job description. Let Vettly spot what recruiters are looking for — and what you're missing.
          </p>
           <div className="btn-group flex flex-wrap justify-center gap-4">
@@ -42,34 +42,36 @@ function LandingHero() {
       </main>
 
       {/* Features Section */}
-      <section className="py-20 bg-white dark:bg-gray-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
-              Why Choose Vettly?
-            </h2>
-            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-              Get the edge you need in today's competitive job market with AI-powered resume analysis.
-            </p>
+      <section className="section bg-white dark:bg-gray-900">
+  <div className="container">
+    <div className="text-center mb-16 max-w-2xl mx-auto">
+      <h2 className="heading-secondary mb-4">Why Choose Vettly?</h2>
+      <p className="text-large">
+        Get the edge you need in today's competitive job market with AI-powered resume analysis.
+      </p>
+    </div>
+
+    <div className="grid md:grid-cols-3 gap-8">
+      {features.map((feature, index) => (
+        <div key={index} className="card text-center p-8">
+          <div className="flex items-center justify-center w-16 h-16 bg-white dark:bg-gray-600 rounded-lg mb-6 mx-auto">
+            {feature.icon}
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {features.map((feature, index) => (
-              <div key={index} className="card text-center">
-                <div className="flex items-center justify-center w-16 h-16 bg-white dark:bg-gray-600 rounded-lg mb-6 mx-auto">
-                  {feature.icon}
-                </div>
-                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">{feature.title}</h3>
-                <p className="text-gray-600 dark:text-gray-300 leading-relaxed">{feature.description}</p>
-              </div>
-            ))}
-          </div>
+          <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+            {feature.title}
+          </h3>
+          <p className="text-gray-600 dark:text-gray-300 leading-relaxed">{feature.description}</p>
         </div>
-      </section>
+      ))}
+    </div>
+  </div>
+</section>
+
 
       <section className="cta-section">
         <div className="max-w-4xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">Ready to Get Started?</h2>
-          <p className="text-lg mb-8 max-w-2xl mx-auto">
+          <p className="text-lg mb-12 max-w-2xl mx-auto">
             Join thousands of job seekers who've improved their resumes with Vettly.
           </p>
           <button className="btn-primary">Start Your Analysis</button>

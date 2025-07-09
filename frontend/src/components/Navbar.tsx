@@ -31,7 +31,7 @@ function Navbar({ isDark, toggleTheme }: NavbarProps) {
         />
       )}
 
-      {/* Navigation */}
+
       <header className="relative z-30 bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
@@ -48,7 +48,7 @@ function Navbar({ isDark, toggleTheme }: NavbarProps) {
               </h1>
             </div>
             
-            {/* Desktop Navigation */}
+
             <nav className="hidden lg:flex items-center space-x-8">
               <a href="#features" className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
                 Features
@@ -81,7 +81,6 @@ function Navbar({ isDark, toggleTheme }: NavbarProps) {
         </div>
       </header>
 
-      {/* Mobile Menu */}
       <div className={`mobile-menu lg:hidden fixed top-0 left-0 h-full w-80 bg-white dark:bg-gray-800 shadow-xl z-50 transform transition-transform duration-300 ease-in-out ${menuOpen ? "translate-x-0" : "-translate-x-full"}`}>
         <div className="p-6">
           <div className="flex justify-between items-center mb-8">

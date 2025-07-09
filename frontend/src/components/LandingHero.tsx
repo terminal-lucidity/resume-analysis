@@ -22,21 +22,21 @@ function LandingHero() {
   return (
     <div>
       {/* Hero Section */}
-      <main className="hero-background py-20 lg:py-32">
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <main className="hero-background section-hero text-center">
+        <div className="container">
           <h1 className="heading-primary mb-6">
             Vet your Resume,
-            <span className="heading-accent block">Get Hired Faster.</span>
+          <span className="heading-accent block">Get Hired Faster.</span>
           </h1>
-          <p className="text-xl text-gray-600 dark:text-gray-300 mb-10 max-w-3xl mx-auto leading-relaxed">
-            Upload your resume and job description. Let Vettly spot what recruiters are looking for — and what you're missing.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <button className="btn-primary flex items-center gap-2 group">
-              Try Vettly for Free
-              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-            </button>
-            <button className="btn-secondary">See Demo</button>
+          <p className="text-large mb-10 max-w-2xl mx-auto leading-relaxed">
+          Upload your resume and job description. Let Vettly spot what recruiters are looking for — and what you're missing.
+         </p>
+          <div className="btn-group flex flex-wrap justify-center gap-4">
+           <button className="btn btn-primary btn-large flex items-center gap-2 group">
+            Try Vettly for Free
+          <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+          </button>
+          <button className="btn btn-secondary btn-large">See Demo</button>
           </div>
         </div>
       </main>
@@ -66,7 +66,6 @@ function LandingHero() {
         </div>
       </section>
 
-      {/* CTA Section */}
       <section className="cta-section">
         <div className="max-w-4xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">Ready to Get Started?</h2>

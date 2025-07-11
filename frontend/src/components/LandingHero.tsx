@@ -54,7 +54,7 @@ function LandingHero() {
           <div className="grid grid-cols-3 gap-xl">
             {features.map((feature, index) => (
               <div key={index} className="card card-feature fade-in">
-                <div className="flex items-center justify-center w-16 h-16 bg-white dark:bg-gray-600 rounded-xl mb-lg mx-auto">
+                <div className="flex items-center justify-center w-24 h-24 bg-white dark:bg-gray-600 rounded-xl mb-lg mx-auto">
                   {feature.icon}
                 </div>
                 <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-md">

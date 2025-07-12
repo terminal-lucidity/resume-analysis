@@ -111,9 +111,9 @@ const Navbar: React.FC<NavbarProps> = ({ className = '' }) => {
           <li className="navbar-item navbar-cta">
             <button 
               className="navbar-link cta-button"
-              onClick={() => handleLinkClick('/try-free')}
+              onClick={() => handleLinkClick('/sign-in')}
             >
-              Try Free
+              Sign In
             </button>
           </li>
         </ul>

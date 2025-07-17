@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Moon, Sun } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import './Navbar.css';
 
 interface NavbarProps {
@@ -7,6 +8,7 @@ interface NavbarProps {
 }
 
 const Navbar: React.FC<NavbarProps> = ({ className = '' }) => {
+  const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -55,14 +57,13 @@ const Navbar: React.FC<NavbarProps> = ({ className = '' }) => {
 
   const handleLinkClick = (href: string) => {
     closeMenu();
-    // Handle navigation here (e.g., with React Router)
-    console.log('Navigate to:', href);
+    navigate(href);
   };
 
   return (
     <nav className={`navbar ${isScrolled ? 'scrolled' : ''} ${className}`}>
       <div className="navbar-container">
-        <div className="navbar-brand">
+        <div className="navbar-brand" onClick={() => handleLinkClick('/')}>
           <span className="brand-text">Vettly</span>
         </div>
 
@@ -111,7 +112,7 @@ const Navbar: React.FC<NavbarProps> = ({ className = '' }) => {
           <li className="navbar-item navbar-cta">
             <button 
               className="navbar-link cta-button"
-              onClick={() => handleLinkClick('/sign-in')}
+              onClick={() => handleLinkClick('/signin')}
             >
               Sign In
             </button>

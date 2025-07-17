@@ -5,6 +5,13 @@ import jwt from "jsonwebtoken";
 import { auth } from "../middleware/auth";
 import { z } from "zod";
 
+if (!process.env.JWT_SECRET) {
+  throw new Error("JWT_SECRET environment variable is not set");
+}
+
+// Create a constant for the validated JWT secret
+const JWT_SECRET = process.env.JWT_SECRET;
+
 const router = Router();
 
 const userSchema = z.object({
@@ -27,12 +34,14 @@ router.post("/register", async (req, res) => {
     const user = new User();
     user.email = email;
     user.password = password;
-    user.name = name;
+    if (name) {
+      user.name = name;
+    }
     await user.hashPassword();
 
     await userRepository.save(user);
 
-    const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET);
+    const token = jwt.sign({ userId: user.id }, JWT_SECRET);
     res.status(201).json({ user, token });
   } catch (error) {
     if (error instanceof z.ZodError) {
@@ -53,7 +62,7 @@ router.post("/login", async (req, res) => {
       return res.status(401).json({ error: "Invalid credentials" });
     }
 
-    const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET);
+    const token = jwt.sign({ userId: user.id }, JWT_SECRET);
     res.json({ user, token });
   } catch (error) {
     if (error instanceof z.ZodError) {

@@ -22,13 +22,24 @@ export const postgresConnection = new DataSource({
   entities: [User],
   migrations: ["src/migrations/**/*.ts"],
   subscribers: ["src/subscribers/**/*.ts"],
+  ssl:
+    process.env.NODE_ENV === "production"
+      ? { rejectUnauthorized: false }
+      : false,
+  extra: {
+    // Handle connection timeouts
+    connectionTimeoutMillis: 5000,
+  },
 });
 
 // MongoDB connection using Mongoose
 export const connectMongoDB = async () => {
   try {
-    // TypeScript now knows MONGODB_URI is defined due to the check above
-    await mongoose.connect(process.env.MONGODB_URI!);
+    await mongoose.connect(process.env.MONGODB_URI!, {
+      // Add Mongoose specific options
+      serverSelectionTimeoutMS: 5000,
+      socketTimeoutMS: 45000,
+    });
     console.log("MongoDB connected successfully");
   } catch (error) {
     console.error("MongoDB connection error:", error);

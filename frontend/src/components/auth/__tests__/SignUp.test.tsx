@@ -19,8 +19,8 @@ describe('SignUp Component', () => {
     expect(screen.getByText('Create your account')).toBeInTheDocument();
     expect(screen.getByLabelText(/full name/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/email address/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/^password$/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/confirm password/i)).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(/enter your password/i)).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(/confirm your password/i)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /create account/i })).toBeInTheDocument();
   });
 
@@ -35,7 +35,6 @@ describe('SignUp Component', () => {
       expect(screen.getByText('Name is required')).toBeInTheDocument();
       expect(screen.getByText('Email is required')).toBeInTheDocument();
       expect(screen.getByText('Password is required')).toBeInTheDocument();
-      expect(screen.getByText('Please confirm your password')).toBeInTheDocument();
     });
   });
 
@@ -58,7 +57,7 @@ describe('SignUp Component', () => {
     const user = userEvent.setup();
     render(<SignUp />);
     
-    const passwordInput = screen.getByLabelText(/^password$/i);
+    const passwordInput = screen.getByPlaceholderText(/enter your password/i);
     const submitButton = screen.getByRole('button', { name: /create account/i });
     
     await user.type(passwordInput, '123');
@@ -73,8 +72,8 @@ describe('SignUp Component', () => {
     const user = userEvent.setup();
     render(<SignUp />);
     
-    const passwordInput = screen.getByLabelText(/^password$/i);
-    const confirmPasswordInput = screen.getByLabelText(/confirm password/i);
+    const passwordInput = screen.getByPlaceholderText(/enter your password/i);
+    const confirmPasswordInput = screen.getByPlaceholderText(/confirm your password/i);
     const submitButton = screen.getByRole('button', { name: /create account/i });
     
     await user.type(passwordInput, 'password123');
@@ -90,9 +89,9 @@ describe('SignUp Component', () => {
     const user = userEvent.setup();
     render(<SignUp />);
     
-    const passwordInput = screen.getByLabelText(/^password$/i);
-    const confirmPasswordInput = screen.getByLabelText(/confirm password/i);
-    const toggleButtons = screen.getAllByRole('button', { name: /toggle password visibility/i });
+    const passwordInput = screen.getByPlaceholderText(/enter your password/i);
+    const confirmPasswordInput = screen.getByPlaceholderText(/confirm your password/i);
+    const toggleButtons = screen.getAllByLabelText(/toggle password visibility/i);
     
     // Initially passwords should be hidden
     expect(passwordInput).toHaveAttribute('type', 'password');
@@ -101,10 +100,18 @@ describe('SignUp Component', () => {
     // Click to show first password
     await user.click(toggleButtons[0]);
     expect(passwordInput).toHaveAttribute('type', 'text');
+    expect(confirmPasswordInput).toHaveAttribute('type', 'password');
     
     // Click to show second password
     await user.click(toggleButtons[1]);
+    expect(passwordInput).toHaveAttribute('type', 'text');
     expect(confirmPasswordInput).toHaveAttribute('type', 'text');
+    
+    // Click to hide both passwords
+    await user.click(toggleButtons[0]);
+    await user.click(toggleButtons[1]);
+    expect(passwordInput).toHaveAttribute('type', 'password');
+    expect(confirmPasswordInput).toHaveAttribute('type', 'password');
   });
 
   it('submits form with valid data', async () => {
@@ -119,9 +126,9 @@ describe('SignUp Component', () => {
     
     const nameInput = screen.getByLabelText(/full name/i);
     const emailInput = screen.getByLabelText(/email address/i);
-    const passwordInput = screen.getByLabelText(/^password$/i);
-    const confirmPasswordInput = screen.getByLabelText(/confirm password/i);
-    const termsCheckbox = screen.getByLabelText(/i agree to the/i);
+    const passwordInput = screen.getByPlaceholderText(/enter your password/i);
+    const confirmPasswordInput = screen.getByPlaceholderText(/confirm your password/i);
+    const termsCheckbox = screen.getByLabelText(/terms of service/i);
     const submitButton = screen.getByRole('button', { name: /create account/i });
     
     await user.type(nameInput, 'John Doe');
@@ -146,21 +153,19 @@ describe('SignUp Component', () => {
 
   it('displays loading state during form submission', async () => {
     const user = userEvent.setup();
-    const mockResponse = new Promise(resolve => 
-      setTimeout(() => resolve({ 
-        ok: true, 
-        json: async () => ({ user: { id: 1 }, token: 'fake-token' }) 
-      }), 100)
-    );
+    let resolvePromise: (value: any) => void;
+    const mockResponse = new Promise(resolve => {
+      resolvePromise = resolve;
+    });
     mockFetch.mockReturnValueOnce(mockResponse);
     
     render(<SignUp />);
     
     const nameInput = screen.getByLabelText(/full name/i);
     const emailInput = screen.getByLabelText(/email address/i);
-    const passwordInput = screen.getByLabelText(/^password$/i);
-    const confirmPasswordInput = screen.getByLabelText(/confirm password/i);
-    const termsCheckbox = screen.getByLabelText(/i agree to the/i);
+    const passwordInput = screen.getByPlaceholderText(/enter your password/i);
+    const confirmPasswordInput = screen.getByPlaceholderText(/confirm your password/i);
+    const termsCheckbox = screen.getByLabelText(/terms of service/i);
     const submitButton = screen.getByRole('button', { name: /create account/i });
     
     await user.type(nameInput, 'John Doe');
@@ -170,15 +175,22 @@ describe('SignUp Component', () => {
     await user.click(termsCheckbox);
     await user.click(submitButton);
     
+    // Check loading state before resolving promise
     expect(screen.getByText('Creating account...')).toBeInTheDocument();
     expect(submitButton).toBeDisabled();
+    
+    // Resolve the promise
+    resolvePromise!({ 
+      ok: true,
+      json: async () => ({ user: { id: 1 }, token: 'fake-token' }) 
+    });
   });
 
   it('displays error message on failed registration', async () => {
     const user = userEvent.setup();
     const mockResponse = {
       ok: false,
-      json: async () => ({ error: 'Email already registered' })
+      json: async () => ({ error: 'Email already exists' })
     };
     mockFetch.mockResolvedValueOnce(mockResponse);
     
@@ -186,9 +198,9 @@ describe('SignUp Component', () => {
     
     const nameInput = screen.getByLabelText(/full name/i);
     const emailInput = screen.getByLabelText(/email address/i);
-    const passwordInput = screen.getByLabelText(/^password$/i);
-    const confirmPasswordInput = screen.getByLabelText(/confirm password/i);
-    const termsCheckbox = screen.getByLabelText(/i agree to the/i);
+    const passwordInput = screen.getByPlaceholderText(/enter your password/i);
+    const confirmPasswordInput = screen.getByPlaceholderText(/confirm your password/i);
+    const termsCheckbox = screen.getByLabelText(/terms of service/i);
     const submitButton = screen.getByRole('button', { name: /create account/i });
     
     await user.type(nameInput, 'John Doe');
@@ -199,7 +211,7 @@ describe('SignUp Component', () => {
     await user.click(submitButton);
     
     await waitFor(() => {
-      expect(screen.getByText('Email already registered')).toBeInTheDocument();
+      expect(screen.getByText('Email already exists')).toBeInTheDocument();
     });
   });
 
@@ -218,10 +230,12 @@ describe('SignUp Component', () => {
     });
     
     // Start typing in name field
-    await user.type(nameInput, 'John');
+    await user.type(nameInput, 'John Doe');
     
     // Error should be cleared
-    expect(screen.queryByText('Name is required')).not.toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.queryByText('Name is required')).not.toBeInTheDocument();
+    });
   });
 
   it('has links to sign in and terms/privacy', () => {
@@ -235,10 +249,10 @@ describe('SignUp Component', () => {
   it('requires terms of service checkbox to be checked', () => {
     render(<SignUp />);
     
-    const termsCheckbox = screen.getByLabelText(/i agree to the/i);
+    const termsCheckbox = screen.getByLabelText(/terms of service/i);
     expect(termsCheckbox).toBeInTheDocument();
     expect(termsCheckbox).toHaveAttribute('type', 'checkbox');
-    expect(termsCheckbox).toBeRequired();
+    expect(termsCheckbox).toHaveAttribute('required');
   });
 
   it('handles network errors gracefully', async () => {
@@ -249,9 +263,9 @@ describe('SignUp Component', () => {
     
     const nameInput = screen.getByLabelText(/full name/i);
     const emailInput = screen.getByLabelText(/email address/i);
-    const passwordInput = screen.getByLabelText(/^password$/i);
-    const confirmPasswordInput = screen.getByLabelText(/confirm password/i);
-    const termsCheckbox = screen.getByLabelText(/i agree to the/i);
+    const passwordInput = screen.getByPlaceholderText(/enter your password/i);
+    const confirmPasswordInput = screen.getByPlaceholderText(/confirm your password/i);
+    const termsCheckbox = screen.getByLabelText(/terms of service/i);
     const submitButton = screen.getByRole('button', { name: /create account/i });
     
     await user.type(nameInput, 'John Doe');

@@ -42,9 +42,13 @@ const SignIn: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!validateForm()) return;
+    if (!validateForm()) {
+      return;
+    }
     
     setIsLoading(true);
+    setErrors({}); // Clear any previous errors
+    
     try {
       const response = await fetch('http://localhost:3000/api/auth/login', {
         method: 'POST',
@@ -105,7 +109,7 @@ const SignIn: React.FC = () => {
 
           {/* Form section */}
           <div className="px-8 py-8">
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} noValidate className="space-y-6">
               {errors.general && (
                 <div className="bg-red-50 border border-red-200 rounded-lg p-4">
                   <div className="flex">

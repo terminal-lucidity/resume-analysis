@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '../../../test/utils';
+import { render, screen, waitFor } from '../../../test/utils';
 import userEvent from '@testing-library/user-event';
 import SignIn from '../SignIn';
 
@@ -18,7 +18,7 @@ describe('SignIn Component', () => {
     expect(screen.getByText('Welcome Back')).toBeInTheDocument();
     expect(screen.getByText('Sign in to your account')).toBeInTheDocument();
     expect(screen.getByLabelText(/email address/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(/enter your password/i)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /sign in/i })).toBeInTheDocument();
   });
 
@@ -54,8 +54,8 @@ describe('SignIn Component', () => {
     const user = userEvent.setup();
     render(<SignIn />);
     
-    const passwordInput = screen.getByLabelText(/password/i);
-    const toggleButton = screen.getByRole('button', { name: /toggle password visibility/i });
+    const passwordInput = screen.getByPlaceholderText(/enter your password/i);
+    const toggleButton = screen.getByLabelText(/toggle password visibility/i);
     
     // Initially password should be hidden
     expect(passwordInput).toHaveAttribute('type', 'password');
@@ -80,7 +80,7 @@ describe('SignIn Component', () => {
     render(<SignIn />);
     
     const emailInput = screen.getByLabelText(/email address/i);
-    const passwordInput = screen.getByLabelText(/password/i);
+    const passwordInput = screen.getByPlaceholderText(/enter your password/i);
     const submitButton = screen.getByRole('button', { name: /sign in/i });
     
     await user.type(emailInput, 'test@example.com');
@@ -103,7 +103,7 @@ describe('SignIn Component', () => {
     const user = userEvent.setup();
     const mockResponse = new Promise(resolve => 
       setTimeout(() => resolve({ 
-        ok: true, 
+        ok: true,
         json: async () => ({ user: { id: 1 }, token: 'fake-token' }) 
       }), 100)
     );
@@ -112,7 +112,7 @@ describe('SignIn Component', () => {
     render(<SignIn />);
     
     const emailInput = screen.getByLabelText(/email address/i);
-    const passwordInput = screen.getByLabelText(/password/i);
+    const passwordInput = screen.getByPlaceholderText(/enter your password/i);
     const submitButton = screen.getByRole('button', { name: /sign in/i });
     
     await user.type(emailInput, 'test@example.com');
@@ -134,7 +134,7 @@ describe('SignIn Component', () => {
     render(<SignIn />);
     
     const emailInput = screen.getByLabelText(/email address/i);
-    const passwordInput = screen.getByLabelText(/password/i);
+    const passwordInput = screen.getByPlaceholderText(/enter your password/i);
     const submitButton = screen.getByRole('button', { name: /sign in/i });
     
     await user.type(emailInput, 'test@example.com');
@@ -164,7 +164,9 @@ describe('SignIn Component', () => {
     await user.type(emailInput, 'test@example.com');
     
     // Error should be cleared
-    expect(screen.queryByText('Email is required')).not.toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.queryByText('Email is required')).not.toBeInTheDocument();
+    });
   });
 
   it('has links to sign up and forgot password', () => {
@@ -189,7 +191,7 @@ describe('SignIn Component', () => {
     render(<SignIn />);
     
     const emailInput = screen.getByLabelText(/email address/i);
-    const passwordInput = screen.getByLabelText(/password/i);
+    const passwordInput = screen.getByPlaceholderText(/enter your password/i);
     const submitButton = screen.getByRole('button', { name: /sign in/i });
     
     await user.type(emailInput, 'test@example.com');

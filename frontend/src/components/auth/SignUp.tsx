@@ -225,6 +225,7 @@ const SignUp: React.FC = () => {
                     type="button"
                     className="absolute inset-y-0 right-0 pr-3 flex items-center"
                     onClick={() => setShowPassword(!showPassword)}
+                    aria-label="Toggle password visibility"
                   >
                     {showPassword ? (
                       <EyeSlashIcon className="h-5 w-5 text-gray-400 hover:text-gray-600" />
@@ -260,6 +261,7 @@ const SignUp: React.FC = () => {
                     type="button"
                     className="absolute inset-y-0 right-0 pr-3 flex items-center"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    aria-label="Toggle password visibility"
                   >
                     {showConfirmPassword ? (
                       <EyeSlashIcon className="h-5 w-5 text-gray-400 hover:text-gray-600" />

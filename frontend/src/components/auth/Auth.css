@@ -242,7 +242,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
   position: relative;
   overflow: hidden;
   margin: 0 auto;
@@ -291,6 +290,7 @@
 
 .auth-spinner {
   animation: spin 1s linear infinite;
+  margin-right: 0.5rem;
 }
 
 @keyframes spin {

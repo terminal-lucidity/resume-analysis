@@ -5,6 +5,7 @@ import ForgotPassword from './components/auth/ForgotPassword';
 import LandingHero from './components/LandingHero';
 import Features from './components/Features';
 import Navbar from './components/Navbar';
+import OAuthSuccess from './components/auth/OAuthSuccess';
 import './App.css';
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
             <Route path="/signin" element={<SignIn />} />
             <Route path="/signup" element={<SignUp />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/oauth-success" element={<OAuthSuccess />} />
             <Route path="/features" element={<Features />} />
             <Route path="/pricing" element={<div>Pricing Page (Coming Soon)</div>} />
             <Route path="/about" element={<div>About Page (Coming Soon)</div>} />

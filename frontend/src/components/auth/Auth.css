@@ -1,11 +1,11 @@
 /* Auth Pages Custom Styles */
 .auth-container {
-  min-height: 100vh;
+  min-height: 90vh;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 1rem;
+  padding: 0.3rem;
   position: relative;
   overflow: hidden;
 }

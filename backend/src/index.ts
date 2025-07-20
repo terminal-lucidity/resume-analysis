@@ -3,6 +3,7 @@ import cors from "cors";
 import { config } from "dotenv";
 import { postgresConnection, connectMongoDB } from "./config/database";
 import authRoutes from "./routes/auth";
+import passport from "./passport";
 
 config();
 
@@ -11,6 +12,7 @@ const app = express();
 // Middleware
 app.use(cors());
 app.use(express.json());
+app.use(passport.initialize());
 
 // Routes
 app.use("/api/auth", authRoutes);

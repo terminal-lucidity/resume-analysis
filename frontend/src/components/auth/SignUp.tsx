@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 import './Auth.css';
 
@@ -19,6 +19,7 @@ interface FormErrors {
 }
 
 const SignUp: React.FC = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState<SignUpFormData>({
     name: '',
     email: '',
@@ -89,6 +90,18 @@ const SignUp: React.FC = () => {
 
       const data = await response.json();
       console.log('Sign up successful:', data);
+      
+      // Store token and user data
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+      
+      // Dispatch custom event to notify navbar
+      window.dispatchEvent(new CustomEvent('authStateChanged', {
+        detail: { isAuthenticated: true, user: data.user }
+      }));
+      
+      // Redirect to home page
+      navigate('/');
     } catch (error) {
       setErrors({
         general: error instanceof Error ? error.message : 'An error occurred',

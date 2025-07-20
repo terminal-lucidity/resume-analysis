@@ -35,26 +35,36 @@
 
 .features-stats {
   display: flex;
-  flex-wrap: wrap;
-  gap: 2rem;
-  justify-content: center;
-  margin-bottom: 2.5rem;
+  flex-wrap: nowrap;
+  gap: 1.5rem;
+  justify-content: space-evenly;
+  margin-bottom: 1.5rem;
+  overflow-x: auto;
+  width: 100%;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
 }
 .features-stat-card {
   background: #fff;
-  border-radius: 1rem;
-  box-shadow: 0 4px 24px 0 rgba(44, 62, 80, 0.08);
-  padding: 1.5rem 2.5rem;
-  min-width: 140px;
+  border-radius: 1.25rem;
+  box-shadow: 0 5px 20px 0 rgba(44, 62, 80, 0.12);
+  border: 1.5px solid #e0e7ef;
+  padding: 1.5rem 1rem;
+  flex: 1;
+  min-width: 120px;
+  max-width: 180px;
   text-align: center;
-  transition: box-shadow 0.2s;
+  transition: box-shadow 0.2s, border-color 0.2s;
 }
 .dark .features-stat-card {
   background: #22223b;
   color: #f4f4f8;
+  border: 1.5px solid #353657;
 }
 .features-stat-card:hover {
-  box-shadow: 0 8px 32px 0 rgba(44, 62, 80, 0.16);
+  box-shadow: 0 8px 32px 0 rgba(44, 62, 80, 0.18);
+  border-color: #6366f1;
 }
 .features-stat-number {
   font-size: 2rem;

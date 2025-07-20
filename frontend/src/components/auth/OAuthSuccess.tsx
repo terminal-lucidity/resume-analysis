@@ -10,6 +10,23 @@ const OAuthSuccess: React.FC = () => {
     const token = params.get('token');
     if (token) {
       localStorage.setItem('token', token);
+      
+      // Try to get user data from URL params or fetch it
+      const userData = params.get('user');
+      if (userData) {
+        try {
+          const user = JSON.parse(decodeURIComponent(userData));
+          localStorage.setItem('user', JSON.stringify(user));
+          
+          // Dispatch custom event to notify navbar
+          window.dispatchEvent(new CustomEvent('authStateChanged', {
+            detail: { isAuthenticated: true, user }
+          }));
+        } catch (error) {
+          console.error('Error parsing user data:', error);
+        }
+      }
+      
       setTimeout(() => {
         navigate('/');
       }, 1500);

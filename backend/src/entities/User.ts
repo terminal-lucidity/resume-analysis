@@ -15,11 +15,17 @@ export class User {
   @Column({ unique: true })
   email!: string;
 
-  @Column()
-  password!: string;
+  @Column({ nullable: true })
+  password?: string;
 
   @Column({ nullable: true })
-  name!: string;
+  name?: string;
+
+  @Column({ nullable: true, unique: true })
+  googleId?: string;
+
+  @Column({ nullable: true, unique: true })
+  githubId?: string;
 
   @CreateDateColumn()
   createdAt!: Date;
@@ -28,10 +34,13 @@ export class User {
   updatedAt!: Date;
 
   async hashPassword() {
-    this.password = await bcrypt.hash(this.password, 10);
+    if (this.password) {
+      this.password = await bcrypt.hash(this.password, 10);
+    }
   }
 
   async validatePassword(password: string): Promise<boolean> {
+    if (!this.password) return false;
     return bcrypt.compare(password, this.password);
   }
 }

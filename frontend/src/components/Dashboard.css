@@ -197,6 +197,7 @@
   flex-direction: column;
   justify-content: flex-start;
   align-items: stretch;
+  border-left: 1px solid #e0e7ef;
 }
 
 .dark .upload-info-section,
@@ -206,13 +207,13 @@
 
 .dark .resumes-section {
   background: #1e293b;
+  border-left: 1px solid #334155;
 }
 
 /* Cleanup old card styles */
 .upload-card,
 .dark .upload-card,
 .upload-card::before,
-.dark .resumes-section,
 .resumes-section::before {
   background: none;
   border: none;

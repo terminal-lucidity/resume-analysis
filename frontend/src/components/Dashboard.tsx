@@ -207,15 +207,20 @@ const Dashboard: React.FC = () => {
       </div>
 
       <div className="dashboard-content">
-        {/* Upload Section */}
-        <div className="upload-section">
-          <div className="upload-card">
+        <div className="dashboard-panel">
+          {/* Column 1: Upload Text and Icon */}
+          <div className="upload-info-section">
             <div className="upload-header">
-              <Upload className="upload-icon" />
+              <div className="upload-icon-container">
+                <Upload className="upload-icon" />
+              </div>
               <h2>Upload Resume</h2>
               <p>Upload your resume in PDF or DOCX format to get started</p>
             </div>
+          </div>
 
+          {/* Column 2: Upload Field and Button */}
+          <div className="upload-action-section">
             <div className="upload-area">
               <input
                 type="file"
@@ -227,17 +232,21 @@ const Dashboard: React.FC = () => {
               />
               <label htmlFor="resume-upload" className="upload-label">
                 <div className="upload-placeholder">
-                  <Plus className="upload-plus-icon" />
-                  <span>Choose a file or drag it here</span>
-                  <span className="upload-hint">PDF, DOCX up to 10MB</span>
+                  <div className="upload-placeholder-content">
+                    <Plus className="upload-plus-icon" />
+                    <span className="upload-text">Drop your resume here or click to browse</span>
+                    <span className="upload-hint">PDF, DOCX up to 10MB</span>
+                  </div>
                 </div>
               </label>
 
               {selectedFile && (
                 <div className="selected-file">
                   <FileText className="file-icon" />
-                  <span>{selectedFile.name}</span>
-                  <span className="file-size">({formatFileSize(selectedFile.size)})</span>
+                  <div className="file-info">
+                    <span className="file-name">{selectedFile.name}</span>
+                    <span className="file-size">({formatFileSize(selectedFile.size)})</span>
+                  </div>
                 </div>
               )}
 
@@ -256,81 +265,88 @@ const Dashboard: React.FC = () => {
                 {isUploading ? (
                   <>
                     <div className="upload-spinner"></div>
-                    Uploading...
+                    <span>Uploading...</span>
                   </>
                 ) : (
                   <>
                     <Upload className="button-icon" />
-                    Upload Resume
+                    <span>Upload Resume</span>
                   </>
                 )}
               </button>
             </div>
           </div>
-        </div>
 
-        {/* Resumes List */}
-        <div className="resumes-section">
-          <div className="resumes-header">
-            <h2>Your Resumes</h2>
-            <span className="resume-count">{resumes.length} resume{resumes.length !== 1 ? 's' : ''}</span>
-          </div>
-
-          {resumes.length === 0 ? (
-            <div className="empty-state">
-              <FileText className="empty-icon" />
-              <h3>No resumes yet</h3>
-              <p>Upload your first resume to get started with analysis and insights.</p>
+          {/* Column 3: Previous Resumes */}
+          <div className="resumes-section">
+            <div className="resumes-header">
+              <h2>Your Resumes</h2>
+              <span className="resume-count">{resumes.length} resume{resumes.length !== 1 ? 's' : ''}</span>
             </div>
-          ) : (
-            <div className="resumes-grid">
-              {resumes.map((resume) => (
-                <div key={resume.id} className={`resume-card ${resume.isActive ? 'active' : ''}`}>
-                  <div className="resume-header">
-                    <div className="resume-info">
-                      <FileText className="resume-icon" />
-                      <div>
-                        <h3>{resume.fileName}</h3>
-                        <p className="resume-meta">
-                          {formatFileSize(resume.fileSize)} • {formatDate(resume.createdAt)}
-                        </p>
+
+            {resumes.length === 0 ? (
+              <div className="empty-state">
+                <FileText className="empty-icon" />
+                <h3>No resumes yet</h3>
+                <p>Upload your first resume to get started with analysis and insights.</p>
+                <button 
+                  onClick={() => document.getElementById('resume-upload')?.click()}
+                  className="empty-state-cta"
+                >
+                  <Plus className="cta-icon" />
+                  Upload Your First Resume
+                </button>
+              </div>
+            ) : (
+              <div className="resumes-list">
+                {resumes.map((resume) => (
+                  <div key={resume.id} className={`resume-item ${resume.isActive ? 'active' : ''}`}>
+                    <div className="resume-item-header">
+                      <div className="resume-item-info">
+                        <FileText className="resume-item-icon" />
+                        <div>
+                          <h4>{resume.fileName}</h4>
+                          <p className="resume-item-meta">
+                            {formatFileSize(resume.fileSize)} • {formatDate(resume.createdAt)}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="resume-item-status">
+                        {resume.isActive && <CheckCircle className="active-icon" />}
                       </div>
                     </div>
-                    <div className="resume-status">
-                      {resume.isActive && <CheckCircle className="active-icon" />}
-                    </div>
-                  </div>
 
-                  <div className="resume-actions">
-                    {!resume.isActive && (
+                    <div className="resume-item-actions">
+                      {!resume.isActive && (
+                        <button
+                          onClick={() => handleActivate(resume.id)}
+                          className="action-button activate"
+                        >
+                          Set Active
+                        </button>
+                      )}
                       <button
-                        onClick={() => handleActivate(resume.id)}
-                        className="action-button activate"
+                        onClick={() => handleDelete(resume.id)}
+                        className="action-button delete"
                       >
-                        Set as Active
+                        <Trash2 className="action-icon" />
                       </button>
-                    )}
-                    <button
-                      onClick={() => handleDelete(resume.id)}
-                      className="action-button delete"
-                    >
-                      <Trash2 className="action-icon" />
-                    </button>
-                  </div>
-
-                  {resume.hasAnalysis && (
-                    <div className="analysis-badge">
-                      <span>Analysis Available</span>
                     </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
+
+                    {resume.hasAnalysis && (
+                      <div className="analysis-badge">
+                        <span>Analysis Available</span>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
   );
 };
 
-export default Dashboard; 
+export default Dashboard;

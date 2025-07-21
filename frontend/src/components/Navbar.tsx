@@ -175,6 +175,7 @@ const Navbar: React.FC<NavbarProps> = ({ className = '' }) => {
               Contact
             </button>
           </li>
+
           <li className="navbar-item">
             <button 
               className="navbar-link theme-toggle"

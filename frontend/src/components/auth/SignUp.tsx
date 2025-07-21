@@ -100,8 +100,8 @@ const SignUp: React.FC = () => {
         detail: { isAuthenticated: true, user: data.user }
       }));
       
-      // Redirect to home page
-      navigate('/');
+      // Redirect to dashboard
+      navigate('/dashboard');
     } catch (error) {
       setErrors({
         general: error instanceof Error ? error.message : 'An error occurred',

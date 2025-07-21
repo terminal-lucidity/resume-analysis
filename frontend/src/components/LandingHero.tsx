@@ -1,6 +1,20 @@
-import { Upload, Target, Zap, ArrowRight } from "lucide-react";
+import { Upload, Target, Zap, ArrowRight, BarChart3 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 
 function LandingHero() {
+  const navigate = useNavigate();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    const userData = localStorage.getItem('user');
+    setIsAuthenticated(!!(token && userData));
+  }, []);
+
+  const handleDashboardClick = () => {
+    navigate('/dashboard');
+  };
   const features = [
     {
       icon: <Upload className="w-8 h-8 text-blue-500" />,
@@ -32,10 +46,21 @@ function LandingHero() {
             Upload your resume and job description. Let Vettly spot what recruiters are looking for — and what you're missing.
           </p>
           <div className="btn-group flex flex-wrap justify-center gap-md">
-            <button className="btn btn-primary btn-large flex items-center gap-sm group">
-              Try Vettly for Free
-              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-            </button>
+            {isAuthenticated ? (
+              <button 
+                onClick={handleDashboardClick}
+                className="btn btn-primary btn-large flex items-center gap-sm group"
+              >
+                <BarChart3 className="w-5 h-5" />
+                Go to Dashboard
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </button>
+            ) : (
+              <button className="btn btn-primary btn-large flex items-center gap-sm group">
+                Try Vettly for Free
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </button>
+            )}
             <button className="btn btn-secondary btn-large">See Demo</button>
           </div>
         </div>
@@ -76,7 +101,17 @@ function LandingHero() {
           <p className="text-xl mb-xl max-w-2xl mx-auto">
             Join thousands of job seekers who've improved their resumes with Vettly.
           </p>
-          <button className="btn btn-primary btn-large">Start Your Analysis</button>
+          {isAuthenticated ? (
+            <button 
+              onClick={handleDashboardClick}
+              className="btn btn-primary btn-large flex items-center gap-sm mx-auto"
+            >
+              <BarChart3 className="w-5 h-5" />
+              Go to Dashboard
+            </button>
+          ) : (
+            <button className="btn btn-primary btn-large">Start Your Analysis</button>
+          )}
         </div>
       </section>
 

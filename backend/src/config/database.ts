@@ -2,6 +2,7 @@ import { DataSource } from "typeorm";
 import mongoose from "mongoose";
 import { config } from "dotenv";
 import { User } from "../entities/User";
+import { Resume } from "../entities/Resume";
 import "reflect-metadata";
 
 config();
@@ -19,7 +20,7 @@ export const postgresConnection = new DataSource({
   url: process.env.POSTGRES_URL,
   synchronize: process.env.NODE_ENV === "development", // Don't use in production
   logging: process.env.NODE_ENV === "development",
-  entities: [User],
+  entities: [User, Resume],
   migrations: ["src/migrations/**/*.ts"],
   subscribers: ["src/subscribers/**/*.ts"],
   ssl:

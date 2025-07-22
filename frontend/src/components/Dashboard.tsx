@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Upload, FileText, Trash2, Eye, Plus, CheckCircle, AlertCircle } from 'lucide-react';
+import { Upload, FileText, Trash2, Plus, CheckCircle, AlertCircle } from 'lucide-react';
 import './Dashboard.css';
 
 interface Resume {
@@ -21,7 +21,6 @@ interface UserData {
 const Dashboard: React.FC = () => {
   const [resumes, setResumes] = useState<Resume[]>([]);
   const [isUploading, setIsUploading] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState(0);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [user, setUser] = useState<UserData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -89,7 +88,6 @@ const Dashboard: React.FC = () => {
     if (!selectedFile) return;
 
     setIsUploading(true);
-    setUploadProgress(0);
     setError(null);
 
     try {
@@ -118,7 +116,6 @@ const Dashboard: React.FC = () => {
       
       // Reset form
       setSelectedFile(null);
-      setUploadProgress(0);
       
     } catch (error) {
       console.error('Upload error:', error);

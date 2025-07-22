@@ -6,19 +6,34 @@ import pdf from "pdf-parse";
 import { Resume } from "../entities/Resume";
 import { postgresConnection } from "../config/database";
 import { authenticateToken } from "../middleware/auth";
+import { User } from "../entities/User";
+import { Request } from "express";
 
 const router = express.Router();
 
+// Extend Express Request type to include optional file property
+interface MulterRequest extends Request {
+  file?: Express.Multer.File;
+}
+
 // Configure multer for file uploads
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
+  destination: (
+    req: Request,
+    file: Express.Multer.File,
+    cb: (error: Error | null, destination: string) => void
+  ) => {
     const uploadDir = path.join(__dirname, "../../uploads");
     if (!fs.existsSync(uploadDir)) {
       fs.mkdirSync(uploadDir, { recursive: true });
     }
     cb(null, uploadDir);
   },
-  filename: (req, file, cb) => {
+  filename: (
+    req: Request,
+    file: Express.Multer.File,
+    cb: (error: Error | null, filename: string) => void
+  ) => {
     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
     cb(
       null,
@@ -32,7 +47,11 @@ const upload = multer({
   limits: {
     fileSize: 10 * 1024 * 1024, // 10MB limit
   },
-  fileFilter: (req, file, cb) => {
+  fileFilter: (
+    req: Request,
+    file: Express.Multer.File,
+    cb: multer.FileFilterCallback
+  ) => {
     const allowedTypes = [".pdf", ".docx", ".doc"];
     const fileExtension = path.extname(file.originalname).toLowerCase();
 
@@ -74,15 +93,16 @@ router.post(
   "/upload",
   authenticateToken,
   upload.single("resume"),
-  async (req, res) => {
+  async (req: Request, res) => {
+    const file = (req as any).file as Express.Multer.File | undefined;
     try {
-      if (!req.file) {
+      if (!file) {
         return res.status(400).json({ error: "No file uploaded" });
       }
 
-      const userId = (req as any).user.userId;
-      const filePath = req.file.path;
-      const fileExtension = path.extname(req.file.originalname).toLowerCase();
+      const userId = (req.user as User).id;
+      const filePath = file.path;
+      const fileExtension = path.extname(file.originalname).toLowerCase();
 
       let extractedText = "";
 
@@ -103,15 +123,20 @@ router.post(
       const resumeRepository = postgresConnection.getRepository(Resume);
 
       // Set all existing resumes to inactive
-      await resumeRepository.update({ userId }, { isActive: false });
+      await resumeRepository
+        .createQueryBuilder()
+        .update(Resume)
+        .set({ isActive: false })
+        .where("userId = :userId", { userId })
+        .execute();
 
       const resume = resumeRepository.create({
         userId,
-        fileName: req.file.originalname,
+        fileName: file.originalname,
         originalText: extractedText,
         fileUrl: filePath,
-        fileType: req.file.mimetype,
-        fileSize: req.file.size,
+        fileType: file.mimetype,
+        fileSize: file.size,
         isActive: true,
         parsedData: null,
         aiAnalysis: null,
@@ -138,7 +163,7 @@ router.post(
 // Get user's resumes
 router.get("/", authenticateToken, async (req, res) => {
   try {
-    const userId = (req as any).user.userId;
+    const userId = (req.user as User).id;
     const resumeRepository = postgresConnection.getRepository(Resume);
 
     const resumes = await resumeRepository.find({
@@ -166,7 +191,7 @@ router.get("/", authenticateToken, async (req, res) => {
 // Get specific resume with full data
 router.get("/:id", authenticateToken, async (req, res) => {
   try {
-    const userId = (req as any).user.userId;
+    const userId = (req.user as User).id;
     const resumeId = req.params.id;
 
     const resumeRepository = postgresConnection.getRepository(Resume);
@@ -188,13 +213,18 @@ router.get("/:id", authenticateToken, async (req, res) => {
 // Set resume as active
 router.patch("/:id/activate", authenticateToken, async (req, res) => {
   try {
-    const userId = (req as any).user.userId;
+    const userId = (req.user as User).id;
     const resumeId = req.params.id;
 
     const resumeRepository = postgresConnection.getRepository(Resume);
 
     // Set all resumes to inactive
-    await resumeRepository.update({ userId }, { isActive: false });
+    await resumeRepository
+      .createQueryBuilder()
+      .update(Resume)
+      .set({ isActive: false })
+      .where("userId = :userId", { userId })
+      .execute();
 
     // Set the specified resume as active
     await resumeRepository.update({ id: resumeId, userId }, { isActive: true });
@@ -209,24 +239,20 @@ router.patch("/:id/activate", authenticateToken, async (req, res) => {
 // Delete resume
 router.delete("/:id", authenticateToken, async (req, res) => {
   try {
-    const userId = (req as any).user.userId;
+    const userId = (req.user as User).id;
     const resumeId = req.params.id;
-
     const resumeRepository = postgresConnection.getRepository(Resume);
-    const resume = await resumeRepository.findOne({
-      where: { id: resumeId, userId },
-    });
 
-    if (!resume) {
-      return res.status(404).json({ error: "Resume not found" });
-    }
+    // Set all resumes to inactive (if needed)
+    await resumeRepository
+      .createQueryBuilder()
+      .update(Resume)
+      .set({ isActive: false })
+      .where("userId = :userId", { userId })
+      .execute();
 
-    // Delete the file if it exists
-    if (resume.fileUrl && fs.existsSync(resume.fileUrl)) {
-      fs.unlinkSync(resume.fileUrl);
-    }
-
-    await resumeRepository.remove(resume);
+    // Delete the specified resume
+    await resumeRepository.delete({ id: resumeId, userId });
 
     res.json({ message: "Resume deleted successfully" });
   } catch (error) {

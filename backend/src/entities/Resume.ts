@@ -12,23 +12,23 @@ import { User } from "./User";
 @Entity("resumes")
 export class Resume {
   @PrimaryGeneratedColumn("uuid")
-  id: string;
+  id!: string;
 
   @Column()
-  userId: string;
+  userId!: string;
 
   @ManyToOne(() => User, { onDelete: "CASCADE" })
   @JoinColumn({ name: "userId" })
-  user: User;
+  user!: User;
 
   @Column()
-  fileName: string;
+  fileName!: string;
 
   @Column()
-  originalText: string;
+  originalText!: string;
 
   @Column({ type: "jsonb", nullable: true })
-  parsedData: {
+  parsedData!: {
     skills: string[];
     experience: Array<{
       company: string;
@@ -47,32 +47,32 @@ export class Resume {
       phone?: string;
       location?: string;
     };
-  };
+  } | null;
 
   @Column({ type: "jsonb", nullable: true })
-  aiAnalysis: {
+  aiAnalysis!: {
     strengths: string[];
     improvements: string[];
     suggestedRoles: string[];
     score: number;
     summary: string;
-  };
+  } | null;
 
   @Column({ default: false })
-  isActive: boolean;
+  isActive!: boolean;
 
   @Column({ type: "text", nullable: true })
-  fileUrl: string;
+  fileUrl!: string | null;
 
   @Column({ type: "text", nullable: true })
-  fileType: string;
+  fileType!: string | null;
 
   @Column({ type: "int", nullable: true })
-  fileSize: number;
+  fileSize!: number | null;
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  updatedAt!: Date;
 }

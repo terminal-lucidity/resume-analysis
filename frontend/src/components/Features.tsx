@@ -6,74 +6,66 @@ import {
   Zap, 
   CheckCircle, 
   BarChart3, 
-  FileText, 
   Users, 
   Shield
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const Features: React.FC = () => {
+  const navigate = useNavigate();
+  const isAuthenticated = Boolean(localStorage.getItem('token') && localStorage.getItem('user'));
+  
   const mainFeatures = [
     {
-      icon: <div className="features-icon"><Upload /></div>,
+      step: 'Step 1',
+      icon: Upload,
       title: "Smart Resume Upload",
       description: "Upload your resume in any format - PDF, DOC, DOCX. Our AI extracts and analyzes every detail automatically.",
       benefits: ["Drag & drop interface", "Multiple file formats", "Instant text extraction"]
     },
     {
-      icon: <div className="features-icon"><Target /></div>,
+      step: 'Step 2',
+      icon: Target,
       title: "AI-Powered Analysis",
       description: "Advanced AI algorithms analyze your resume against job requirements and industry standards.",
       benefits: ["Keyword optimization", "Skills gap analysis", "Industry benchmarking"]
     },
     {
-      icon: <div className="features-icon"><BarChart3 /></div>,
+      step: 'Step 3',
+      icon: BarChart3,
       title: "Detailed Insights",
       description: "Get comprehensive feedback on strengths, weaknesses, and specific improvement recommendations.",
       benefits: ["Score breakdown", "Actionable suggestions", "Progress tracking"]
+    },
+    {
+      step: 'Step 4',
+      icon: Users,
+      title: "Interview Prep",
+      description: "Practice with AI-generated interview questions tailored to your resume and target roles. Get tips and feedback to boost your confidence.",
+      benefits: ["Role-specific questions", "AI feedback", "Confidence building"]
     }
   ];
 
   const keyBenefits = [
     {
-      icon: <div className="features-icon" style={{width: '2.5rem', height: '2.5rem'}}><Zap /></div>,
+      icon: Zap,
       title: "Lightning Fast",
       description: "Get your analysis in under 30 seconds"
     },
     {
-      icon: <div className="features-icon" style={{width: '2.5rem', height: '2.5rem'}}><CheckCircle /></div>,
+      icon: CheckCircle,
       title: "Accurate Results",
       description: "95% accuracy rate in resume analysis"
     },
     {
-      icon: <div className="features-icon" style={{width: '2.5rem', height: '2.5rem'}}><Users /></div>,
+      icon: Users,
       title: "Recruiter Insights",
       description: "See what recruiters actually look for"
     },
     {
-      icon: <div className="features-icon" style={{width: '2.5rem', height: '2.5rem'}}><Shield /></div>,
+      icon: Shield,
       title: "Privacy First",
       description: "Your data is encrypted and secure"
-    }
-  ];
-
-  const howItWorks = [
-    {
-      step: "01",
-      title: "Upload Your Resume",
-      description: "Simply drag and drop your resume file or browse to upload it. We support PDF, DOC, and DOCX formats.",
-      icon: <Upload />
-    },
-    {
-      step: "02",
-      title: "AI Analysis",
-      description: "Our advanced AI analyzes your resume for content, structure, keywords, and overall effectiveness.",
-      icon: <Target />
-    },
-    {
-      step: "03",
-      title: "Get Results",
-      description: "Receive detailed feedback with specific recommendations to improve your resume and increase your chances.",
-      icon: <FileText />
     }
   ];
 
@@ -108,40 +100,32 @@ const Features: React.FC = () => {
 
         {/* Main Features */}
         <section>
-          <h2 className="features-title" style={{fontSize: '2rem', marginBottom: '1rem'}}>Everything You Need to Succeed</h2>
-          <p className="features-subtitle" style={{marginBottom: '2.5rem'}}>Our comprehensive suite of tools helps you create resumes that stand out</p>
-          <div className="features-cards">
-            {mainFeatures.map((feature, index) => (
-              <div key={index} className="features-card">
-                {feature.icon}
-                <h3 className="features-title-card">{feature.title}</h3>
-                <p className="features-desc">{feature.description}</p>
-                <ul className="features-benefits">
-                  {feature.benefits.map((benefit, benefitIndex) => (
-                    <li key={benefitIndex} className="features-benefit">
-                      <span className="features-benefit-icon"><CheckCircle /></span>
-                      {benefit}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* How It Works */}
-        <section style={{marginTop: '3rem'}}>
-          <h2 className="features-title" style={{fontSize: '2rem', marginBottom: '1rem'}}>How It Works</h2>
-          <p className="features-subtitle" style={{marginBottom: '2.5rem'}}>Get started in just three simple steps</p>
-          <div className="features-cards" style={{gridTemplateColumns: 'repeat(3, 1fr)'}}>
-            {howItWorks.map((step, index) => (
-              <div key={index} className="features-card" style={{padding: '2rem 1.5rem'}}>
-                <div style={{fontWeight: 700, fontSize: '1.5rem', color: '#6366f1', marginBottom: '0.5rem'}}>{step.step}</div>
-                <div className="features-icon" style={{marginBottom: '1rem', background: 'linear-gradient(135deg, #6366f1 0%, #a78bfa 100%)', color: '#fff'}}>{step.icon}</div>
-                <h3 className="features-title-card">{step.title}</h3>
-                <p className="features-desc">{step.description}</p>
-              </div>
-            ))}
+          <h2 className="features-title">Everything You Need to Succeed</h2>
+          <p className="features-subtitle">Our comprehensive suite of tools helps you create resumes that stand out</p>
+          <div className="features-steps-flow">
+            {mainFeatures.map((feature, idx) => {
+              const IconComponent = feature.icon;
+              return (
+                <div
+                  key={idx}
+                  className={`features-step-card${idx === 0 ? ' clickable' : ''}`}
+                  onClick={idx === 0 ? () => navigate(isAuthenticated ? '/dashboard' : '/signin') : undefined}
+                >
+                  <div className="features-icon">
+                    <IconComponent size={28} />
+                  </div>
+                  <h3 className="step-title">{feature.title}</h3>
+                  <p className="step-desc">{feature.description}</p>
+                  <ul className="step-benefits">
+                    {feature.benefits.map((b, i) => (
+                      <li key={i}>
+                        <CheckCircle size={18} /> {b}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              );
+            })}
           </div>
         </section>
 
@@ -150,13 +134,18 @@ const Features: React.FC = () => {
           <h2 className="features-title" style={{fontSize: '2rem', marginBottom: '1rem'}}>Why Choose Vettly?</h2>
           <p className="features-subtitle" style={{marginBottom: '2.5rem'}}>Join thousands of job seekers who've improved their resumes with our platform</p>
           <div className="features-cards" style={{gridTemplateColumns: 'repeat(4, 1fr)'}}>
-            {keyBenefits.map((benefit, index) => (
-              <div key={index} className="features-card" style={{padding: '2rem 1.5rem'}}>
-                {benefit.icon}
-                <h3 className="features-title-card">{benefit.title}</h3>
-                <p className="features-desc">{benefit.description}</p>
-              </div>
-            ))}
+            {keyBenefits.map((benefit, index) => {
+              const IconComponent = benefit.icon;
+              return (
+                <div key={index} className="features-card" style={{padding: '2rem 1.5rem'}}>
+                  <div className="features-icon" style={{width: '2.5rem', height: '2.5rem'}}>
+                    <IconComponent size={24} />
+                  </div>
+                  <h3 className="features-title-card">{benefit.title}</h3>
+                  <p className="features-desc">{benefit.description}</p>
+                </div>
+              );
+            })}
           </div>
         </section>
       </div>
@@ -164,4 +153,4 @@ const Features: React.FC = () => {
   );
 };
 
-export default Features; 
+export default Features;

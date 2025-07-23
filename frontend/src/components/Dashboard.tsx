@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Upload, FileText, Trash2, Plus, CheckCircle, AlertCircle } from 'lucide-react';
+import { Upload, FileText, Trash2, Plus, CheckCircle, AlertCircle, Search } from 'lucide-react';
 import './Dashboard.css';
 
 interface Resume {
@@ -25,6 +25,11 @@ const Dashboard: React.FC = () => {
   const [user, setUser] = useState<UserData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [jobTitle, setJobTitle] = useState('');
+  const [jobDescription, setJobDescription] = useState('');
+  const [analysisLoading, setAnalysisLoading] = useState(false);
+  const [analysisResult, setAnalysisResult] = useState<string | null>(null);
+  const [showJobAnalysis, setShowJobAnalysis] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -169,6 +174,17 @@ const Dashboard: React.FC = () => {
     }
   };
 
+  const handleAnalyzeJob = (e: React.FormEvent) => {
+    e.preventDefault();
+    setAnalysisLoading(true);
+    setTimeout(() => {
+      setAnalysisResult(
+        'Mock AI Analysis: Your resume matches 70% of the job description. Consider adding more keywords related to leadership and project management.'
+      );
+      setAnalysisLoading(false);
+    }, 1500);
+  };
+
   const formatFileSize = (bytes: number) => {
     if (bytes === 0) return '0 Bytes';
     const k = 1024;
@@ -205,73 +221,147 @@ const Dashboard: React.FC = () => {
 
       <div className="dashboard-content">
         <div className="dashboard-panel">
-          {/* Column 1: Upload Text and Icon */}
+          {/* Column 1: Info Section (Upload or Analyze) */}
           <div className="upload-info-section">
-            <div className="upload-header">
-              <div className="upload-icon-container">
-                <Upload className="upload-icon" />
+            {showJobAnalysis ? (
+              <div className="job-analysis-header">
+                <div className="job-analysis-icon-container">
+                  <Search className="job-analysis-icon" />
+                </div>
+                <h2>Analyze for a Job</h2>
+                <p>Paste a job description or enter a job title to get tailored resume insights.</p>
               </div>
-              <h2>Upload Resume</h2>
-              <p>Upload your resume in PDF or DOCX format to get started</p>
-            </div>
+            ) : (
+              <div className="upload-header">
+                <div className="upload-icon-container">
+                  <Upload className="upload-icon" />
+                </div>
+                <h2>Upload Resume</h2>
+                <p>Upload your resume in PDF or DOCX format to get started</p>
+              </div>
+            )}
           </div>
 
-          {/* Column 2: Upload Field and Button */}
+          {/* Column 2: Upload or Job Analysis Form, conditional */}
           <div className="upload-action-section">
-            <div className="upload-area">
-              <input
-                type="file"
-                id="resume-upload"
-                accept=".pdf,.docx,.doc"
-                onChange={handleFileSelect}
-                className="file-input"
-                disabled={isUploading}
-              />
-              <label htmlFor="resume-upload" className="upload-label">
-                <div className="upload-placeholder">
-                  <div className="upload-placeholder-content">
-                    <Plus className="upload-plus-icon" />
-                    <span className="upload-text">Drop your resume here or click to browse</span>
-                    <span className="upload-hint">PDF, DOCX up to 10MB</span>
+            {(!showJobAnalysis) ? (
+              <div className="upload-area">
+                <input
+                  type="file"
+                  id="resume-upload"
+                  accept=".pdf,.docx,.doc"
+                  onChange={handleFileSelect}
+                  className="file-input"
+                  disabled={isUploading}
+                />
+                <label htmlFor="resume-upload" className="upload-label">
+                  <div className="upload-placeholder">
+                    <div className="upload-placeholder-content">
+                      <Plus className="upload-plus-icon" />
+                      <span className="upload-text">Drop your resume here or click to browse</span>
+                      <span className="upload-hint">PDF, DOCX up to 10MB</span>
+                    </div>
                   </div>
-                </div>
-              </label>
+                </label>
 
-              {selectedFile && (
-                <div className="selected-file">
-                  <FileText className="file-icon" />
-                  <div className="file-info">
-                    <span className="file-name">{selectedFile.name}</span>
-                    <span className="file-size">({formatFileSize(selectedFile.size)})</span>
+                {selectedFile && (
+                  <div className="selected-file">
+                    <FileText className="file-icon" />
+                    <div className="file-info">
+                      <span className="file-name">{selectedFile.name}</span>
+                      <span className="file-size">({formatFileSize(selectedFile.size)})</span>
+                    </div>
                   </div>
-                </div>
-              )}
-
-              {error && (
-                <div className="upload-error">
-                  <AlertCircle className="error-icon" />
-                  <span>{error}</span>
-                </div>
-              )}
-
-              <button
-                onClick={handleUpload}
-                disabled={!selectedFile || isUploading}
-                className="upload-button"
-              >
-                {isUploading ? (
-                  <>
-                    <div className="upload-spinner"></div>
-                    <span>Uploading...</span>
-                  </>
-                ) : (
-                  <>
-                    <Upload className="button-icon" />
-                    <span>Upload Resume</span>
-                  </>
                 )}
-              </button>
-            </div>
+
+                {error && (
+                  <div className="upload-error">
+                    <AlertCircle className="error-icon" />
+                    <span>{error}</span>
+                  </div>
+                )}
+
+                <button
+                  onClick={handleUpload}
+                  disabled={!selectedFile || isUploading}
+                  className="upload-button"
+                >
+                  {isUploading ? (
+                    <>
+                      <div className="upload-spinner"></div>
+                      <span>Uploading...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Upload className="button-icon" />
+                      <span>Upload Resume</span>
+                    </>
+                  )}
+                </button>
+                {/* Show Analyze for a Job button if resumes exist */}
+                {resumes.length > 0 && (
+                  <button
+                    className="analyze-job-toggle"
+                    type="button"
+                    onClick={() => setShowJobAnalysis(true)}
+                  >
+                    <Search className="button-icon" />
+                    Analyze for a Job
+                  </button>
+                )}
+              </div>
+            ) : (
+              <div className="job-analysis-form-panel">
+                <button
+                  className="go-back-button"
+                  type="button"
+                  onClick={() => setShowJobAnalysis(false)}
+                >
+                  ← Go Back
+                </button>
+                <form className="job-analysis-form" onSubmit={handleAnalyzeJob}>
+                  <input
+                    type="text"
+                    className="job-title-input"
+                    placeholder="Job Title (optional)"
+                    value={jobTitle}
+                    onChange={e => setJobTitle(e.target.value)}
+                    disabled={analysisLoading}
+                  />
+                  <textarea
+                    className="job-description-textarea"
+                    placeholder="Paste job description here (optional)"
+                    value={jobDescription}
+                    onChange={e => setJobDescription(e.target.value)}
+                    rows={6}
+                    disabled={analysisLoading}
+                  />
+                  <button
+                    type="submit"
+                    className="analyze-button"
+                    disabled={analysisLoading || (!jobTitle && !jobDescription)}
+                  >
+                    {analysisLoading ? (
+                      <>
+                        <div className="analyze-spinner"></div>
+                        <span>Analyzing...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Search className="button-icon" />
+                        <span>Analyze</span>
+                      </>
+                    )}
+                  </button>
+                </form>
+                {analysisResult && (
+                  <div className="analysis-result">
+                    <h3>AI Analysis Result</h3>
+                    <p>{analysisResult}</p>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Column 3: Previous Resumes */}

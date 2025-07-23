@@ -1,7 +1,6 @@
 import React from 'react';
 import './Features.css';
 import { 
-  Upload, 
   Target, 
   Zap, 
   CheckCircle, 

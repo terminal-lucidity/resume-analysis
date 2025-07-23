@@ -7,7 +7,8 @@ import {
   CheckCircle, 
   BarChart3, 
   Users, 
-  Shield
+  Shield,
+  Search
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -18,32 +19,39 @@ const Features: React.FC = () => {
   const mainFeatures = [
     {
       step: 'Step 1',
-      icon: Upload,
-      title: "Smart Resume Upload",
-      description: "Upload your resume in any format - PDF, DOC, DOCX. Our AI extracts and analyzes every detail automatically.",
-      benefits: ["Drag & drop interface", "Multiple file formats", "Instant text extraction"]
-    },
-    {
-      step: 'Step 2',
       icon: Target,
       title: "AI-Powered Analysis",
       description: "Advanced AI algorithms analyze your resume against job requirements and industry standards.",
       benefits: ["Keyword optimization", "Skills gap analysis", "Industry benchmarking"]
     },
     {
-      step: 'Step 3',
+      step: 'Step 2',
       icon: BarChart3,
       title: "Detailed Insights",
       description: "Get comprehensive feedback on strengths, weaknesses, and specific improvement recommendations.",
       benefits: ["Score breakdown", "Actionable suggestions", "Progress tracking"]
     },
     {
-      step: 'Step 4',
+      step: 'Step 3',
       icon: Users,
       title: "Interview Prep",
       description: "Practice with AI-generated interview questions tailored to your resume and target roles. Get tips and feedback to boost your confidence.",
       benefits: ["Role-specific questions", "AI feedback", "Confidence building"]
-    }
+    },
+    {
+      step: 'Step 4',
+      icon: Search,
+      title: "Personalized Job Matching",
+      description: "We help you find jobs that match your resume and skills, connecting you with opportunities tailored to your profile.",
+      benefits: ["Curated job listings", "Resume-based recommendations", "Direct application links"]
+    },
+    // {
+    //   step: 'Step 5',
+    //   icon: Upload,
+    //   title: "Smart Resume Upload",
+    //   description: "Upload your resume in any format - PDF, DOC, DOCX. Our AI extracts and analyzes every detail automatically.",
+    //   benefits: ["Drag & drop interface", "Multiple file formats", "Instant text extraction"]
+    // }
   ];
 
   const keyBenefits = [

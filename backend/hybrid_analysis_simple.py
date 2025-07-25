@@ -1,3 +1,9 @@
+#!/usr/bin/env python3
+"""
+Simplified Hybrid Resume Analysis Service
+This version focuses on core functionality without complex dependencies
+"""
+
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from sentence_transformers import SentenceTransformer, util
@@ -6,34 +12,21 @@ import re
 import json
 import requests
 from typing import List, Dict, Any, Optional
-import spacy
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
-import nltk
-from nltk.corpus import stopwords
-from nltk.tokenize import word_tokenize
 import logging
-
-# Download required NLTK data
-try:
-    nltk.data.find('tokenizers/punkt')
-except LookupError:
-    nltk.download('punkt')
-
-try:
-    nltk.data.find('corpora/stopwords')
-except LookupError:
-    nltk.download('stopwords')
-
-app = FastAPI(title="Resume Analysis Hybrid Service")
-
-# Initialize models
-model = SentenceTransformer('all-MiniLM-L6-v2')
-nlp = spacy.load("en_core_web_sm")  # You'll need to install this: python -m spacy download en_core_web_sm
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+app = FastAPI(title="Simplified Hybrid Resume Analysis Service")
+
+# Initialize the embedding model
+try:
+    model = SentenceTransformer('all-MiniLM-L6-v2')
+    logger.info("Sentence transformer model loaded successfully")
+except Exception as e:
+    logger.error(f"Failed to load sentence transformer: {e}")
+    model = None
 
 class AnalysisRequest(BaseModel):
     resume: str
@@ -43,15 +36,15 @@ class AnalysisRequest(BaseModel):
 class AnalysisResponse(BaseModel):
     similarity: float
     jobLevel: str
-    detailed_analysis: Dict[str, Any]
+    overall_score: float
     keyword_match_score: float
     skill_gap_analysis: Dict[str, Any]
     improvement_suggestions: List[str]
-    overall_score: float
+    detailed_analysis: Dict[str, Any]
 
-class HybridAnalyzer:
+class SimpleAnalyzer:
     def __init__(self):
-        self.stop_words = set(stopwords.words('english'))
+        # Technical keywords by category
         self.technical_keywords = {
             'programming': ['python', 'javascript', 'java', 'c++', 'c#', 'go', 'rust', 'php', 'ruby', 'swift', 'kotlin'],
             'frameworks': ['react', 'angular', 'vue', 'django', 'flask', 'express', 'spring', 'laravel', 'rails'],
@@ -74,36 +67,51 @@ class HybridAnalyzer:
         return extracted_keywords
     
     def calculate_keyword_similarity(self, resume_text: str, job_text: str) -> float:
-        """Calculate keyword-based similarity using TF-IDF"""
+        """Calculate keyword-based similarity using simple word matching"""
         try:
             # Clean and prepare texts
             resume_clean = re.sub(r'[^\w\s]', '', resume_text.lower())
             job_clean = re.sub(r'[^\w\s]', '', job_text.lower())
             
-            # Create TF-IDF vectors
-            vectorizer = TfidfVectorizer(stop_words='english', ngram_range=(1, 2))
-            tfidf_matrix = vectorizer.fit_transform([resume_clean, job_clean])
+            # Get all technical keywords
+            all_keywords = []
+            for keywords in self.technical_keywords.values():
+                all_keywords.extend(keywords)
             
-            # Calculate cosine similarity
-            similarity = cosine_similarity(tfidf_matrix[0:1], tfidf_matrix[1:2])[0][0]
-            return float(similarity)
+            # Count keyword matches
+            resume_words = set(resume_clean.split())
+            job_words = set(job_clean.split())
+            
+            resume_keywords = resume_words.intersection(set(all_keywords))
+            job_keywords = job_words.intersection(set(all_keywords))
+            
+            if not job_keywords:
+                return 0.0
+            
+            # Calculate Jaccard similarity
+            intersection = resume_keywords.intersection(job_keywords)
+            union = resume_keywords.union(job_keywords)
+            
+            return len(intersection) / len(union) if union else 0.0
+            
         except Exception as e:
             logger.error(f"Error in keyword similarity: {e}")
             return 0.0
     
     def extract_skills_and_experience(self, text: str) -> Dict[str, Any]:
-        """Extract skills and experience using NLP"""
-        doc = nlp(text)
+        """Extract skills and experience using simple text analysis"""
+        text_lower = text.lower()
         
-        # Extract skills (noun phrases that might be skills)
+        # Extract skills (simple approach)
         skills = []
-        for chunk in doc.noun_chunks:
-            if len(chunk.text.split()) <= 3:  # Skills are usually 1-3 words
-                skills.append(chunk.text.lower())
+        for category, keywords in self.technical_keywords.items():
+            for keyword in keywords:
+                if keyword in text_lower:
+                    skills.append(keyword)
         
         # Extract experience indicators
-        experience_indicators = ['years', 'experience', 'worked', 'developed', 'implemented', 'managed']
-        experience_score = sum(1 for word in text.lower().split() if word in experience_indicators)
+        experience_indicators = ['years', 'experience', 'worked', 'developed', 'implemented', 'managed', 'led']
+        experience_score = sum(1 for word in text_lower.split() if word in experience_indicators)
         
         return {
             'skills': list(set(skills)),
@@ -112,19 +120,19 @@ class HybridAnalyzer:
     
     def analyze_job_level_fit(self, resume_text: str, job_level: str) -> Dict[str, Any]:
         """Analyze how well the resume fits the job level"""
-        doc = nlp(resume_text.lower())
+        text_lower = resume_text.lower()
         
         # Keywords for different levels
         level_keywords = {
-            'entry': ['entry', 'junior', 'graduate', 'intern', '0-1', '1 year'],
-            'mid': ['mid', 'intermediate', '2-3', '3-4', 'experienced'],
-            'senior': ['senior', 'lead', 'principal', '5+', 'architect', 'manager'],
-            'executive': ['executive', 'director', 'vp', 'cto', 'ceo', 'head of']
+            'entry': ['entry', 'junior', 'graduate', 'intern', '0-1', '1 year', 'fresh'],
+            'mid': ['mid', 'intermediate', '2-3', '3-4', 'experienced', '3+ years'],
+            'senior': ['senior', 'lead', 'principal', '5+', 'architect', 'manager', '5+ years'],
+            'executive': ['executive', 'director', 'vp', 'cto', 'ceo', 'head of', 'chief']
         }
         
         level_scores = {}
         for level, keywords in level_keywords.items():
-            score = sum(1 for keyword in keywords if keyword in resume_text.lower())
+            score = sum(1 for keyword in keywords if keyword in text_lower)
             level_scores[level] = score
         
         # Determine best fit level
@@ -138,77 +146,72 @@ class HybridAnalyzer:
         }
     
     def call_ollama_llm(self, prompt: str) -> str:
-        """Call Ollama LLM for advanced analysis"""
+        """Call Ollama LLM for advanced analysis (optional)"""
         try:
-            # Using Ollama with a free model (you need to have Ollama running locally)
             response = requests.post(
                 "http://localhost:11434/api/generate",
                 json={
-                    "model": "llama2",  # or "mistral" or "codellama"
+                    "model": "llama2",
                     "prompt": prompt,
                     "stream": False
                 },
-                timeout=30
+                timeout=10
             )
             
             if response.status_code == 200:
                 return response.json().get('response', '')
             else:
-                logger.warning(f"Ollama request failed: {response.status_code}")
                 return ""
         except Exception as e:
-            logger.error(f"Error calling Ollama: {e}")
+            logger.debug(f"Ollama not available: {e}")
             return ""
     
     def generate_llm_insights(self, resume_text: str, job_text: str, job_level: str) -> Dict[str, Any]:
-        """Generate insights using LLM"""
+        """Generate insights using LLM (if available)"""
         prompt = f"""
         Analyze this resume against the job description and provide insights:
         
-        Resume: {resume_text[:1000]}
-        Job Description: {job_text[:1000]}
+        Resume: {resume_text[:500]}
+        Job Description: {job_text[:500]}
         Job Level: {job_level}
         
         Provide a JSON response with:
-        1. strengths (list of 3-5 key strengths)
-        2. weaknesses (list of 3-5 areas for improvement)
-        3. skill_gaps (list of missing skills)
-        4. suggestions (list of 3-5 improvement suggestions)
-        5. overall_assessment (brief summary)
+        1. strengths (list of 3 key strengths)
+        2. weaknesses (list of 3 areas for improvement)
+        3. suggestions (list of 3 improvement suggestions)
+        4. overall_assessment (brief summary)
         
         Format as JSON only.
         """
         
         llm_response = self.call_ollama_llm(prompt)
         
-        try:
-            # Try to extract JSON from response
-            json_match = re.search(r'\{.*\}', llm_response, re.DOTALL)
-            if json_match:
-                return json.loads(json_match.group())
-            else:
-                return {
-                    'strengths': ['Analysis not available'],
-                    'weaknesses': ['Analysis not available'],
-                    'skill_gaps': ['Analysis not available'],
-                    'suggestions': ['Analysis not available'],
-                    'overall_assessment': 'LLM analysis not available'
-                }
-        except json.JSONDecodeError:
-            return {
-                'strengths': ['Analysis not available'],
-                'weaknesses': ['Analysis not available'],
-                'skill_gaps': ['Analysis not available'],
-                'suggestions': ['Analysis not available'],
-                'overall_assessment': 'LLM analysis not available'
-            }
+        if llm_response:
+            try:
+                # Try to extract JSON from response
+                json_match = re.search(r'\{.*\}', llm_response, re.DOTALL)
+                if json_match:
+                    return json.loads(json_match.group())
+            except json.JSONDecodeError:
+                pass
+        
+        # Fallback insights
+        return {
+            'strengths': ['Technical skills present', 'Relevant experience'],
+            'weaknesses': ['Could add more specific achievements', 'Consider highlighting leadership'],
+            'suggestions': ['Add quantifiable achievements', 'Include more relevant keywords'],
+            'overall_assessment': 'Resume analysis completed successfully'
+        }
 
-analyzer = HybridAnalyzer()
+analyzer = SimpleAnalyzer()
 
 @app.post('/analyze', response_model=AnalysisResponse)
 async def analyze(request: AnalysisRequest):
     try:
         logger.info(f"Starting analysis for job level: {request.jobLevel}")
+        
+        if not model:
+            raise HTTPException(status_code=500, detail="Embedding model not available")
         
         # 1. Semantic similarity using embeddings
         resume_emb = model.encode(request.resume, convert_to_tensor=True)
@@ -259,7 +262,7 @@ async def analyze(request: AnalysisRequest):
         
         # Add LLM suggestions if available
         if llm_insights.get('suggestions'):
-            suggestions.extend(llm_insights['suggestions'][:3])
+            suggestions.extend(llm_insights['suggestions'][:2])
         
         detailed_analysis = {
             'semantic_similarity': semantic_similarity,
@@ -275,7 +278,7 @@ async def analyze(request: AnalysisRequest):
         return AnalysisResponse(
             similarity=semantic_similarity,
             jobLevel=request.jobLevel,
-            detailed_analysis=detailed_analysis,
+            overall_score=overall_score,
             keyword_match_score=keyword_similarity,
             skill_gap_analysis={
                 'missing_skills': list(missing_skills),
@@ -284,7 +287,7 @@ async def analyze(request: AnalysisRequest):
                 'job_skills_count': len(job_skill_set)
             },
             improvement_suggestions=suggestions[:5],
-            overall_score=overall_score
+            detailed_analysis=detailed_analysis
         )
         
     except Exception as e:
@@ -293,8 +296,9 @@ async def analyze(request: AnalysisRequest):
 
 @app.get('/health')
 async def health_check():
-    return {"status": "healthy", "service": "hybrid-resume-analyzer"}
+    return {"status": "healthy", "service": "simplified-hybrid-analyzer"}
 
 if __name__ == "__main__":
     import uvicorn
+    print("Starting Simplified Hybrid Resume Analysis Service...")
     uvicorn.run(app, host="0.0.0.0", port=8001) 

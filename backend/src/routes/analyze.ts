@@ -14,9 +14,14 @@ const router = express.Router();
  */
 router.post("/", auth, async (req, res) => {
   try {
-    const { jobTitle, jobDescription, resumeId } = req.body;
-    if (!resumeId || (!jobTitle && !jobDescription)) {
-      return res.status(400).json({ error: "Missing required fields." });
+    const { jobTitle, jobDescription, jobLevel, resumeId } = req.body;
+    if (!resumeId || !jobTitle || !jobLevel) {
+      return res
+        .status(400)
+        .json({
+          error:
+            "Missing required fields: resumeId, jobTitle, and jobLevel are required. jobDescription is optional.",
+        });
     }
 
     // Null check for req.user
@@ -42,7 +47,11 @@ router.post("/", auth, async (req, res) => {
     const pyRes = await fetch("http://localhost:8001/analyze", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ resume: resumeText, job: jobText }),
+      body: JSON.stringify({
+        resume: resumeText,
+        job: jobText,
+        jobLevel: jobLevel,
+      }),
     });
     if (!pyRes.ok) {
       return res.status(500).json({ error: "Embedding service error." });

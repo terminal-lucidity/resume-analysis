@@ -30,6 +30,9 @@ const Dashboard: React.FC = () => {
   const [analysisLoading, setAnalysisLoading] = useState(false);
   const [analysisResult, setAnalysisResult] = useState<string | null>(null);
   const [showJobAnalysis, setShowJobAnalysis] = useState(false);
+  const [showResumeModal, setShowResumeModal] = useState(false);
+  const [selectedResumeId, setSelectedResumeId] = useState<string | null>(null);
+  const [jobLevel, setJobLevel] = useState('');
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -174,15 +177,51 @@ const Dashboard: React.FC = () => {
     }
   };
 
-  const handleAnalyzeJob = (e: React.FormEvent) => {
+  const handleAnalyzeJob = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!selectedResumeId) {
+      setShowResumeModal(true);
+      return;
+    }
+    
+    if (!jobTitle || !jobLevel) {
+      alert('Please fill in all required fields: Job Title and Job Level');
+      return;
+    }
+    
     setAnalysisLoading(true);
-    setTimeout(() => {
-      setAnalysisResult(
-        'Mock AI Analysis: Your resume matches 70% of the job description. Consider adding more keywords related to leadership and project management.'
-      );
+    
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch('http://localhost:3000/api/analyze', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          jobTitle,
+          jobDescription,
+          jobLevel,
+          resumeId: selectedResumeId
+        })
+      });
+      
+      if (!response.ok) throw new Error('Analysis failed');
+      const data = await response.json();
+      setAnalysisResult(`Similarity Score: ${(data.similarity * 100).toFixed(1)}%`);
+    } catch (error) {
+      console.error('Analysis error:', error);
+      setAnalysisResult('Analysis failed. Please try again.');
+    } finally {
       setAnalysisLoading(false);
-    }, 1500);
+    }
+  };
+
+  const handleResumeSelect = (resumeId: string) => {
+    setSelectedResumeId(resumeId);
+    setShowResumeModal(false);
   };
 
   const formatFileSize = (bytes: number) => {
@@ -323,23 +362,42 @@ const Dashboard: React.FC = () => {
                   <input
                     type="text"
                     className="job-title-input"
-                    placeholder="Job Title (optional)"
+                    placeholder="Job Title *"
                     value={jobTitle}
                     onChange={e => setJobTitle(e.target.value)}
                     disabled={analysisLoading}
+                    required
                   />
+                  
+                  <select
+                    className="job-level-select"
+                    value={jobLevel}
+                    onChange={(e) => setJobLevel(e.target.value)}
+                    required
+                  >
+                    <option value="">Select Job Level *</option>
+                    <option value="entry">Entry Level</option>
+                    <option value="mid">Mid Level</option>
+                    <option value="senior">Senior Level</option>
+                    <option value="lead">Lead</option>
+                    <option value="manager">Manager</option>
+                    <option value="director">Director</option>
+                    <option value="executive">Executive</option>
+                  </select>
+                  
                   <textarea
                     className="job-description-textarea"
-                    placeholder="Paste job description here (optional)"
+                    placeholder="Job Description (optional)"
                     value={jobDescription}
                     onChange={e => setJobDescription(e.target.value)}
                     rows={6}
                     disabled={analysisLoading}
                   />
+                  
                   <button
                     type="submit"
                     className="analyze-button"
-                    disabled={analysisLoading || (!jobTitle && !jobDescription)}
+                    disabled={analysisLoading || !jobTitle || !jobLevel}
                   >
                     {analysisLoading ? (
                       <>
@@ -354,6 +412,17 @@ const Dashboard: React.FC = () => {
                     )}
                   </button>
                 </form>
+                {selectedResumeId && (
+                  <div className="selected-resume-info">
+                    <span>Selected: {resumes.find(r => r.id === selectedResumeId)?.fileName}</span>
+                    <button 
+                      className="change-resume-btn"
+                      onClick={() => setShowResumeModal(true)}
+                    >
+                      Change
+                    </button>
+                  </div>
+                )}
                 {analysisResult && (
                   <div className="analysis-result">
                     <h3>AI Analysis Result</h3>
@@ -432,6 +501,45 @@ const Dashboard: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Resume Selection Modal */}
+      {showResumeModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h3>Select a Resume</h3>
+              <button 
+                className="modal-close"
+                onClick={() => setShowResumeModal(false)}
+              >
+                ×
+              </button>
+            </div>
+            <div className="modal-body">
+              {resumes.length === 0 ? (
+                <p>No resumes available. Please upload a resume first.</p>
+              ) : (
+                <div className="resume-selection-list">
+                  {resumes.map((resume) => (
+                    <div 
+                      key={resume.id} 
+                      className="resume-selection-item"
+                      onClick={() => handleResumeSelect(resume.id)}
+                    >
+                      <FileText className="resume-icon" />
+                      <div className="resume-info">
+                        <h4>{resume.fileName}</h4>
+                        <p>{formatFileSize(resume.fileSize)} • {formatDate(resume.createdAt)}</p>
+                      </div>
+                      {resume.isActive && <CheckCircle className="active-icon" />}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

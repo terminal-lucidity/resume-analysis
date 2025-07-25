@@ -4,6 +4,7 @@ import { config } from "dotenv";
 import { postgresConnection, connectMongoDB } from "./config/database";
 import authRoutes from "./routes/auth";
 import resumeRoutes from "./routes/resume";
+import analyzeRoutes from "./routes/analyze";
 import passport from "./passport";
 import "./entities/Resume"; // Register Resume entity with TypeORM
 
@@ -19,6 +20,7 @@ app.use(passport.initialize());
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/resumes", resumeRoutes);
+app.use("/api/analyze", analyzeRoutes);
 
 // Health check
 app.get("/health", (req, res) => {

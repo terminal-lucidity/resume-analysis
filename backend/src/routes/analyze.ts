@@ -2,30 +2,40 @@ import express from "express";
 import fetch from "node-fetch";
 import { getRepository } from "typeorm";
 import { Resume } from "../entities/Resume";
-import authMiddleware from "../middleware/auth";
-
+import { auth } from "../middleware/auth";
+import { User } from "../entities/User";
 const router = express.Router();
 
 // POST /api/analyze
 // Requires: { jobTitle, jobDescription, resumeId }
-router.post("/", authMiddleware, async (req, res) => {
+/**
+ * @param {import('express').Request & { user?: import('../entities/User').User }} req
+ * @param {import('express').Response} res
+ */
+router.post("/", auth, async (req, res) => {
   try {
     const { jobTitle, jobDescription, resumeId } = req.body;
     if (!resumeId || (!jobTitle && !jobDescription)) {
       return res.status(400).json({ error: "Missing required fields." });
     }
 
+    // Null check for req.user
+    const userId = (req.user as User)?.id;
+    if (!userId) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+
     // 1. Fetch the resume text from the database
     const resumeRepo = getRepository(Resume);
     const resume = await resumeRepo.findOne({
-      where: { id: resumeId, userId: req.user.id },
+      where: { id: resumeId, userId },
     });
     if (!resume) {
       return res.status(404).json({ error: "Resume not found." });
     }
 
-    // 2. Prepare the text for analysis
-    const resumeText = resume.text || resume.content || "";
+    // Use the correct property for resume text
+    const resumeText = resume.originalText || "";
     const jobText = [jobTitle, jobDescription].filter(Boolean).join("\n");
 
     // 3. Call the Python embedding microservice

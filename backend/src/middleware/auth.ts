@@ -40,6 +40,7 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
       throw new Error("User not found");
     }
 
+    console.log("Authenticated user:", user); // Debug log
     req.user = user;
     next();
   } catch (error) {

@@ -17,9 +17,9 @@ router.post("/", auth, async (req, res) => {
     const { jobTitle, jobDescription, jobLevel, resumeId } = req.body;
     if (!resumeId || !jobTitle || !jobLevel) {
       return res.status(400).json({
-          error:
-            "Missing required fields: resumeId, jobTitle, and jobLevel are required. jobDescription is optional.",
-        });
+        error:
+          "Missing required fields: resumeId, jobTitle, and jobLevel are required. jobDescription is optional.",
+      });
     }
 
     // Null check for req.user
@@ -82,6 +82,51 @@ router.post("/", auth, async (req, res) => {
     });
   } catch (err) {
     console.error("Analysis error:", err);
+    return res.status(500).json({ error: "Internal server error." });
+  }
+});
+
+// POST /api/analyze/test - Test endpoint without authentication
+router.post("/test", async (req, res) => {
+  try {
+    const { jobTitle, jobDescription, jobLevel, resumeText } = req.body;
+    if (!resumeText || !jobTitle || !jobLevel) {
+      return res.status(400).json({
+        error:
+          "Missing required fields: resumeText, jobTitle, and jobLevel are required. jobDescription is optional.",
+      });
+    }
+
+    const jobText = [jobTitle, jobDescription].filter(Boolean).join("\n");
+
+    // Call the Python hybrid analysis microservice
+    const pyRes = await fetch("http://localhost:8001/analyze", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        resume: resumeText,
+        job: jobText,
+        jobLevel: jobLevel,
+      }),
+    });
+
+    if (!pyRes.ok) {
+      return res.status(500).json({ error: "Hybrid analysis service error." });
+    }
+
+    const analysisResult = await pyRes.json();
+
+    // Return the comprehensive analysis
+    return res.json({
+      similarity: analysisResult.similarity,
+      overallScore: analysisResult.overall_score,
+      keywordMatchScore: analysisResult.keyword_match_score,
+      skillGapAnalysis: analysisResult.skill_gap_analysis,
+      improvementSuggestions: analysisResult.improvement_suggestions,
+      detailedAnalysis: analysisResult.detailed_analysis,
+    });
+  } catch (err) {
+    console.error("Test analysis error:", err);
     return res.status(500).json({ error: "Internal server error." });
   }
 });

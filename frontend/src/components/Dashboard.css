@@ -166,7 +166,7 @@
 }
 
 .upload-info-section, .upload-action-section {
-  min-height: 500px;
+  height: 550px;
   padding: 48px 40px;
   box-sizing: border-box;
   position: relative;
@@ -251,10 +251,12 @@
 .upload-area {
   position: relative;
   z-index: 1;
-  min-height: 300px;
+  min-height: 450px;
+  height: 450px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
+  gap: 16px;
 }
 
 .file-input {
@@ -384,13 +386,19 @@
 .upload-placeholder {
   border: 2px dashed #d1d5db;
   border-radius: 16px;
-  padding: 60px 40px;
+  padding: 40px 30px;
   text-align: center;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   background: #f9fafb;
   position: relative;
   overflow: hidden;
   cursor: pointer;
+  height: 240px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
 }
 
 .upload-placeholder::before {
@@ -579,8 +587,7 @@
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  margin-top: auto;
-  align-self: stretch;
+  margin-top: 16px;
   position: relative;
   overflow: hidden;
   box-shadow: 
@@ -796,10 +803,11 @@
   background: #fff;
   border: 1px solid #e5e7eb;
   border-radius: 8px;
-  padding: 12px;
+  padding: 16px;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
+  cursor: pointer;
 }
 
 .resume-item::before {
@@ -847,11 +855,35 @@
   box-shadow: 0 4px 16px rgba(129, 140, 248, 0.2);
 }
 
+.resume-item.selected {
+  border-color: #10b981;
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.15);
+}
+
+.dark .resume-item.selected {
+  border-color: #34d399;
+  background: linear-gradient(135deg, #064e3b 0%, #065f46 100%);
+  box-shadow: 0 4px 16px rgba(52, 211, 153, 0.2);
+}
+
+.selected-indicator {
+  width: 8px;
+  height: 8px;
+  background: #10b981;
+  border-radius: 50%;
+  margin-left: 8px;
+}
+
+.dark .selected-indicator {
+  background: #34d399;
+}
+
 .resume-item-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
 }
 
 .resume-item-info {
@@ -909,8 +941,15 @@
 
 .resume-item-actions {
   display: flex;
-  gap: 6px;
-  margin-bottom: 6px;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+.dark .resume-item-actions {
+  border-top-color: rgba(255, 255, 255, 0.1);
 }
 
 .action-button {
@@ -918,49 +957,70 @@
   align-items: center;
   justify-content: center;
   gap: 4px;
-  padding: 4px 8px;
-  border: none;
-  border-radius: 4px;
-  font-size: 0.75rem;
+  padding: 8px 12px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 6px;
+  font-size: 0.8rem;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  min-width: auto;
+  height: auto;
+  white-space: nowrap;
+}
+
+.dark .action-button {
+  border-color: rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.2);
 }
 
 .action-button.activate {
-  background: #4f46e5;
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
   color: white;
+  border-color: #4f46e5;
 }
 
 .dark .action-button.activate {
-  background: #6366f1;
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  border-color: #6366f1;
 }
 
 .action-button.activate:hover {
-  background: #4338ca;
+  background: linear-gradient(135deg, #4338ca 0%, #6d28d9 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
 }
 
 .dark .action-button.activate:hover {
-  background: #4f46e5;
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
 }
 
 .action-button.delete {
-  background: #fef2f2;
-  color: #dc2626;
-  padding: 4px;
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: white;
+  border-color: #ef4444;
+  padding: 6px;
+  width: 32px;
+  height: 32px;
 }
 
 .dark .action-button.delete {
-  background: #450a0a;
-  color: #fca5a5;
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+  border-color: #dc2626;
 }
 
 .action-button.delete:hover {
-  background: #fee2e2;
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
 }
 
 .dark .action-button.delete:hover {
-  background: #7f1d1d;
+  background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%);
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4);
 }
 
 .action-icon {
@@ -973,10 +1033,12 @@
   align-items: center;
   background: #ecfdf5;
   color: #059669;
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-size: 0.625rem;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 0.7rem;
   font-weight: 500;
+  margin-top: 8px;
+  align-self: flex-start;
 }
 
 .dark .analysis-badge {
@@ -1388,12 +1450,12 @@
   }
   
   .resume-item-actions {
-    flex-direction: column;
-    gap: 4px;
+    flex-direction: row;
+    gap: 6px;
   }
   
   .action-button {
-    width: 100%;
+    width: auto;
     justify-content: center;
     padding: 6px 8px;
   }
@@ -1409,11 +1471,11 @@
   color: #4f46e5;
   border: 1.5px solid #4f46e5;
   border-radius: 12px;
-  padding: 14px 0;
+  padding: 14px 24px;
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  margin-top: 18px;
+  margin-top: 8px;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 2px 8px rgba(79, 70, 229, 0.06);
 }
@@ -1461,7 +1523,8 @@
   align-items: center;
   width: 100%;
   padding: 0;
-  min-height: 400px;
+  min-height: 450px;
+  height: 450px;
   justify-content: flex-start;
 } 
 
@@ -1622,51 +1685,4 @@
   color: #cbd5e1;
 }
 
-/* Selected Resume Info */
-.selected-resume-info {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
-  border: 1px solid #bae6fd;
-  border-radius: 12px;
-  padding: 16px 20px;
-  margin: 20px 0;
-  font-size: 0.9rem;
-  color: #1e293b;
-  box-shadow: 0 2px 8px rgba(14, 165, 233, 0.1);
-}
-
-.dark .selected-resume-info {
-  background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
-  border-color: #3730a3;
-  color: #f4f4f8;
-  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.2);
-}
-
-.change-resume-btn {
-  background: none;
-  border: none;
-  color: #4f46e5;
-  font-size: 0.85rem;
-  font-weight: 600;
-  cursor: pointer;
-  padding: 6px 12px;
-  border-radius: 6px;
-  transition: all 0.2s ease;
-  text-decoration: underline;
-  text-underline-offset: 2px;
-}
-
-.change-resume-btn:hover {
-  background: rgba(79, 70, 229, 0.1);
-  text-decoration: none;
-}
-
-.dark .change-resume-btn {
-  color: #818cf8;
-}
-
-.dark .change-resume-btn:hover {
-  background: rgba(129, 140, 248, 0.1);
-} 
+ 

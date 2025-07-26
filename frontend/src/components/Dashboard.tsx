@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Upload, FileText, Trash2, Plus, CheckCircle, AlertCircle, Search } from 'lucide-react';
+import { Upload, FileText, Trash2, Plus, CheckCircle, AlertCircle, Search, ArrowRight } from 'lucide-react';
 import './Dashboard.css';
 
 interface Resume {
@@ -28,7 +28,6 @@ const Dashboard: React.FC = () => {
   const [jobTitle, setJobTitle] = useState('');
   const [jobDescription, setJobDescription] = useState('');
   const [analysisLoading, setAnalysisLoading] = useState(false);
-  const [analysisResult, setAnalysisResult] = useState<string | null>(null);
   const [showJobAnalysis, setShowJobAnalysis] = useState(false);
   const [showResumeModal, setShowResumeModal] = useState(false);
   const [selectedResumeId, setSelectedResumeId] = useState<string | null>(null);
@@ -67,6 +66,14 @@ const Dashboard: React.FC = () => {
 
       const data = await response.json();
       setResumes(data.resumes);
+      
+      // Set the first active resume as selected, or the first resume if none are active
+      const activeResume = data.resumes.find((r: Resume) => r.isActive);
+      if (activeResume) {
+        setSelectedResumeId(activeResume.id);
+      } else if (data.resumes.length > 0) {
+        setSelectedResumeId(data.resumes[0].id);
+      }
     } catch (error) {
       console.error('Error fetching resumes:', error);
       setError('Failed to load resumes');
@@ -99,10 +106,10 @@ const Dashboard: React.FC = () => {
     setError(null);
 
     try {
-      const token = localStorage.getItem('token');
       const formData = new FormData();
       formData.append('resume', selectedFile);
 
+      const token = localStorage.getItem('token');
       const response = await fetch('http://localhost:3000/api/resumes/upload', {
         method: 'POST',
         headers: {
@@ -112,22 +119,15 @@ const Dashboard: React.FC = () => {
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Upload failed');
+        throw new Error('Upload failed');
       }
 
-      const data = await response.json();
-      console.log('Upload successful:', data);
-      
-      // Refresh resumes list
-      await fetchResumes();
-      
-      // Reset form
+      await response.json();
       setSelectedFile(null);
-      
+      fetchResumes(); // Refresh the resumes list
     } catch (error) {
       console.error('Upload error:', error);
-      setError(error instanceof Error ? error.message : 'Upload failed');
+      setError('Upload failed. Please try again.');
     } finally {
       setIsUploading(false);
     }
@@ -146,13 +146,13 @@ const Dashboard: React.FC = () => {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to delete resume');
+        throw new Error('Delete failed');
       }
 
-      await fetchResumes();
+      fetchResumes(); // Refresh the resumes list
     } catch (error) {
       console.error('Delete error:', error);
-      setError('Failed to delete resume');
+      setError('Delete failed. Please try again.');
     }
   };
 
@@ -167,13 +167,13 @@ const Dashboard: React.FC = () => {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to activate resume');
+        throw new Error('Activation failed');
       }
 
-      await fetchResumes();
+      fetchResumes(); // Refresh the resumes list
     } catch (error) {
-      console.error('Activate error:', error);
-      setError('Failed to activate resume');
+      console.error('Activation error:', error);
+      setError('Activation failed. Please try again.');
     }
   };
 
@@ -192,36 +192,29 @@ const Dashboard: React.FC = () => {
     
     setAnalysisLoading(true);
     
-    try {
-      const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:3000/api/analyze', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          jobTitle,
-          jobDescription,
-          jobLevel,
-          resumeId: selectedResumeId
-        })
-      });
-      
-      if (!response.ok) throw new Error('Analysis failed');
-      const data = await response.json();
-      setAnalysisResult(`Similarity Score: ${(data.similarity * 100).toFixed(1)}%`);
-    } catch (error) {
-      console.error('Analysis error:', error);
-      setAnalysisResult('Analysis failed. Please try again.');
-    } finally {
-      setAnalysisLoading(false);
-    }
+    // Navigate to analysis page with the data
+    const analysisData = {
+      resumeId: selectedResumeId,
+      jobTitle,
+      jobDescription,
+      jobLevel,
+      selectedResume: resumes.find(r => r.id === selectedResumeId)
+    };
+    
+    // Store analysis data in localStorage for the analysis page
+    localStorage.setItem('analysisData', JSON.stringify(analysisData));
+    
+    // Navigate to analysis page
+    window.location.href = '/analysis';
   };
 
   const handleResumeSelect = (resumeId: string) => {
     setSelectedResumeId(resumeId);
     setShowResumeModal(false);
+  };
+
+  const handleResumeSelectFromSidebar = (resumeId: string) => {
+    setSelectedResumeId(resumeId);
   };
 
   const formatFileSize = (bytes: number) => {
@@ -407,28 +400,13 @@ const Dashboard: React.FC = () => {
                     ) : (
                       <>
                         <Search className="button-icon" />
-                        <span>Analyze</span>
+                        <span>Analyze Resume</span>
+                        <ArrowRight className="button-icon" />
                       </>
                     )}
                   </button>
                 </form>
-                {selectedResumeId && (
-                  <div className="selected-resume-info">
-                    <span>Selected: {resumes.find(r => r.id === selectedResumeId)?.fileName}</span>
-                    <button 
-                      className="change-resume-btn"
-                      onClick={() => setShowResumeModal(true)}
-                    >
-                      Change
-                    </button>
-                  </div>
-                )}
-                {analysisResult && (
-                  <div className="analysis-result">
-                    <h3>AI Analysis Result</h3>
-                    <p>{analysisResult}</p>
-                  </div>
-                )}
+
               </div>
             )}
           </div>
@@ -456,7 +434,11 @@ const Dashboard: React.FC = () => {
             ) : (
               <div className="resumes-list">
                 {resumes.map((resume) => (
-                  <div key={resume.id} className={`resume-item ${resume.isActive ? 'active' : ''}`}>
+                  <div 
+                    key={resume.id} 
+                    className={`resume-item ${resume.isActive ? 'active' : ''} ${selectedResumeId === resume.id ? 'selected' : ''}`}
+                    onClick={() => handleResumeSelectFromSidebar(resume.id)}
+                  >
                     <div className="resume-item-header">
                       <div className="resume-item-info">
                         <FileText className="resume-item-icon" />
@@ -469,20 +451,27 @@ const Dashboard: React.FC = () => {
                       </div>
                       <div className="resume-item-status">
                         {resume.isActive && <CheckCircle className="active-icon" />}
+                        {selectedResumeId === resume.id && <div className="selected-indicator" />}
                       </div>
                     </div>
 
                     <div className="resume-item-actions">
                       {!resume.isActive && (
                         <button
-                          onClick={() => handleActivate(resume.id)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleActivate(resume.id);
+                          }}
                           className="action-button activate"
                         >
                           Set Active
                         </button>
                       )}
                       <button
-                        onClick={() => handleDelete(resume.id)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDelete(resume.id);
+                        }}
                         className="action-button delete"
                       >
                         <Trash2 className="action-icon" />

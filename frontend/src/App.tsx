@@ -8,6 +8,7 @@ import SignUp from './components/auth/SignUp';
 import ForgotPassword from './components/auth/ForgotPassword';
 import OAuthSuccess from './components/auth/OAuthSuccess';
 import Dashboard from './components/Dashboard';
+import Analysis from './components/Analysis';
 import './App.css';
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/oauth-success" element={<OAuthSuccess />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/analysis" element={<Analysis />} />
         </Routes>
       </div>
     </Router>

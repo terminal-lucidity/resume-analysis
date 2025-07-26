@@ -1,95 +1,162 @@
-# Hybrid Resume Analysis Service
+# Hybrid Resume Analysis System
 
-This service combines multiple AI/ML techniques to provide comprehensive resume analysis:
+A comprehensive AI-powered resume analysis system that combines multiple machine learning techniques to provide detailed insights for job matching and career development.
 
-## 🚀 Features
+## 🎯 Overview
 
-### 1. **Semantic Analysis**
+This system analyzes resumes against job descriptions using a hybrid approach that combines:
 
-- Uses Sentence Transformers (all-MiniLM-L6-v2) for semantic similarity
-- Compares resume content with job descriptions at a meaning level
+- **Semantic Analysis** - Deep understanding of content meaning
+- **Keyword Matching** - Technical skill extraction and matching
+- **NLP Processing** - Natural language understanding
+- **LLM Insights** - Advanced analysis using free language models
 
-### 2. **Keyword Analysis**
+## 🏗️ Architecture
 
-- TF-IDF based keyword matching
-- Technical keyword extraction and categorization
-- Programming languages, frameworks, databases, cloud services, etc.
+### Two-Service Architecture
 
-### 3. **NLP-Powered Skills Extraction**
-
-- Uses spaCy for natural language processing
-- Extracts skills, experience indicators, and job level indicators
-- Identifies missing skills and skill gaps
-
-### 4. **Job Level Analysis**
-
-- Analyzes resume fit for different job levels (entry, mid, senior, executive)
-- Matches experience indicators with job requirements
-
-### 5. **LLM Insights** (Optional)
-
-- Uses Ollama with free models (Llama 2, Mistral, CodeLlama)
-- Provides detailed strengths, weaknesses, and improvement suggestions
-- Generates personalized recommendations
-
-## 📋 Prerequisites
-
-- Python 3.8+
-- Node.js (for the main backend)
-- Ollama (optional, for LLM features)
-
-## 🛠️ Installation
-
-### Quick Setup
-
-```bash
-# Run the automated setup script
-python setup_hybrid_analysis.py
+```
+┌─────────────────┐    ┌─────────────────────┐
+│   Node.js API   │◄──►│  Python ML Service  │
+│   (Port 3000)   │    │   (Port 8001)       │
+└─────────────────┘    └─────────────────────┘
+         │                       │
+         ▼                       ▼
+┌─────────────────┐    ┌─────────────────────┐
+│   PostgreSQL    │    │   Ollama LLM        │
+│   Database      │    │   (Optional)        │
+└─────────────────┘    └─────────────────────┘
 ```
 
-### Manual Setup
+### Service Responsibilities
+
+#### **Node.js Backend (Main API)**
+
+- User authentication and management
+- File upload and storage
+- Database operations
+- API routing and middleware
+- Integration with Python ML service
+
+#### **Python ML Service (Analysis Engine)**
+
+- Semantic similarity computation
+- Keyword extraction and matching
+- Skills gap analysis
+- Job level assessment
+- LLM-powered insights
+
+## 🔧 Technical Stack
+
+### **Backend (Node.js)**
+
+- **Framework:** Express.js with TypeScript
+- **Database:** PostgreSQL with TypeORM
+- **Authentication:** JWT + Passport.js
+- **File Processing:** PDF parsing, document handling
+
+### **ML Service (Python)**
+
+- **Web Framework:** FastAPI
+- **ML Libraries:**
+  - Sentence Transformers (all-MiniLM-L6-v2)
+  - spaCy (NLP processing)
+  - scikit-learn (TF-IDF, similarity metrics)
+- **LLM Integration:** Ollama (Llama 2, Mistral)
+- **Data Processing:** NumPy, Pandas
+
+## 📊 Analysis Components
+
+### 1. **Semantic Similarity (40% weight)**
+
+- Uses sentence transformers for meaning-based comparison
+- Compares resume content with job descriptions at a conceptual level
+- Handles synonyms, paraphrasing, and contextual understanding
+
+### 2. **Keyword Matching (30% weight)**
+
+- TF-IDF based technical keyword extraction
+- Categorizes skills into:
+  - **Programming:** Python, JavaScript, Java, C++, etc.
+  - **Frameworks:** React, Angular, Django, Flask, etc.
+  - **Databases:** MySQL, PostgreSQL, MongoDB, Redis, etc.
+  - **Cloud:** AWS, Azure, GCP, Docker, Kubernetes, etc.
+  - **ML/AI:** TensorFlow, PyTorch, scikit-learn, etc.
+  - **Tools:** Git, Jira, Confluence, Slack, etc.
+
+### 3. **Job Level Analysis (20% weight)**
+
+- Analyzes experience indicators for different levels:
+  - **Entry:** 0-2 years, junior, graduate, intern
+  - **Mid:** 2-5 years, intermediate, experienced
+  - **Senior:** 5+ years, lead, principal, architect
+  - **Executive:** Director, VP, CTO, CEO
+
+### 4. **Skills Gap Analysis (10% weight)**
+
+- Identifies missing skills from job requirements
+- Calculates skill coverage percentage
+- Provides specific learning recommendations
+
+## 🚀 Quick Start
+
+### Prerequisites
+
+- Node.js 18+
+- Python 3.8+
+- PostgreSQL
+- Ollama (optional, for LLM features)
+
+### Installation
 
 ```bash
-# 1. Install Python dependencies
-pip install -r requirements.txt
+# Clone the repository
+git clone <repository-url>
+cd resume-analysis
 
-# 2. Install spaCy English model
+# Install Node.js dependencies
+cd backend
+npm install
+
+# Setup Python environment
+python3 -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+pip install -r requirements_clean.txt
 python -m spacy download en_core_web_sm
 
-# 3. (Optional) Install Ollama for LLM features
+# Optional: Install Ollama for LLM features
 # Visit https://ollama.ai and follow installation instructions
 ollama pull llama2
 ```
 
-## 🚀 Running the Service
-
-### Option 1: Using the startup script
+### Running the Services
 
 ```bash
-./start_analysis_service.sh
+# Start both services (development)
+npm run start:full
+
+# Start both services (production)
+npm run start:prod
+
+# Start services individually
+npm run dev                    # Node.js backend only
+npm run start:analysis         # Python ML service only
 ```
 
-### Option 2: Manual start
+## 📡 API Endpoints
 
-```bash
-python embedding_service.py
-```
-
-The service will be available at `http://localhost:8001`
-
-## 📊 API Endpoints
-
-### POST `/analyze`
+### POST `/api/analyze`
 
 Analyzes a resume against a job description.
 
-**Request Body:**
+**Request:**
 
 ```json
 {
-  "resume": "Resume text content...",
-  "job": "Job description text...",
-  "jobLevel": "entry|mid|senior|executive"
+  "resumeId": "uuid",
+  "jobTitle": "Senior Software Engineer",
+  "jobDescription": "We are looking for...",
+  "jobLevel": "senior"
 }
 ```
 
@@ -98,7 +165,6 @@ Analyzes a resume against a job description.
 ```json
 {
   "similarity": 0.85,
-  "jobLevel": "senior",
   "overallScore": 0.78,
   "keywordMatchScore": 0.72,
   "skillGapAnalysis": {
@@ -114,154 +180,209 @@ Analyzes a resume against a job description.
   "detailedAnalysis": {
     "semantic_similarity": 0.85,
     "keyword_similarity": 0.72,
-    "resume_keywords": {
-      "programming": ["python", "javascript"],
-      "frameworks": ["react", "django"]
-    },
-    "job_keywords": {
-      "programming": ["python", "java"],
-      "cloud": ["aws", "docker"]
-    },
     "level_analysis": {
-      "level_scores": { "entry": 2, "mid": 5, "senior": 8, "executive": 1 },
       "best_fit_level": "senior",
       "level_match_score": 0.8
     },
     "llm_insights": {
-      "strengths": ["Strong technical background", "Good project experience"],
-      "weaknesses": [
-        "Limited cloud experience",
-        "Could improve leadership skills"
-      ],
-      "suggestions": ["Add cloud certifications", "Highlight leadership roles"]
+      "strengths": ["Strong technical background"],
+      "weaknesses": ["Limited cloud experience"],
+      "suggestions": ["Add cloud certifications"]
     }
   }
 }
 ```
 
-### GET `/health`
+## 🎯 Key Features
 
-Health check endpoint.
+### **Intelligent Analysis**
 
-## 🔧 Configuration
+- Multi-dimensional scoring system
+- Context-aware skill matching
+- Experience level assessment
+- Personalized improvement suggestions
 
-### Environment Variables
+### **Free LLM Integration**
 
-- `OLLAMA_HOST`: Ollama server host (default: localhost:11434)
-- `OLLAMA_MODEL`: Model to use (default: llama2)
+- Uses Ollama with open-source models
+- No API costs or rate limits
+- Supports multiple models (Llama 2, Mistral, CodeLlama)
+- Graceful fallback when LLM unavailable
 
-### Model Options
+### **Scalable Architecture**
 
-The service supports multiple free LLM models through Ollama:
+- Microservice design
+- Independent scaling of services
+- Easy to add new analysis components
+- Modular and maintainable codebase
 
-- `llama2`: General purpose (recommended)
-- `mistral`: Good for analysis tasks
-- `codellama`: Specialized for technical content
+### **Production Ready**
 
-## 📈 Analysis Components
+- Comprehensive error handling
+- Health check endpoints
+- Logging and monitoring
+- Database persistence of results
 
-### 1. **Semantic Similarity (40% weight)**
+## 🔍 Technical Deep Dive
 
-- Uses sentence transformers for meaning-based comparison
-- Most important component for overall score
+### **Semantic Analysis Implementation**
 
-### 2. **Keyword Matching (30% weight)**
+```python
+# Uses sentence transformers for semantic similarity
+model = SentenceTransformer('all-MiniLM-L6-v2')
+resume_emb = model.encode(resume_text, convert_to_tensor=True)
+job_emb = model.encode(job_text, convert_to_tensor=True)
+similarity = util.pytorch_cos_sim(resume_emb, job_emb).item()
+```
 
-- TF-IDF based similarity
-- Technical keyword extraction and matching
+### **Keyword Extraction Process**
 
-### 3. **Job Level Fit (20% weight)**
+```python
+# Technical keyword categorization
+technical_keywords = {
+    'programming': ['python', 'javascript', 'java'],
+    'frameworks': ['react', 'django', 'express'],
+    'databases': ['mysql', 'postgresql', 'mongodb'],
+    # ... more categories
+}
+```
 
-- Analyzes experience indicators
-- Matches against requested job level
+### **Scoring Algorithm**
 
-### 4. **Skill Gap Analysis (10% weight)**
+```python
+overall_score = (
+    semantic_similarity * 0.4 +
+    keyword_similarity * 0.3 +
+    level_match_score * 0.2 +
+    skill_gap_score * 0.1
+)
+```
 
-- Identifies missing skills
-- Calculates skill coverage percentage
+## 🧪 Testing
 
-## 🎯 Technical Keywords Categories
-
-The service recognizes these technical categories:
-
-- **Programming**: Python, JavaScript, Java, C++, etc.
-- **Frameworks**: React, Angular, Django, Flask, etc.
-- **Databases**: MySQL, PostgreSQL, MongoDB, Redis, etc.
-- **Cloud**: AWS, Azure, GCP, Docker, Kubernetes, etc.
-- **ML/AI**: TensorFlow, PyTorch, scikit-learn, etc.
-- **Tools**: Git, Jira, Confluence, Slack, etc.
-
-## 🔍 Troubleshooting
-
-### Common Issues
-
-1. **spaCy model not found**
-
-   ```bash
-   python -m spacy download en_core_web_sm
-   ```
-
-2. **Ollama not responding**
-
-   - Check if Ollama is running: `ollama list`
-   - Restart Ollama service
-   - Verify model is downloaded: `ollama pull llama2`
-
-3. **Memory issues with large resumes**
-   - The service truncates input to 1000 characters for LLM analysis
-   - Consider preprocessing very large resumes
-
-### Performance Tips
-
-1. **Use virtual environment**
-
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
-   ```
-
-2. **GPU acceleration** (optional)
-
-   - Install PyTorch with CUDA support for faster embeddings
-   - Install spaCy with GPU support
-
-3. **Model caching**
-   - Sentence transformers models are cached automatically
-   - First run may be slower due to model download
-
-## 🔄 Integration with Main Backend
-
-The hybrid analysis service integrates seamlessly with the main Node.js backend:
-
-1. **Enhanced Response**: Returns detailed analysis instead of just similarity score
-2. **Database Storage**: Stores analysis results in the Resume entity
-3. **Error Handling**: Graceful fallback when LLM is unavailable
-4. **Caching**: Analysis results are stored for future reference
-
-## 📝 Development
-
-### Adding New Analysis Components
-
-1. **New ML Model**: Add to `HybridAnalyzer` class
-2. **New Keywords**: Update `technical_keywords` dictionary
-3. **New Metrics**: Add to scoring calculation in `analyze` function
-
-### Testing
+### **Service Health Checks**
 
 ```bash
-# Test the service directly
-curl -X POST http://localhost:8001/analyze \
-  -H "Content-Type: application/json" \
-  -d '{"resume": "Python developer with 5 years experience...", "job": "Senior Python developer...", "jobLevel": "senior"}'
+# Check Node.js backend
+curl http://localhost:3000/health
 
-# Health check
+# Check Python ML service
 curl http://localhost:8001/health
 ```
 
-## 🎉 Benefits
+### **Analysis Testing**
 
-1. **Comprehensive Analysis**: Multiple analysis techniques provide deeper insights
-2. **Free Models**: Uses open-source models to avoid API costs
-3. **Scalable**: Easy to add new analysis components
-4. **Accurate**: Combines semantic and keyword-based approaches
-5. **Actionable**: Provides specific improvement suggestions
+```bash
+# Run comprehensive tests
+python test_hybrid_analysis.py
+
+# Test individual components
+python -c "from hybrid_analysis_simple import SimpleAnalyzer; print('Service ready')"
+```
+
+## 📈 Performance Considerations
+
+### **Optimization Strategies**
+
+- Model caching for sentence transformers
+- Efficient keyword matching algorithms
+- Async processing for LLM calls
+- Database indexing for fast queries
+
+### **Scalability Features**
+
+- Stateless service design
+- Horizontal scaling capability
+- Load balancing ready
+- Resource-efficient ML models
+
+## 🔒 Security & Privacy
+
+### **Data Protection**
+
+- Secure file upload handling
+- Input validation and sanitization
+- No external API calls for sensitive data
+- Local processing of resume content
+
+### **Authentication**
+
+- JWT-based authentication
+- Role-based access control
+- Secure session management
+- API rate limiting
+
+## 🚀 Deployment
+
+### **Development**
+
+```bash
+npm run start:full
+```
+
+### **Production**
+
+```bash
+# Build the application
+npm run build
+
+# Start production services
+npm run start:prod
+```
+
+### **Docker Support**
+
+```dockerfile
+# Example Dockerfile for Python service
+FROM python:3.9-slim
+WORKDIR /app
+COPY requirements_clean.txt .
+RUN pip install -r requirements_clean.txt
+COPY . .
+CMD ["python", "hybrid_analysis_simple.py"]
+```
+
+## 📚 Learning Resources
+
+### **Technologies Used**
+
+- [FastAPI Documentation](https://fastapi.tiangolo.com/)
+- [Sentence Transformers](https://www.sbert.net/)
+- [spaCy NLP](https://spacy.io/)
+- [Ollama](https://ollama.ai/)
+
+### **ML Concepts**
+
+- Semantic Similarity
+- TF-IDF Vectorization
+- Cosine Similarity
+- Natural Language Processing
+
+## 🤝 Contributing
+
+### **Adding New Analysis Components**
+
+1. Extend the `SimpleAnalyzer` class
+2. Add new scoring weights
+3. Update the API response schema
+4. Include comprehensive tests
+
+### **Code Standards**
+
+- TypeScript for Node.js code
+- Python type hints
+- Comprehensive error handling
+- Detailed documentation
+
+## 📞 Support
+
+For questions or issues:
+
+- Check the troubleshooting section
+- Review the test files
+- Examine the health check endpoints
+- Consult the detailed API documentation
+
+---
+
+**Built with ❤️ using modern AI/ML technologies**

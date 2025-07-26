@@ -472,58 +472,73 @@
 /* Dark mode support */
 @media (prefers-color-scheme: dark) {
   .auth-card {
-    background: rgba(17, 24, 39, 0.95);
-    border-color: rgba(255, 255, 255, 0.1);
+    background: rgba(26, 26, 46, 0.95);
+    border-color: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(20px);
   }
   
   .auth-label {
-    color: #d1d5db;
+    color: #e2e8f0;
   }
   
   .auth-input {
-    background: #374151;
-    border-color: #4b5563;
-    color: #f9fafb;
+    background: #1a1a2e;
+    border-color: rgba(255, 255, 255, 0.12);
+    color: #f8fafc;
   }
   
   .auth-input:focus {
-    background: #1f2937;
+    background: #16213e;
+    border-color: #818cf8;
+    box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.1);
   }
   
   .auth-input::placeholder {
-    color: #9ca3af;
+    color: #a0aec0;
   }
   
   .auth-checkbox {
-    background: #374151;
-    border-color: #4b5563;
+    background: #1a1a2e;
+    border-color: rgba(255, 255, 255, 0.12);
+  }
+  
+  .auth-checkbox:checked {
+    background: #818cf8;
+    border-color: #818cf8;
   }
   
   .auth-checkbox-label {
-    color: #d1d5db;
+    color: #e2e8f0;
   }
   
   .auth-secondary-button {
-    background: #374151;
-    color: #667eea;
-    border-color: #4b5563;
+    background: #1a1a2e;
+    color: #818cf8;
+    border-color: rgba(255, 255, 255, 0.12);
   }
   
   .auth-secondary-button:hover {
-    background: #4b5563;
+    background: #16213e;
+    border-color: #818cf8;
   }
   
   .auth-option-button {
-    background: #374151;
-    border-color: #4b5563;
-    color: #d1d5db;
+    background: #1a1a2e;
+    border-color: rgba(255, 255, 255, 0.12);
+    color: #e2e8f0;
   }
   
   .auth-option-button:hover {
-    background: #4b5563;
+    background: #16213e;
+    border-color: rgba(255, 255, 255, 0.2);
   }
   
   .auth-divider-text {
-    background: #111827;
+    background: #0a0a0f;
+    color: #a0aec0;
+  }
+  
+  .auth-divider::before {
+    background: rgba(255, 255, 255, 0.08);
   }
 } 

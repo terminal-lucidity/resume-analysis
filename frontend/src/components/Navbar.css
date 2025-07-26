@@ -10,8 +10,9 @@
 }
 
 .dark .navbar {
-    background: rgba(17, 24, 39, 0.95);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(15, 15, 35, 0.95);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(20px);
 }
 
 .navbar.scrolled {
@@ -20,8 +21,8 @@
 }
 
 .dark .navbar.scrolled {
-    background: rgba(17, 24, 39, 0.98);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    background: rgba(15, 15, 35, 0.98);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 }
 
 .navbar-container {
@@ -46,7 +47,7 @@
 }
 
 .dark .navbar-brand {
-    color: #ffffff;
+    color: #f8fafc;
 }
 
 .brand-text {
@@ -93,7 +94,7 @@
 }
 
 .dark .navbar-link {
-    color: #d1d5db;
+    color: #e2e8f0;
 }
 
 .navbar-link:hover {
@@ -102,8 +103,8 @@
 }
 
 .dark .navbar-link:hover {
-    color: #f3f4f6;
-    background: rgba(129, 140, 248, 0.1);
+    color: #f8fafc;
+    background: rgba(129, 140, 248, 0.12);
 }
 
 .navbar-link:focus {

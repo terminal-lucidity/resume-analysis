@@ -19,7 +19,11 @@
 }
 
 .dark .dashboard {
-  background: var(--features-bg-dark, linear-gradient(135deg, #0f172a 0%, #1e293b 100%));
+  background: var(--features-bg-dark, linear-gradient(135deg, #0a0a1a 0%, #0f0f23 50%, #1a1a3a 100%));
+}
+
+.dark .dashboard::before {
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="rgba(255,255,255,0.03)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
 }
 
 .dashboard-loading {
@@ -33,7 +37,7 @@
 }
 
 .dark .dashboard-loading {
-  background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+  background: linear-gradient(135deg, #0f0f23 0%, #1a1a3a 50%, #1e1e4a 100%);
 }
 
 .loading-spinner {
@@ -71,12 +75,13 @@
 }
 
 .dark .dashboard-header {
-  background: rgba(0, 0, 0, 0.1);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(15, 15, 35, 0.8);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(20px);
 }
 
 .dark .dashboard-header::before {
-  background: linear-gradient(90deg, transparent 0%, rgba(129, 140, 248, 0.05) 50%, transparent 100%);
+  background: linear-gradient(90deg, transparent 0%, rgba(129, 140, 248, 0.08) 50%, transparent 100%);
 }
 
 @keyframes shimmer {
@@ -111,15 +116,15 @@
 }
 
 .dark .dashboard-welcome h1 {
-  color: #f4f4f8;
-  background: linear-gradient(135deg, #f4f4f8 0%, #a5b4fc 100%);
+  color: #f8fafc;
+  background: linear-gradient(135deg, #f8fafc 0%, #818cf8 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 .dark .dashboard-welcome p {
-  color: #bfc7d1;
+  color: #cbd5e1;
 }
 
 .dashboard-content {
@@ -160,9 +165,14 @@
 }
 
 .dark .dashboard-panel {
-  background: #1e293b;
-  border: 1.5px solid #334155;
-  box-shadow: 0 5px 20px 0 rgba(0, 0, 0, 0.3);
+  background: #0f0f23;
+  border: 1.5px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(20px);
+}
+
+.dark .dashboard-panel::before {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.05) 0%, transparent 50%, rgba(139, 92, 246, 0.05) 100%);
 }
 
 .upload-info-section, .upload-action-section {
@@ -227,12 +237,12 @@
 
 .dark .upload-info-section,
 .dark .upload-action-section {
-  border-right: 1px solid #334155;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .dark .resumes-section {
-  background: #1e293b;
-  border-left: 1px solid #334155;
+  background: #0f0f23;
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 /* Cleanup old card styles */
@@ -301,8 +311,8 @@
 }
 
 .dark .upload-card {
-  background: rgba(31, 41, 55, 0.95);
-  border-color: rgba(255, 255, 255, 0.1);
+  background: rgba(15, 15, 35, 0.95);
+  border-color: rgba(255, 255, 255, 0.08);
   box-shadow: 
     0 20px 40px rgba(0, 0, 0, 0.4),
     0 0 0 1px rgba(255, 255, 255, 0.05);
@@ -418,8 +428,8 @@
 }
 
 .dark .upload-placeholder {
-  border-color: #475569;
-  background: #1e293b;
+  border-color: rgba(255, 255, 255, 0.12);
+  background: #0f0f23;
 }
 
 .upload-placeholder:hover {
@@ -504,8 +514,8 @@
 }
 
 .dark .selected-file {
-  background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
-  border-color: #3730a3;
+  background: linear-gradient(135deg, #0f0f23 0%, #1a1a3a 100%);
+  border-color: rgba(129, 140, 248, 0.3);
   box-shadow: 0 4px 16px rgba(99, 102, 241, 0.2);
 }
 
@@ -668,7 +678,7 @@
 }
 
 .dark .resumes-header {
-  border-bottom-color: #475569;
+  border-bottom-color: rgba(255, 255, 255, 0.08);
 }
 
 .resumes-header h2 {
@@ -827,8 +837,8 @@
 }
 
 .dark .resume-item {
-  background: #334155;
-  border-color: #475569;
+  background: #0f0f23;
+  border-color: rgba(255, 255, 255, 0.08);
 }
 
 .resume-item:hover {
@@ -851,7 +861,7 @@
 
 .dark .resume-item.active {
   border-color: #818cf8;
-  background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+  background: linear-gradient(135deg, #0f0f23 0%, #1a1a3a 100%);
   box-shadow: 0 4px 16px rgba(129, 140, 248, 0.2);
 }
 
@@ -863,7 +873,7 @@
 
 .dark .resume-item.selected {
   border-color: #34d399;
-  background: linear-gradient(135deg, #064e3b 0%, #065f46 100%);
+  background: linear-gradient(135deg, #0f0f23 0%, #1a1a3a 100%);
   box-shadow: 0 4px 16px rgba(52, 211, 153, 0.2);
 }
 
@@ -1556,8 +1566,8 @@
 }
 
 .dark .modal-content {
-  background: #1e293b;
-  border-color: #334155;
+  background: #0f0f23;
+  border-color: rgba(255, 255, 255, 0.08);
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
 }
 
@@ -1570,7 +1580,7 @@
 }
 
 .dark .modal-header {
-  border-bottom-color: #475569;
+  border-bottom-color: rgba(255, 255, 255, 0.08);
 }
 
 .modal-header h3 {
@@ -1638,13 +1648,13 @@
 }
 
 .dark .resume-selection-item {
-  background: #334155;
-  border-color: #475569;
+  background: #0f0f23;
+  border-color: rgba(255, 255, 255, 0.08);
 }
 
 .dark .resume-selection-item:hover {
   border-color: #818cf8;
-  background: #1e293b;
+  background: #1a1a3a;
 }
 
 .resume-icon {

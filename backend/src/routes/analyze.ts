@@ -17,9 +17,9 @@ router.post("/", auth, async (req, res) => {
     const { jobTitle, jobDescription, jobLevel, resumeId } = req.body;
     if (!resumeId || !jobTitle || !jobLevel) {
       return res.status(400).json({
-        error:
-          "Missing required fields: resumeId, jobTitle, and jobLevel are required. jobDescription is optional.",
-      });
+          error:
+            "Missing required fields: resumeId, jobTitle, and jobLevel are required. jobDescription is optional.",
+        });
     }
 
     // Null check for req.user

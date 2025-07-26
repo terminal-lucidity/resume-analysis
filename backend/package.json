@@ -9,7 +9,11 @@
     "build": "tsc",
     "lint": "eslint . --ext .ts",
     "test": "jest",
-    "typeorm": "typeorm-ts-node-commonjs"
+    "typeorm": "typeorm-ts-node-commonjs",
+    "start:analysis": "python3 hybrid_analysis_simple.py",
+    "start:full": "concurrently \"npm run dev\" \"npm run start:analysis\"",
+    "start:prod": "concurrently \"npm start\" \"npm run start:analysis\"",
+    "setup": "python3 setup_hybrid_analysis.py"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.848.0",

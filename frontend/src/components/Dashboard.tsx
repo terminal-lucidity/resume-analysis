@@ -202,9 +202,11 @@ const Dashboard: React.FC = () => {
     };
     
     // Store analysis data in localStorage for the analysis page
+    console.log('Storing analysis data:', analysisData);
     localStorage.setItem('analysisData', JSON.stringify(analysisData));
     
     // Navigate to analysis page
+    console.log('Navigating to analysis page...');
     window.location.href = '/analysis';
   };
 

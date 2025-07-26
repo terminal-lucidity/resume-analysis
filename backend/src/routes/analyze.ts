@@ -1,9 +1,9 @@
 import express from "express";
 import fetch from "node-fetch";
-import { getRepository } from "typeorm";
 import { Resume } from "../entities/Resume";
 import { auth } from "../middleware/auth";
 import { User } from "../entities/User";
+import { postgresConnection } from "../config/database";
 const router = express.Router();
 
 // POST /api/analyze
@@ -29,7 +29,7 @@ router.post("/", auth, async (req, res) => {
     }
 
     // 1. Fetch the resume text from the database
-    const resumeRepo = getRepository(Resume);
+    const resumeRepo = postgresConnection.getRepository(Resume);
     const resume = await resumeRepo.findOne({
       where: { id: resumeId, userId },
     });
@@ -40,6 +40,14 @@ router.post("/", auth, async (req, res) => {
     // Use the correct property for resume text
     const resumeText = resume.originalText || "";
     const jobText = [jobTitle, jobDescription].filter(Boolean).join("\n");
+
+    console.log("Analysis request:", {
+      resumeId,
+      jobTitle,
+      jobLevel,
+      resumeTextLength: resumeText.length,
+      jobTextLength: jobText.length,
+    });
 
     // 3. Call the Python hybrid analysis microservice
     const pyRes = await fetch("http://localhost:8001/analyze", {
@@ -52,24 +60,33 @@ router.post("/", auth, async (req, res) => {
       }),
     });
     if (!pyRes.ok) {
+      console.error("Python service error:", pyRes.status, pyRes.statusText);
       return res.status(500).json({ error: "Hybrid analysis service error." });
     }
     const analysisResult = await pyRes.json();
+    console.log("Python service response received successfully");
 
     // 4. Store the detailed analysis in the database
-    await resumeRepo.update(resumeId, {
-      aiAnalysis: {
-        strengths:
-          analysisResult.detailed_analysis.llm_insights.strengths || [],
-        improvements:
-          analysisResult.detailed_analysis.llm_insights.weaknesses || [],
-        suggestedRoles: [jobTitle], // Based on current analysis
-        score: analysisResult.overall_score,
-        summary:
-          analysisResult.detailed_analysis.llm_insights.overall_assessment ||
-          "Analysis completed",
-      },
-    });
+    console.log("Updating database with analysis results...");
+    try {
+      await resumeRepo.update(resumeId, {
+        aiAnalysis: {
+          strengths:
+            analysisResult.detailed_analysis.llm_insights.strengths || [],
+          improvements:
+            analysisResult.detailed_analysis.llm_insights.weaknesses || [],
+          suggestedRoles: [jobTitle], // Based on current analysis
+          score: analysisResult.overall_score,
+          summary:
+            analysisResult.detailed_analysis.llm_insights.overall_assessment ||
+            "Analysis completed",
+        },
+      });
+      console.log("Database update completed successfully");
+    } catch (dbError) {
+      console.error("Database update failed:", dbError);
+      // Continue without database update for now
+    }
 
     // 5. Return the comprehensive analysis
     return res.json({
@@ -82,6 +99,11 @@ router.post("/", auth, async (req, res) => {
     });
   } catch (err) {
     console.error("Analysis error:", err);
+    console.error("Error details:", {
+      message: err instanceof Error ? err.message : "Unknown error",
+      stack: err instanceof Error ? err.stack : "No stack trace",
+      body: req.body,
+    });
     return res.status(500).json({ error: "Internal server error." });
   }
 });

@@ -42,20 +42,25 @@ const Analysis: React.FC = () => {
   const [issues, setIssues] = useState<Array<{start: number, end: number, message: string}>>([]);
 
   useEffect(() => {
+    console.log('Analysis component mounted');
     const token = localStorage.getItem('token');
     if (!token) {
+      console.log('No token found, redirecting to signin');
       window.location.href = '/signin';
       return;
     }
 
     const storedData = localStorage.getItem('analysisData');
+    console.log('Stored analysis data:', storedData);
     if (!storedData) {
+      console.log('No analysis data found, redirecting to dashboard');
       window.location.href = '/dashboard';
       return;
     }
 
     try {
       const data = JSON.parse(storedData);
+      console.log('Parsed analysis data:', data);
       setAnalysisData(data);
       performAnalysis(data);
     } catch (error) {
@@ -67,9 +72,11 @@ const Analysis: React.FC = () => {
 
   const performAnalysis = async (data: AnalysisData) => {
     try {
+      console.log('Starting analysis for data:', data);
       const token = localStorage.getItem('token');
       
       // First, get the resume text from the database
+      console.log('Fetching resume with ID:', data.resumeId);
       const resumeResponse = await fetch(`http://localhost:3000/api/resumes/${data.resumeId}`, {
         headers: {
           'Authorization': `Bearer ${token}`
@@ -77,21 +84,27 @@ const Analysis: React.FC = () => {
       });
 
       if (!resumeResponse.ok) {
-        throw new Error('Failed to fetch resume');
+        const errorData = await resumeResponse.json().catch(() => ({}));
+        console.error('Resume fetch error:', resumeResponse.status, errorData);
+        throw new Error(`Failed to fetch resume: ${errorData.error || resumeResponse.statusText}`);
       }
 
       const resumeData = await resumeResponse.json();
-      const resumeText = resumeData.originalText || '';
+      console.log('Resume data received:', resumeData);
+      const resumeText = resumeData.resume?.originalText || '';
       setResumeText(resumeText);
+      console.log('Resume text length:', resumeText.length);
 
       // Perform the analysis
-      const analysisResponse = await fetch('http://localhost:3000/api/analyze/test', {
+      console.log('Sending analysis request...');
+      const analysisResponse = await fetch('http://localhost:3000/api/analyze', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
-          resumeText,
+          resumeId: data.resumeId,
           jobTitle: data.jobTitle,
           jobDescription: data.jobDescription,
           jobLevel: data.jobLevel
@@ -99,7 +112,9 @@ const Analysis: React.FC = () => {
       });
 
       if (!analysisResponse.ok) {
-        throw new Error('Analysis failed');
+        const errorData = await analysisResponse.json().catch(() => ({}));
+        console.error('Analysis response error:', analysisResponse.status, errorData);
+        throw new Error(`Analysis failed: ${errorData.error || analysisResponse.statusText}`);
       }
 
       const result = await analysisResponse.json();

@@ -29,7 +29,35 @@ interface AnalysisResult {
       weaknesses: string[];
       overall_assessment: string;
     };
+    ats_analysis?: {
+      action_verb_score: number;
+      found_action_verbs: string[];
+      ats_category_scores: Record<string, number>;
+      industry_scores: Record<string, number>;
+      overall_ats_score: number;
+    };
+    achievements_analysis?: {
+      quantifiable_achievements: string[];
+      achievement_sentences: string[];
+      achievement_score: number;
+    };
+    section_analysis?: {
+      section_scores: Record<string, number>;
+      completeness_score: number;
+      missing_sections: string[];
+    };
+    format_analysis?: {
+      problematic_elements: string[];
+      bullet_score: number;
+      spacing_score: number;
+      format_score: number;
+      ats_friendly: boolean;
+    };
   };
+  ats_score?: number;
+  achievement_score?: number;
+  format_score?: number;
+  section_completeness?: number;
 }
 
 const Analysis: React.FC = () => {
@@ -375,6 +403,88 @@ const Analysis: React.FC = () => {
                     </li>
                   ))}
                 </ul>
+              </div>
+
+              {/* ATS Optimization Section */}
+              <div className="insights-card ats-card">
+                <h3>ATS Optimization</h3>
+                <div className="ats-metrics">
+                  <div className="ats-metric">
+                    <span>Action Verbs</span>
+                    <span className="metric-score">
+                      {analysisResult.ats_score ? (analysisResult.ats_score * 100).toFixed(0) : 'N/A'}%
+                    </span>
+                  </div>
+                  <div className="ats-metric">
+                    <span>Achievements</span>
+                    <span className="metric-score">
+                      {analysisResult.achievement_score ? (analysisResult.achievement_score * 100).toFixed(0) : 'N/A'}%
+                    </span>
+                  </div>
+                  <div className="ats-metric">
+                    <span>Format</span>
+                    <span className="metric-score">
+                      {analysisResult.format_score ? (analysisResult.format_score * 100).toFixed(0) : 'N/A'}%
+                    </span>
+                  </div>
+                  <div className="ats-metric">
+                    <span>Sections</span>
+                    <span className="metric-score">
+                      {analysisResult.section_completeness ? (analysisResult.section_completeness * 100).toFixed(0) : 'N/A'}%
+                    </span>
+                  </div>
+                </div>
+                
+                {analysisResult.detailedAnalysis.ats_analysis && (
+                  <div className="ats-details">
+                    <h4>Strong Action Verbs Found:</h4>
+                    <div className="action-verbs">
+                      {analysisResult.detailedAnalysis.ats_analysis.found_action_verbs.slice(0, 8).map((verb, index) => (
+                        <span key={index} className="verb-tag">{verb}</span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {analysisResult.detailedAnalysis.achievements_analysis && 
+                 analysisResult.detailedAnalysis.achievements_analysis.quantifiable_achievements.length > 0 && (
+                  <div className="ats-details">
+                    <h4>Quantifiable Achievements:</h4>
+                    <ul className="achievements-list">
+                      {analysisResult.detailedAnalysis.achievements_analysis.quantifiable_achievements.slice(0, 3).map((achievement, index) => (
+                        <li key={index}>{achievement}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {analysisResult.detailedAnalysis.section_analysis && (
+                  <div className="ats-details">
+                    {analysisResult.detailedAnalysis.section_analysis.detected_sections && 
+                     analysisResult.detailedAnalysis.section_analysis.detected_sections.length > 0 && (
+                      <div>
+                        <h4>Detected Sections:</h4>
+                        <div className="detected-sections">
+                          {analysisResult.detailedAnalysis.section_analysis.detected_sections.map((section, index) => (
+                            <span key={index} className="section-tag detected">{section}</span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    
+                    {analysisResult.detailedAnalysis.section_analysis.missing_sections && 
+                     analysisResult.detailedAnalysis.section_analysis.missing_sections.length > 0 && (
+                      <div>
+                        <h4>Missing Sections:</h4>
+                        <div className="missing-sections">
+                          {analysisResult.detailedAnalysis.section_analysis.missing_sections.map((section, index) => (
+                            <span key={index} className="section-tag missing">{section}</span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
 
               {analysisResult.skillGapAnalysis.missing_skills.length > 0 && (

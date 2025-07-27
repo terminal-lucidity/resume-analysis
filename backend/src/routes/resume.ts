@@ -63,12 +63,42 @@ const upload = multer({
   },
 });
 
-// Helper function to extract text from PDF
+// Helper function to extract text from PDF using improved parser
 async function extractTextFromPDF(filePath: string): Promise<string> {
   try {
-    const dataBuffer = fs.readFileSync(filePath);
-    const data = await pdf(dataBuffer);
-    return data.text;
+    // Try to use the improved Python parser first
+    const { spawn } = require('child_process');
+    
+    return new Promise((resolve, reject) => {
+      const pythonProcess = spawn('python3', ['improved_resume_parser.py', 'extract_text', filePath]);
+      
+      let output = '';
+      let error = '';
+      
+      pythonProcess.stdout.on('data', (data: Buffer) => {
+        output += data.toString();
+      });
+      
+      pythonProcess.stderr.on('data', (data: Buffer) => {
+        error += data.toString();
+      });
+      
+      pythonProcess.on('close', (code: number) => {
+        if (code === 0 && output.trim()) {
+          resolve(output.trim());
+        } else {
+          // Fallback to original pdf-parse
+          console.log("Falling back to pdf-parse due to:", error);
+          const dataBuffer = fs.readFileSync(filePath);
+          pdf(dataBuffer).then((data: any) => {
+            resolve(data.text);
+          }).catch((pdfError: any) => {
+            console.error("Error extracting text from PDF:", pdfError);
+            reject(new Error("Failed to extract text from PDF"));
+          });
+        }
+      });
+    });
   } catch (error) {
     console.error("Error extracting text from PDF:", error);
     throw new Error("Failed to extract text from PDF");

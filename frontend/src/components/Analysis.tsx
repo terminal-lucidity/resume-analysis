@@ -33,6 +33,8 @@ interface AnalysisResult {
 }
 
 const Analysis: React.FC = () => {
+  console.log('Analysis component rendering');
+  
   const [analysisData, setAnalysisData] = useState<AnalysisData | null>(null);
   const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -95,33 +97,99 @@ const Analysis: React.FC = () => {
       setResumeText(resumeText);
       console.log('Resume text length:', resumeText.length);
 
-      // Perform the analysis
-      console.log('Sending analysis request...');
-      const analysisResponse = await fetch('http://localhost:3000/api/analyze', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          resumeId: data.resumeId,
-          jobTitle: data.jobTitle,
-          jobDescription: data.jobDescription,
-          jobLevel: data.jobLevel
-        })
-      });
-
-      if (!analysisResponse.ok) {
-        const errorData = await analysisResponse.json().catch(() => ({}));
-        console.error('Analysis response error:', analysisResponse.status, errorData);
-        throw new Error(`Analysis failed: ${errorData.error || analysisResponse.statusText}`);
-      }
-
-      const result = await analysisResponse.json();
-      setAnalysisResult(result);
+      // Check if this is a request to view existing analysis or perform new analysis
+      const isViewingExisting = data.jobTitle === 'General Resume Analysis' && 
+                               data.jobDescription === 'Viewing existing resume analysis';
       
-      // Generate issues based on analysis
-      generateIssues(resumeText, result);
+      console.log('Is viewing existing analysis:', isViewingExisting);
+      console.log('Resume aiAnalysis data:', resumeData.resume?.aiAnalysis);
+      console.log('Full resume data:', resumeData.resume);
+      
+      if (isViewingExisting && resumeData.resume?.aiAnalysis) {
+        // Display existing analysis
+        console.log('Displaying existing analysis:', resumeData.resume.aiAnalysis);
+        const existingAnalysis = resumeData.resume.aiAnalysis;
+        
+        // Convert existing analysis format to match expected format
+        const convertedResult: AnalysisResult = {
+          similarity: existingAnalysis.score || 0,
+          overallScore: existingAnalysis.score || 0,
+          keywordMatchScore: existingAnalysis.score || 0,
+          skillGapAnalysis: {
+            missing_skills: [],
+            skill_gap_score: 0
+          },
+          improvementSuggestions: existingAnalysis.improvements || [],
+          detailedAnalysis: {
+            llm_insights: {
+              strengths: existingAnalysis.strengths || [],
+              weaknesses: [],
+              overall_assessment: existingAnalysis.summary || ''
+            }
+          }
+        };
+        
+        setAnalysisResult(convertedResult);
+        generateIssues(resumeText, convertedResult);
+      } else if (isViewingExisting) {
+        // No existing analysis found, perform a new analysis instead
+        console.log('No existing analysis found for this resume, performing new analysis');
+        
+        // Perform new analysis with default job data
+        const analysisResponse = await fetch('http://localhost:3000/api/analyze', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            resumeId: data.resumeId,
+            jobTitle: 'General Resume Review',
+            jobDescription: 'Comprehensive resume analysis and improvement suggestions',
+            jobLevel: 'Any Level'
+          })
+        });
+
+        if (!analysisResponse.ok) {
+          const errorData = await analysisResponse.json().catch(() => ({}));
+          console.error('Analysis response error:', analysisResponse.status, errorData);
+          throw new Error(`Analysis failed: ${errorData.error || analysisResponse.statusText}`);
+        }
+
+        const result = await analysisResponse.json();
+        setAnalysisResult(result);
+        
+        // Generate issues based on analysis
+        generateIssues(resumeText, result);
+      } else {
+        // Perform new analysis
+        console.log('Sending analysis request...');
+        const analysisResponse = await fetch('http://localhost:3000/api/analyze', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            resumeId: data.resumeId,
+            jobTitle: data.jobTitle,
+            jobDescription: data.jobDescription,
+            jobLevel: data.jobLevel
+          })
+        });
+
+        if (!analysisResponse.ok) {
+          const errorData = await analysisResponse.json().catch(() => ({}));
+          console.error('Analysis response error:', analysisResponse.status, errorData);
+          throw new Error(`Analysis failed: ${errorData.error || analysisResponse.statusText}`);
+        }
+
+        const result = await analysisResponse.json();
+        setAnalysisResult(result);
+        
+        // Generate issues based on analysis
+        generateIssues(resumeText, result);
+      }
       
     } catch (error) {
       console.error('Analysis error:', error);

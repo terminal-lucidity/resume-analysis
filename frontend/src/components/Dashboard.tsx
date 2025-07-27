@@ -210,6 +210,31 @@ const Dashboard: React.FC = () => {
     window.location.href = '/analysis';
   };
 
+  const handleViewAnalysis = (resumeId: string) => {
+    console.log('handleViewAnalysis called with resumeId:', resumeId);
+    
+    // Set the selected resume
+    setSelectedResumeId(resumeId);
+    
+    // Navigate to analysis page with the resume data
+    const selectedResume = resumes.find(r => r.id === resumeId);
+    const analysisData = {
+      resumeId: resumeId,
+      jobTitle: 'General Resume Analysis', // Default title for existing analysis
+      jobDescription: 'Viewing existing resume analysis', // Default description
+      jobLevel: 'Any Level', // Default level
+      selectedResume: selectedResume
+    };
+    
+    // Store analysis data in localStorage for the analysis page
+    console.log('Storing analysis data for existing resume:', analysisData);
+    localStorage.setItem('analysisData', JSON.stringify(analysisData));
+    
+    // Navigate to analysis page
+    console.log('Navigating to analysis page...');
+    window.location.href = '/analysis';
+  };
+
   const handleResumeSelect = (resumeId: string) => {
     setSelectedResumeId(resumeId);
     setShowResumeModal(false);
@@ -452,38 +477,43 @@ const Dashboard: React.FC = () => {
                         </div>
                       </div>
                       <div className="resume-item-status">
-                        {resume.isActive && <CheckCircle className="active-icon" />}
-                        {selectedResumeId === resume.id && <div className="selected-indicator" />}
+                        <div className="status-indicators">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              if (!resume.isActive) {
+                                handleActivate(resume.id);
+                              }
+                            }}
+                            className={`active-toggle ${resume.isActive ? 'active' : 'inactive'}`}
+                            title={resume.isActive ? 'Active Resume' : 'Set as Active'}
+                          >
+                            <CheckCircle className="active-icon" />
+                          </button>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDelete(resume.id);
+                            }}
+                            className="delete-toggle"
+                            title="Delete Resume"
+                          >
+                            <Trash2 className="delete-icon" />
+                          </button>
+                        </div>
                       </div>
-                    </div>
-
-                    <div className="resume-item-actions">
-                      {!resume.isActive && (
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleActivate(resume.id);
-                          }}
-                          className="action-button activate"
-                        >
-                          Set Active
-                        </button>
-                      )}
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDelete(resume.id);
-                        }}
-                        className="action-button delete"
-                      >
-                        <Trash2 className="action-icon" />
-                      </button>
                     </div>
 
                     {resume.hasAnalysis && (
-                      <div className="analysis-badge">
+                      <button
+                        className="analysis-badge"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleViewAnalysis(resume.id);
+                        }}
+                      >
                         <span>Analysis Available</span>
-                      </div>
+                      </button>
                     )}
                   </div>
                 ))}

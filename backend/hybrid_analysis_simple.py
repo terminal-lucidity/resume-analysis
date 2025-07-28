@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Simplified Hybrid Resume Analysis Service
-This version focuses on core functionality without complex dependencies
+Improved Hybrid Resume Analysis Service
+Enhanced field detection and standalone scoring
 """
 
 from fastapi import FastAPI, HTTPException
@@ -18,7 +18,7 @@ import logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-app = FastAPI(title="Simplified Hybrid Resume Analysis Service")
+app = FastAPI(title="Improved Hybrid Resume Analysis Service")
 
 # Initialize the embedding model
 try:
@@ -45,40 +45,31 @@ class AnalysisResponse(BaseModel):
     achievement_score: Optional[float] = None
     format_score: Optional[float] = None
     section_completeness: Optional[float] = None
+    standalone_score: Optional[float] = None
 
-class SimpleAnalyzer:
+class ImprovedAnalyzer:
     def __init__(self):
-        # Technical keywords by category
+        # Enhanced technical keywords by category
         self.technical_keywords = {
-            'programming': ['python', 'javascript', 'java', 'c++', 'c#', 'go', 'rust', 'php', 'ruby', 'swift', 'kotlin'],
-            'frameworks': ['react', 'angular', 'vue', 'django', 'flask', 'express', 'spring', 'laravel', 'rails'],
-            'databases': ['mysql', 'postgresql', 'mongodb', 'redis', 'elasticsearch', 'cassandra', 'dynamodb'],
-            'cloud': ['aws', 'azure', 'gcp', 'docker', 'kubernetes', 'terraform', 'jenkins', 'gitlab'],
-            'ml_ai': ['tensorflow', 'pytorch', 'scikit-learn', 'pandas', 'numpy', 'matplotlib', 'opencv'],
-            'tools': ['git', 'jira', 'confluence', 'slack', 'figma', 'postman', 'swagger']
+            'programming': ['python', 'javascript', 'java', 'c++', 'c#', 'go', 'rust', 'php', 'ruby', 'swift', 'kotlin', 'typescript', 'scala', 'r', 'matlab'],
+            'frameworks': ['react', 'angular', 'vue', 'django', 'flask', 'express', 'spring', 'laravel', 'rails', 'node.js', 'asp.net', 'jquery', 'bootstrap', 'tailwind'],
+            'databases': ['mysql', 'postgresql', 'mongodb', 'redis', 'elasticsearch', 'cassandra', 'dynamodb', 'oracle', 'sql server', 'sqlite', 'neo4j'],
+            'cloud': ['aws', 'azure', 'gcp', 'docker', 'kubernetes', 'terraform', 'jenkins', 'gitlab', 'github actions', 'ci/cd', 'microservices'],
+            'ml_ai': ['tensorflow', 'pytorch', 'scikit-learn', 'pandas', 'numpy', 'matplotlib', 'opencv', 'keras', 'xgboost', 'spark', 'hadoop'],
+            'tools': ['git', 'jira', 'confluence', 'slack', 'figma', 'postman', 'swagger', 'maven', 'gradle', 'npm', 'yarn']
         }
         
-        # ATS-specific keywords and variations
+        # Enhanced ATS keywords
         self.ats_keywords = {
-            'leadership': ['led', 'managed', 'supervised', 'directed', 'coordinated', 'oversaw', 'headed', 'chaired'],
-            'achievement': ['increased', 'decreased', 'improved', 'enhanced', 'optimized', 'streamlined', 'reduced', 'grew'],
-            'technical_skills': ['developed', 'implemented', 'designed', 'architected', 'built', 'created', 'programmed', 'coded'],
-            'communication': ['presented', 'communicated', 'collaborated', 'coordinated', 'liaised', 'negotiated', 'facilitated'],
-            'analysis': ['analyzed', 'evaluated', 'assessed', 'researched', 'investigated', 'examined', 'studied'],
-            'project_management': ['planned', 'organized', 'scheduled', 'budgeted', 'executed', 'delivered', 'completed']
+            'leadership': ['led', 'managed', 'supervised', 'directed', 'coordinated', 'oversaw', 'headed', 'chaired', 'mentored', 'trained'],
+            'achievement': ['increased', 'decreased', 'improved', 'enhanced', 'optimized', 'streamlined', 'reduced', 'grew', 'boosted', 'accelerated'],
+            'technical_skills': ['developed', 'implemented', 'designed', 'architected', 'built', 'created', 'programmed', 'coded', 'debugged', 'deployed'],
+            'communication': ['presented', 'communicated', 'collaborated', 'coordinated', 'liaised', 'negotiated', 'facilitated', 'documented', 'reported'],
+            'analysis': ['analyzed', 'evaluated', 'assessed', 'researched', 'investigated', 'examined', 'studied', 'diagnosed', 'troubleshot'],
+            'project_management': ['planned', 'organized', 'scheduled', 'budgeted', 'executed', 'delivered', 'completed', 'launched', 'maintained']
         }
         
-        # Industry-specific terminology
-        self.industry_keywords = {
-            'software_engineering': ['agile', 'scrum', 'sprint', 'ci/cd', 'devops', 'microservices', 'api', 'rest', 'graphql'],
-            'data_science': ['machine learning', 'deep learning', 'neural networks', 'statistical analysis', 'data mining', 'predictive modeling'],
-            'product_management': ['product roadmap', 'user stories', 'mvp', 'kpi', 'okr', 'user experience', 'market research'],
-            'marketing': ['seo', 'sem', 'social media', 'content marketing', 'email campaigns', 'conversion rate', 'roi'],
-            'finance': ['financial modeling', 'budgeting', 'forecasting', 'risk assessment', 'compliance', 'audit', 'p&l'],
-            'sales': ['lead generation', 'pipeline management', 'crm', 'quota', 'territory', 'prospecting', 'closing']
-        }
-        
-        # Strong action verbs for ATS optimization
+        # Enhanced strong action verbs
         self.strong_action_verbs = [
             'achieved', 'accelerated', 'accomplished', 'acquired', 'adapted', 'administered', 'advanced', 'advised',
             'analyzed', 'architected', 'assembled', 'assessed', 'assigned', 'assisted', 'attained', 'authored',
@@ -105,76 +96,246 @@ class SimpleAnalyzer:
             'updated', 'upgraded', 'utilized', 'validated', 'verified', 'visualized', 'wrote'
         ]
         
-        # Required resume sections for ATS
-        self.required_sections = [
-            'experience', 'education', 'skills', 'contact', 'summary', 'objective'
-        ]
-        
-        # ATS-friendly formatting indicators
-        self.ats_formatting = {
-            'simple_fonts': ['arial', 'calibri', 'times new roman', 'georgia', 'verdana'],
-            'standard_sections': ['experience', 'education', 'skills', 'summary', 'contact'],
-            'avoid_elements': ['tables', 'images', 'graphics', 'columns', 'headers', 'footers']
+        # Enhanced section detection patterns
+        self.section_patterns = {
+            'experience': [
+                r'experience', r'work experience', r'professional experience', r'employment history',
+                r'work history', r'career history', r'employment', r'work', r'professional background',
+                r'career experience', r'work experience', r'professional background'
+            ],
+            'education': [
+                r'education', r'academic background', r'academic history', r'educational background',
+                r'degrees', r'qualifications', r'academic', r'educational', r'degree',
+                r'university', r'college', r'school', r'graduation'
+            ],
+            'skills': [
+                r'skills', r'technical skills', r'competencies', r'expertise', r'proficiencies',
+                r'capabilities', r'skill set', r'technologies', r'tools', r'programming languages',
+                r'technical expertise', r'competencies', r'proficiencies'
+            ],
+            'contact': [
+                r'contact', r'contact information', r'personal information', r'contact details',
+                r'address', r'phone', r'email', r'linkedin', r'github', r'portfolio',
+                r'personal details', r'contact info'
+            ],
+            'summary': [
+                r'summary', r'profile', r'objective', r'personal statement', r'career objective',
+                r'professional summary', r'executive summary', r'overview', r'profile summary',
+                r'career summary', r'professional profile'
+            ],
+            'projects': [
+                r'projects', r'project experience', r'portfolio', r'personal projects',
+                r'academic projects', r'research projects', r'project work'
+            ],
+            'certifications': [
+                r'certifications', r'certificates', r'professional certifications',
+                r'licenses', r'accreditations', r'professional development'
+            ],
+            'languages': [
+                r'languages', r'language skills', r'foreign languages', r'language proficiency',
+                r'bilingual', r'multilingual'
+            ],
+            'awards': [
+                r'awards', r'honors', r'recognition', r'achievements', r'prizes',
+                r'scholarships', r'grants', r'commendations'
+            ],
+            'volunteer': [
+                r'volunteer', r'volunteer work', r'community service', r'charity',
+                r'non-profit', r'community involvement'
+            ]
         }
     
-    def extract_keywords(self, text: str) -> Dict[str, List[str]]:
-        """Extract technical keywords from text"""
+    def enhanced_section_detection(self, text: str) -> Dict[str, Any]:
+        """Enhanced section detection with better pattern matching"""
         text_lower = text.lower()
-        extracted_keywords = {}
+        lines = text.split('\n')
         
-        for category, keywords in self.technical_keywords.items():
-            found_keywords = [kw for kw in keywords if kw in text_lower]
-            if found_keywords:
-                extracted_keywords[category] = found_keywords
+        section_scores = {}
+        detected_sections = []
+        missing_sections = []
         
-        return extracted_keywords
-    
-    def analyze_ats_keywords(self, resume_text: str, job_text: str) -> Dict[str, Any]:
-        """Analyze ATS-specific keyword matching"""
-        resume_lower = resume_text.lower()
-        job_lower = job_text.lower()
-        
-        # Check for strong action verbs with better detection
-        found_action_verbs = []
-        for verb in self.strong_action_verbs:
-            # Check for exact word matches (not just substring)
-            import re
-            pattern = r'\b' + re.escape(verb) + r'\b'
-            if re.search(pattern, resume_lower):
-                found_action_verbs.append(verb)
-        
-        action_verb_score = min(len(found_action_verbs) / 15, 1.0)  # Normalize to 0-1
-        
-        # Check for ATS keyword categories
-        ats_scores = {}
-        for category, keywords in self.ats_keywords.items():
-            resume_matches = sum(1 for kw in keywords if kw in resume_lower)
-            job_matches = sum(1 for kw in keywords if kw in job_lower)
-            if job_matches > 0:
-                ats_scores[category] = resume_matches / job_matches
+        # Enhanced section detection with multiple strategies
+        for section, patterns in self.section_patterns.items():
+            found = False
+            confidence = 0.0
+            
+            # Strategy 1: Direct pattern matching
+            for pattern in patterns:
+                if re.search(pattern, text_lower, re.IGNORECASE):
+                    found = True
+                    confidence += 0.5
+                    break
+            
+            # Strategy 2: Line-by-line analysis for headers
+            if not found:
+                for line in lines:
+                    line_stripped = line.strip()
+                    if len(line_stripped) > 2 and len(line_stripped) < 50:
+                        line_lower = line_stripped.lower()
+                        
+                        # Check for section headers (all caps, bold indicators, etc.)
+                        if (line_lower.isupper() or 
+                            line_lower.startswith('**') or 
+                            line_lower.endswith('**') or
+                            any(pattern in line_lower for pattern in patterns)):
+                            found = True
+                            confidence += 0.3
+                            break
+            
+            # Strategy 3: Content-based detection
+            if not found:
+                content_indicators = self.get_content_indicators(section)
+                if any(indicator in text_lower for indicator in content_indicators):
+                    found = True
+                    confidence += 0.2
+            
+            # Strategy 4: Enhanced contact detection
+            if section == 'contact':
+                contact_found = self.detect_contact_info(text)
+                if contact_found:
+                    found = True
+                    confidence = 1.0
+            
+            # Strategy 5: Enhanced skills detection
+            if section == 'skills':
+                skills_found = self.detect_skills_content(text)
+                if skills_found:
+                    found = True
+                    confidence += 0.4
+            
+            section_scores[section] = confidence if found else 0.0
+            
+            if confidence > 0.3:  # Lower threshold for detection
+                detected_sections.append(section)
             else:
-                ats_scores[category] = 0.0
+                missing_sections.append(section)
         
-        # Check for industry-specific keywords
-        industry_scores = {}
-        for industry, keywords in self.industry_keywords.items():
-            resume_matches = sum(1 for kw in keywords if kw in resume_lower)
-            job_matches = sum(1 for kw in keywords if kw in job_lower)
-            if job_matches > 0:
-                industry_scores[industry] = resume_matches / job_matches
-            else:
-                industry_scores[industry] = 0.0
+        # Calculate enhanced completeness score
+        completeness_score = sum(section_scores.values()) / len(section_scores)
         
         return {
+            'section_scores': section_scores,
+            'completeness_score': completeness_score,
+            'missing_sections': missing_sections,
+            'detected_sections': detected_sections,
+            'detailed_section_analysis': section_scores
+        }
+    
+    def get_content_indicators(self, section: str) -> List[str]:
+        """Get content indicators for each section"""
+        indicators = {
+            'experience': ['years', 'worked', 'developed', 'implemented', 'managed', 'led', 'company', 'position'],
+            'education': ['university', 'college', 'degree', 'gpa', 'graduated', 'bachelor', 'master', 'phd'],
+            'skills': ['python', 'javascript', 'react', 'aws', 'docker', 'git', 'sql', 'html', 'css'],
+            'contact': ['@', '.com', 'phone', 'email', 'linkedin', 'github'],
+            'summary': ['overview', 'profile', 'objective', 'career', 'professional'],
+            'projects': ['project', 'developed', 'built', 'created', 'portfolio'],
+            'certifications': ['certified', 'certification', 'license', 'accredited'],
+            'languages': ['english', 'spanish', 'french', 'german', 'chinese', 'japanese'],
+            'awards': ['award', 'honor', 'recognition', 'scholarship', 'prize'],
+            'volunteer': ['volunteer', 'community', 'charity', 'non-profit']
+        }
+        return indicators.get(section, [])
+    
+    def detect_contact_info(self, text: str) -> bool:
+        """Enhanced contact information detection"""
+        contact_patterns = [
+            r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b',  # Email
+            r'\(\d{3}\)\s*\d{3}-\d{4}',  # Phone (US format)
+            r'\d{3}-\d{3}-\d{4}',  # Phone (dashed format)
+            r'\d{10}',  # Phone (10 digits)
+            r'linkedin\.com',  # LinkedIn
+            r'github\.com',  # GitHub
+            r'@[a-zA-Z0-9_]+',  # Social media handles
+            r'\b\d{1,3}\s+[A-Za-z\s]+(?:Street|St|Avenue|Ave|Road|Rd|Drive|Dr|Lane|Ln|Boulevard|Blvd)\b',  # Address
+        ]
+        
+        return any(re.search(pattern, text, re.IGNORECASE) for pattern in contact_patterns)
+    
+    def detect_skills_content(self, text: str) -> bool:
+        """Detect if resume contains skills content"""
+        # Check for technical skills
+        all_skills = []
+        for category, skills in self.technical_keywords.items():
+            all_skills.extend(skills)
+        
+        text_lower = text.lower()
+        found_skills = [skill for skill in all_skills if skill in text_lower]
+        
+        # Also check for skill-like patterns
+        skill_patterns = [
+            r'\b(?:proficient|experienced|skilled|expert|advanced|intermediate|beginner)\s+(?:in|with)\b',
+            r'\b(?:programming|coding|development|design|analysis|management)\s+(?:skills|experience)\b',
+            r'\b(?:tools|technologies|frameworks|languages|platforms)\b'
+        ]
+        
+        pattern_matches = any(re.search(pattern, text_lower) for pattern in skill_patterns)
+        
+        return len(found_skills) > 2 or pattern_matches
+    
+    def calculate_standalone_score(self, resume_text: str) -> Dict[str, Any]:
+        """Calculate a comprehensive score without job description"""
+        text_lower = resume_text.lower()
+        
+        # 1. Content richness score
+        word_count = len(resume_text.split())
+        content_score = min(word_count / 300, 1.0)  # Normalize to 0-1
+        
+        # 2. Skills diversity score
+        all_skills = []
+        for category, skills in self.technical_keywords.items():
+            all_skills.extend(skills)
+        
+        found_skills = [skill for skill in all_skills if skill in text_lower]
+        skills_diversity = min(len(found_skills) / 15, 1.0)
+        
+        # 3. Action verbs score
+        found_verbs = [verb for verb in self.strong_action_verbs if verb in text_lower]
+        action_verb_score = min(len(found_verbs) / 20, 1.0)
+        
+        # 4. Achievement score
+        achievements = self.detect_quantifiable_achievements(resume_text)
+        achievement_score = achievements['achievement_score']
+        
+        # 5. Section completeness
+        section_analysis = self.enhanced_section_detection(resume_text)
+        section_score = section_analysis['completeness_score']
+        
+        # 6. Format quality score
+        format_analysis = self.analyze_format_optimization(resume_text)
+        format_score = format_analysis['format_score']
+        
+        # 7. Experience indicators
+        experience_indicators = ['years', 'experience', 'worked', 'developed', 'implemented', 'managed', 'led']
+        experience_count = sum(1 for word in text_lower.split() if word in experience_indicators)
+        experience_score = min(experience_count / 10, 1.0)
+        
+        # Calculate overall standalone score
+        standalone_score = (
+            content_score * 0.15 +
+            skills_diversity * 0.20 +
+            action_verb_score * 0.15 +
+            achievement_score * 0.20 +
+            section_score * 0.15 +
+            format_score * 0.10 +
+            experience_score * 0.05
+        )
+        
+        return {
+            'standalone_score': standalone_score,
+            'content_score': content_score,
+            'skills_diversity': skills_diversity,
             'action_verb_score': action_verb_score,
-            'found_action_verbs': found_action_verbs[:10],  # Top 10
-            'ats_category_scores': ats_scores,
-            'industry_scores': industry_scores,
-            'overall_ats_score': (action_verb_score + sum(ats_scores.values()) / len(ats_scores)) / 2
+            'achievement_score': achievement_score,
+            'section_score': section_score,
+            'format_score': format_score,
+            'experience_score': experience_score,
+            'found_skills': found_skills[:10],  # Top 10
+            'found_verbs': found_verbs[:10]  # Top 10
         }
     
     def detect_quantifiable_achievements(self, text: str) -> Dict[str, Any]:
-        """Detect quantifiable achievements and metrics"""
+        """Enhanced quantifiable achievements detection"""
         import re
         
         # Enhanced patterns for numbers and percentages
@@ -194,6 +355,10 @@ class SimpleAnalyzer:
             r'\d+\.\d+\s*/\s*4\.0',  # GPA format
             r'response time.*\d+%',  # Performance metrics
             r'efficiency.*\d+%',  # Efficiency metrics
+            r'\d+\s+team\s+members',  # Team size
+            r'\d+\s+projects',  # Project count
+            r'\d+\s+clients',  # Client count
+            r'\d+\s+users',  # User count
         ]
         
         achievements = []
@@ -221,7 +386,7 @@ class SimpleAnalyzer:
         
         # Calculate achievement score based on both quantifiable metrics and achievement sentences
         total_achievements = len(achievements) + len(achievement_sentences)
-        achievement_score = min(total_achievements / 8, 1.0)  # Normalize to 0-1
+        achievement_score = min(total_achievements / 6, 1.0)  # Adjusted threshold
         
         return {
             'quantifiable_achievements': achievements,
@@ -229,99 +394,8 @@ class SimpleAnalyzer:
             'achievement_score': achievement_score
         }
     
-    def check_section_completeness(self, text: str) -> Dict[str, Any]:
-        """Check for required resume sections with improved parsing"""
-        text_lower = text.lower()
-        
-        section_scores = {}
-        section_mappings = {
-            'experience': [
-                'experience', 'work experience', 'professional experience', 'employment history',
-                'work history', 'career history', 'employment', 'work', 'e x p e r i e n c e'
-            ],
-            'education': [
-                'education', 'academic background', 'academic history', 'educational background',
-                'degrees', 'qualifications', 'academic', 'e d u c a t i o n'
-            ],
-            'skills': [
-                'skills', 'technical skills', 'competencies', 'expertise', 'proficiencies',
-                'capabilities', 'skill set', 's k i l l s', 'tools & technologies'
-            ],
-            'contact': [
-                'contact', 'contact information', 'personal information', 'contact details',
-                'address', 'phone', 'email', 'linkedin', 'github'
-            ],
-            'summary': [
-                'summary', 'profile', 'objective', 'personal statement', 'career objective',
-                'professional summary', 'executive summary', 'overview'
-            ],
-            'objective': [
-                'objective', 'career objective', 'professional objective', 'goal',
-                'career goal', 'professional goal'
-            ]
-        }
-        
-        for section, indicators in section_mappings.items():
-            # Check for section headers with various formats
-            found = False
-            
-            # Check for exact matches in the text
-            for indicator in indicators:
-                if indicator in text_lower:
-                    found = True
-                    break
-            
-            # If not found, check for section patterns in lines
-            if not found:
-                lines = text.split('\n')
-                for line in lines:
-                    line_lower = line.strip().lower()
-                    for indicator in indicators:
-                        # Check if line starts with or contains the indicator
-                        if (line_lower.startswith(indicator) or 
-                            line_lower.startswith(indicator + ':') or
-                            line_lower.startswith(indicator + ' ') or
-                            indicator in line_lower):
-                            found = True
-                            break
-                    if found:
-                        break
-            
-            section_scores[section] = 1.0 if found else 0.0
-        
-        # Enhanced contact information detection
-        contact_patterns = [
-            r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b',  # Email
-            r'\(\d{3}\)\s*\d{3}-\d{4}',  # Phone (US format)
-            r'\d{3}-\d{3}-\d{4}',  # Phone (dashed format)
-            r'linkedin\.com',  # LinkedIn
-            r'github\.com',  # GitHub
-            r'@[a-zA-Z0-9_]+',  # Social media handles
-        ]
-        
-        import re
-        contact_found = any(re.search(pattern, text, re.IGNORECASE) for pattern in contact_patterns)
-        
-        # If contact section wasn't found but contact info exists, mark it as found
-        if contact_found and section_scores.get('contact', 0) == 0:
-            section_scores['contact'] = 1.0
-        
-        # Special handling for summary/objective - if one is found, mark both as present
-        if section_scores.get('summary', 0) == 1.0 or section_scores.get('objective', 0) == 1.0:
-            section_scores['summary'] = 1.0
-            section_scores['objective'] = 1.0
-        
-        completeness_score = sum(section_scores.values()) / len(section_scores)
-        
-        return {
-            'section_scores': section_scores,
-            'completeness_score': completeness_score,
-            'missing_sections': [section for section, score in section_scores.items() if score == 0.0],
-            'detected_sections': [section for section, score in section_scores.items() if score == 1.0]
-        }
-    
     def analyze_format_optimization(self, text: str) -> Dict[str, Any]:
-        """Analyze ATS-friendly formatting"""
+        """Enhanced ATS-friendly formatting analysis"""
         # Check for problematic elements
         problematic_elements = []
         
@@ -339,7 +413,7 @@ class SimpleAnalyzer:
         
         # Check for bullet points (good for ATS)
         bullet_points = text.count('•') + text.count('-') + text.count('*')
-        bullet_score = min(bullet_points / 8, 1.0)  # Adjusted threshold
+        bullet_score = min(bullet_points / 6, 1.0)  # Adjusted threshold
         
         # Check for proper spacing and structure
         lines = text.split('\n')
@@ -354,20 +428,20 @@ class SimpleAnalyzer:
                 any(word in line_stripped.lower() for word in ['experience', 'education', 'skills', 'contact', 'summary'])):
                 section_headers += 1
         
-        header_score = min(section_headers / 4, 1.0)
+        header_score = min(section_headers / 3, 1.0)  # Adjusted threshold
         
         # Check for consistent formatting
         has_consistent_formatting = (
-            bullet_score > 0.3 and 
-            spacing_score > 0.05 and 
-            header_score > 0.5 and
+            bullet_score > 0.2 and 
+            spacing_score > 0.03 and 
+            header_score > 0.3 and
             len(problematic_elements) == 0
         )
         
         # Calculate overall format score
         format_score = (bullet_score + spacing_score + header_score) / 3
         if problematic_elements:
-            format_score *= 0.5  # Penalize for problematic elements
+            format_score *= 0.7  # Reduced penalty
         
         return {
             'problematic_elements': problematic_elements,
@@ -377,6 +451,18 @@ class SimpleAnalyzer:
             'format_score': format_score,
             'ats_friendly': has_consistent_formatting
         }
+    
+    def extract_keywords(self, text: str) -> Dict[str, List[str]]:
+        """Extract technical keywords from text"""
+        text_lower = text.lower()
+        extracted_keywords = {}
+        
+        for category, keywords in self.technical_keywords.items():
+            found_keywords = [kw for kw in keywords if kw in text_lower]
+            if found_keywords:
+                extracted_keywords[category] = found_keywords
+        
+        return extracted_keywords
     
     def calculate_keyword_similarity(self, resume_text: str, job_text: str) -> float:
         """Calculate keyword-based similarity using simple word matching"""
@@ -410,78 +496,10 @@ class SimpleAnalyzer:
             logger.error(f"Error in keyword similarity: {e}")
             return 0.0
     
-    def extract_skills_and_experience(self, text: str) -> Dict[str, Any]:
-        """Extract skills and experience using simple text analysis"""
-        text_lower = text.lower()
-        
-        # Extract skills (simple approach)
-        skills = []
-        for category, keywords in self.technical_keywords.items():
-            for keyword in keywords:
-                if keyword in text_lower:
-                    skills.append(keyword)
-        
-        # Extract experience indicators
-        experience_indicators = ['years', 'experience', 'worked', 'developed', 'implemented', 'managed', 'led']
-        experience_score = sum(1 for word in text_lower.split() if word in experience_indicators)
-        
-        return {
-            'skills': list(set(skills)),
-            'experience_score': experience_score
-        }
-    
-    def analyze_job_level_fit(self, resume_text: str, job_level: str) -> Dict[str, Any]:
-        """Analyze how well the resume fits the job level"""
-        text_lower = resume_text.lower()
-        
-        # Keywords for different levels
-        level_keywords = {
-            'entry': ['entry', 'junior', 'graduate', 'intern', '0-1', '1 year', 'fresh'],
-            'mid': ['mid', 'intermediate', '2-3', '3-4', 'experienced', '3+ years'],
-            'senior': ['senior', 'lead', 'principal', '5+', 'architect', 'manager', '5+ years'],
-            'executive': ['executive', 'director', 'vp', 'cto', 'ceo', 'head of', 'chief']
-        }
-        
-        level_scores = {}
-        for level, keywords in level_keywords.items():
-            score = sum(1 for keyword in keywords if keyword in text_lower)
-            level_scores[level] = score
-        
-        # Determine best fit level
-        best_fit = max(level_scores, key=lambda x: level_scores[x])
-        
-        return {
-            'level_scores': level_scores,
-            'best_fit_level': best_fit,
-            'requested_level': job_level,
-            'level_match_score': level_scores.get(job_level, 0) / max(1, max(level_scores.values()))
-        }
-    
-    def call_ollama_llm(self, prompt: str) -> str:
-        """Call Ollama LLM for advanced analysis (optional)"""
-        try:
-            response = requests.post(
-                "http://localhost:11434/api/generate",
-                json={
-                    "model": "llama2",
-                    "prompt": prompt,
-                    "stream": False
-                },
-                timeout=10
-            )
-            
-            if response.status_code == 200:
-                return response.json().get('response', '')
-            else:
-                return ""
-        except Exception as e:
-            logger.debug(f"Ollama not available: {e}")
-            return ""
-    
     def generate_llm_insights(self, resume_text: str, job_text: str, job_level: str) -> Dict[str, Any]:
         """Generate insights using LLM (if available)"""
         prompt = f"""
-        Analyze this resume against the job description and provide insights:
+        Analyze this resume and provide insights:
         
         Resume: {resume_text[:500]}
         Job Description: {job_text[:500]}
@@ -515,98 +533,140 @@ class SimpleAnalyzer:
             'overall_assessment': 'Resume analysis completed successfully'
         }
 
-analyzer = SimpleAnalyzer()
+    def call_ollama_llm(self, prompt: str) -> str:
+        """Call Ollama LLM for advanced analysis (optional)"""
+        try:
+            response = requests.post(
+                "http://localhost:11434/api/generate",
+                json={
+                    "model": "llama2",
+                    "prompt": prompt,
+                    "stream": False
+                },
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                return response.json().get('response', '')
+            else:
+                return ""
+        except Exception as e:
+            logger.debug(f"Ollama not available: {e}")
+            return ""
+
+analyzer = ImprovedAnalyzer()
 
 @app.post('/analyze', response_model=AnalysisResponse)
 async def analyze(request: AnalysisRequest):
     try:
-        logger.info(f"Starting analysis for job level: {request.jobLevel}")
+        logger.info(f"Starting improved analysis for job level: {request.jobLevel}")
         
         if not model:
             raise HTTPException(status_code=500, detail="Embedding model not available")
         
-        # 1. Semantic similarity using embeddings
-        resume_emb = model.encode(request.resume, convert_to_tensor=True)
-        job_emb = model.encode(request.job, convert_to_tensor=True)
-        semantic_similarity = util.pytorch_cos_sim(resume_emb, job_emb).item()
+        # 1. Enhanced section detection
+        section_analysis = analyzer.enhanced_section_detection(request.resume)
         
-        # 2. Keyword-based similarity
-        keyword_similarity = analyzer.calculate_keyword_similarity(request.resume, request.job)
+        # 2. Standalone scoring (works without job description)
+        standalone_analysis = analyzer.calculate_standalone_score(request.resume)
         
-        # 3. Extract keywords and skills
+        # 3. Semantic similarity using embeddings (if job description provided)
+        semantic_similarity = 0.0
+        if request.job.strip():
+            resume_emb = model.encode(request.resume, convert_to_tensor=True)
+            job_emb = model.encode(request.job, convert_to_tensor=True)
+            semantic_similarity = util.pytorch_cos_sim(resume_emb, job_emb).item()
+        
+        # 4. Keyword-based similarity (if job description provided)
+        keyword_similarity = 0.0
+        if request.job.strip():
+            keyword_similarity = analyzer.calculate_keyword_similarity(request.resume, request.job)
+        
+        # 5. Extract keywords and skills
         resume_keywords = analyzer.extract_keywords(request.resume)
-        job_keywords = analyzer.extract_keywords(request.job)
+        job_keywords = analyzer.extract_keywords(request.job) if request.job.strip() else {}
         
-        # 4. Skills and experience analysis
-        resume_skills = analyzer.extract_skills_and_experience(request.resume)
-        job_skills = analyzer.extract_skills_and_experience(request.job)
-        
-        # 5. Job level analysis
-        level_analysis = analyzer.analyze_job_level_fit(request.resume, request.jobLevel)
-        
-        # 6. NEW: ATS-specific analysis
-        ats_analysis = analyzer.analyze_ats_keywords(request.resume, request.job)
-        
-        # 7. NEW: Quantifiable achievements detection
+        # 6. Enhanced achievements detection
         achievements_analysis = analyzer.detect_quantifiable_achievements(request.resume)
         
-        # 8. NEW: Section completeness check
-        section_analysis = analyzer.check_section_completeness(request.resume)
-        
-        # 9. NEW: Format optimization analysis
+        # 7. Format optimization analysis
         format_analysis = analyzer.analyze_format_optimization(request.resume)
         
-        # 10. LLM insights (if available)
+        # 8. LLM insights (if available)
         llm_insights = analyzer.generate_llm_insights(request.resume, request.job, request.jobLevel)
         
-        # 11. Calculate skill gap
-        resume_skill_set = set(resume_skills['skills'])
-        job_skill_set = set(job_skills['skills'])
-        missing_skills = job_skill_set - resume_skill_set
-        skill_gap_score = 1 - (len(missing_skills) / max(1, len(job_skill_set)))
+        # 9. Calculate skill gap (if job description provided)
+        skill_gap_analysis = {
+            'missing_skills': [],
+            'skill_gap_score': 1.0,
+            'resume_skills_count': len(resume_keywords.get('programming', []) + resume_keywords.get('frameworks', [])),
+            'job_skills_count': 0
+        }
         
-        # 12. Calculate enhanced overall score with ATS components
-        ats_score = (
-            ats_analysis['overall_ats_score'] * 0.25 +
-            achievements_analysis['achievement_score'] * 0.20 +
-            section_analysis['completeness_score'] * 0.15 +
-            format_analysis['format_score'] * 0.10
-        )
+        if request.job.strip():
+            resume_skill_set = set()
+            for skills in resume_keywords.values():
+                resume_skill_set.update(skills)
+            
+            job_skill_set = set()
+            for skills in job_keywords.values():
+                job_skill_set.update(skills)
+            
+            missing_skills = job_skill_set - resume_skill_set
+            skill_gap_score = 1 - (len(missing_skills) / max(1, len(job_skill_set)))
+            
+            skill_gap_analysis = {
+                'missing_skills': list(missing_skills),
+                'skill_gap_score': skill_gap_score,
+                'resume_skills_count': len(resume_skill_set),
+                'job_skills_count': len(job_skill_set)
+            }
         
-        overall_score = (
-            semantic_similarity * 0.25 +
-            keyword_similarity * 0.20 +
-            level_analysis['level_match_score'] * 0.15 +
-            skill_gap_score * 0.10 +
-            ats_score * 0.30  # ATS components get significant weight
-        )
+        # 10. Calculate enhanced overall score
+        if request.job.strip():
+            # With job description
+            overall_score = (
+                semantic_similarity * 0.25 +
+                keyword_similarity * 0.20 +
+                standalone_analysis['standalone_score'] * 0.30 +
+                section_analysis['completeness_score'] * 0.15 +
+                format_analysis['format_score'] * 0.10
+            )
+        else:
+            # Without job description - use standalone score
+            overall_score = standalone_analysis['standalone_score']
         
-        # 13. Generate enhanced improvement suggestions
+        # 11. Generate enhanced improvement suggestions
         suggestions = []
         
-        # ATS-specific suggestions
-        if ats_analysis['action_verb_score'] < 0.5:
+        # Standalone suggestions
+        if standalone_analysis['content_score'] < 0.5:
+            suggestions.append("Add more detailed descriptions to your resume")
+        
+        if standalone_analysis['skills_diversity'] < 0.3:
+            suggestions.append("Include more technical skills and technologies")
+        
+        if standalone_analysis['action_verb_score'] < 0.3:
             suggestions.append("Use more strong action verbs to make your achievements stand out")
         
         if achievements_analysis['achievement_score'] < 0.3:
             suggestions.append("Add quantifiable achievements with specific numbers and percentages")
         
-        if section_analysis['completeness_score'] < 0.7:
+        if section_analysis['completeness_score'] < 0.6:
             missing_sections = section_analysis['missing_sections']
             suggestions.append(f"Add missing sections: {', '.join(missing_sections[:3])}")
         
         if not format_analysis['ats_friendly']:
             suggestions.append("Optimize formatting for ATS compatibility - use simple fonts and avoid tables/graphics")
         
-        # Original suggestions
-        if semantic_similarity < 0.5:
-            suggestions.append("Consider adding more relevant keywords from the job description")
-        if keyword_similarity < 0.3:
-            suggestions.append("Include more technical skills mentioned in the job posting")
-        if level_analysis['level_match_score'] < 0.5:
-            suggestions.append(f"Add more {request.jobLevel}-level experience indicators")
-        if skill_gap_score < 0.7:
-            suggestions.append(f"Consider learning: {', '.join(list(missing_skills)[:5])}")
+        # Job-specific suggestions (if job description provided)
+        if request.job.strip():
+            if semantic_similarity < 0.4:
+                suggestions.append("Consider adding more relevant keywords from the job description")
+            if keyword_similarity < 0.2:
+                suggestions.append("Include more technical skills mentioned in the job posting")
+            if skill_gap_analysis['skill_gap_score'] < 0.6:
+                suggestions.append(f"Consider learning: {', '.join(skill_gap_analysis['missing_skills'][:5])}")
         
         # Add LLM suggestions if available
         if llm_insights.get('suggestions'):
@@ -617,12 +677,9 @@ async def analyze(request: AnalysisRequest):
             'keyword_similarity': keyword_similarity,
             'resume_keywords': resume_keywords,
             'job_keywords': job_keywords,
-            'resume_skills': resume_skills,
-            'job_skills': job_skills,
-            'level_analysis': level_analysis,
-            'ats_analysis': ats_analysis,
-            'achievements_analysis': achievements_analysis,
             'section_analysis': section_analysis,
+            'standalone_analysis': standalone_analysis,
+            'achievements_analysis': achievements_analysis,
             'format_analysis': format_analysis,
             'llm_insights': llm_insights
         }
@@ -632,18 +689,14 @@ async def analyze(request: AnalysisRequest):
             jobLevel=request.jobLevel,
             overall_score=overall_score,
             keyword_match_score=keyword_similarity,
-            skill_gap_analysis={
-                'missing_skills': list(missing_skills),
-                'skill_gap_score': skill_gap_score,
-                'resume_skills_count': len(resume_skill_set),
-                'job_skills_count': len(job_skill_set)
-            },
-            improvement_suggestions=suggestions[:7],  # Increased to accommodate more suggestions
+            skill_gap_analysis=skill_gap_analysis,
+            improvement_suggestions=suggestions[:8],  # Increased to accommodate more suggestions
             detailed_analysis=detailed_analysis,
-            ats_score=ats_analysis['overall_ats_score'],
+            ats_score=standalone_analysis['action_verb_score'],
             achievement_score=achievements_analysis['achievement_score'],
             format_score=format_analysis['format_score'],
-            section_completeness=section_analysis['completeness_score']
+            section_completeness=section_analysis['completeness_score'],
+            standalone_score=standalone_analysis['standalone_score']
         )
         
     except Exception as e:
@@ -652,9 +705,9 @@ async def analyze(request: AnalysisRequest):
 
 @app.get('/health')
 async def health_check():
-    return {"status": "healthy", "service": "simplified-hybrid-analyzer"}
+    return {"status": "healthy", "service": "improved-hybrid-analyzer"}
 
 if __name__ == "__main__":
     import uvicorn
-    print("Starting Simplified Hybrid Resume Analysis Service...")
+    print("Starting Improved Hybrid Resume Analysis Service...")
     uvicorn.run(app, host="0.0.0.0", port=8001) 

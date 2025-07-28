@@ -859,3 +859,144 @@
     padding: 12px;
   }
 } 
+
+/* Standalone Analysis Styles */
+.standalone-card {
+  border-left: 4px solid #8b5cf6;
+}
+
+.dark .standalone-card {
+  border-left-color: #a78bfa;
+}
+
+.standalone-metrics {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.standalone-metric {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  font-size: 0.875rem;
+}
+
+.standalone-metric span:first-child {
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.dark .standalone-metric span:first-child {
+  color: #a0aec0;
+}
+
+.standalone-score {
+  font-weight: 600;
+  color: #8b5cf6;
+  background: rgba(139, 92, 246, 0.1);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+}
+
+.dark .standalone-score {
+  color: #a78bfa;
+  background: rgba(167, 139, 250, 0.2);
+}
+
+/* Enhanced section detection styles */
+.section-detection {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.dark .section-detection {
+  border-top-color: rgba(255, 255, 255, 0.08);
+}
+
+.section-detection h4 {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0 0 8px 0;
+}
+
+.dark .section-detection h4 {
+  color: #f8fafc;
+}
+
+.detected-sections-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 4px;
+  margin-bottom: 12px;
+}
+
+.section-indicator {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-align: center;
+}
+
+.section-indicator.detected {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.dark .section-indicator.detected {
+  background: rgba(22, 163, 74, 0.2);
+  color: #4ade80;
+  border: 1px solid rgba(22, 163, 74, 0.3);
+}
+
+.section-indicator.missing {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.dark .section-indicator.missing {
+  background: rgba(220, 38, 38, 0.2);
+  color: #f87171;
+  border: 1px solid rgba(220, 38, 38, 0.3);
+}
+
+.section-indicator.partial {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+.dark .section-indicator.partial {
+  background: rgba(217, 119, 6, 0.2);
+  color: #fbbf24;
+  border: 1px solid rgba(217, 119, 6, 0.3);
+}
+
+/* Enhanced skills display */
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 4px;
+  margin-top: 8px;
+}
+
+.skill-indicator {
+  padding: 3px 6px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 500;
+  text-align: center;
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.dark .skill-indicator {
+  background: rgba(59, 130, 246, 0.2);
+  color: #60a5fa;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+} 

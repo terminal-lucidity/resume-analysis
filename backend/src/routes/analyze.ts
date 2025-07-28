@@ -96,6 +96,7 @@ router.post("/", auth, async (req, res) => {
       skillGapAnalysis: analysisResult.skill_gap_analysis,
       improvementSuggestions: analysisResult.improvement_suggestions,
       detailedAnalysis: analysisResult.detailed_analysis,
+      standaloneScore: analysisResult.standalone_score, // Add this line
     });
   } catch (err) {
     console.error("Analysis error:", err);
@@ -146,6 +147,7 @@ router.post("/test", async (req, res) => {
       skillGapAnalysis: analysisResult.skill_gap_analysis,
       improvementSuggestions: analysisResult.improvement_suggestions,
       detailedAnalysis: analysisResult.detailed_analysis,
+      standaloneScore: analysisResult.standalone_score, // Add this line
     });
   } catch (err) {
     console.error("Test analysis error:", err);

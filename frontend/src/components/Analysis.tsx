@@ -29,22 +29,29 @@ interface AnalysisResult {
       weaknesses: string[];
       overall_assessment: string;
     };
-    ats_analysis?: {
+    standalone_analysis?: {
+      standalone_score: number;
+      content_score: number;
+      skills_diversity: number;
       action_verb_score: number;
-      found_action_verbs: string[];
-      ats_category_scores: Record<string, number>;
-      industry_scores: Record<string, number>;
-      overall_ats_score: number;
-    };
-    achievements_analysis?: {
-      quantifiable_achievements: string[];
-      achievement_sentences: string[];
       achievement_score: number;
+      section_score: number;
+      format_score: number;
+      experience_score: number;
+      found_skills: string[];
+      found_verbs: string[];
     };
     section_analysis?: {
       section_scores: Record<string, number>;
       completeness_score: number;
       missing_sections: string[];
+      detected_sections: string[];
+      detailed_section_analysis: Record<string, number>;
+    };
+    achievements_analysis?: {
+      quantifiable_achievements: string[];
+      achievement_sentences: string[];
+      achievement_score: number;
     };
     format_analysis?: {
       problematic_elements: string[];
@@ -58,6 +65,7 @@ interface AnalysisResult {
   achievement_score?: number;
   format_score?: number;
   section_completeness?: number;
+  standalone_score?: number;
 }
 
 const Analysis: React.FC = () => {
@@ -495,6 +503,49 @@ const Analysis: React.FC = () => {
                       <span key={index} className="skill-tag">{skill}</span>
                     ))}
                   </div>
+                </div>
+              )}
+
+              {showDetailed && analysisResult.detailedAnalysis.standalone_analysis && (
+                <div className="insights-card">
+                  <h3>Standalone Analysis</h3>
+                  <div className="ats-metrics">
+                    <div className="ats-metric">
+                      <span>Content Quality</span>
+                      <span className="metric-score">
+                        {(analysisResult.detailedAnalysis.standalone_analysis.content_score * 100).toFixed(0)}%
+                      </span>
+                    </div>
+                    <div className="ats-metric">
+                      <span>Skills Diversity</span>
+                      <span className="metric-score">
+                        {(analysisResult.detailedAnalysis.standalone_analysis.skills_diversity * 100).toFixed(0)}%
+                      </span>
+                    </div>
+                    <div className="ats-metric">
+                      <span>Action Verbs</span>
+                      <span className="metric-score">
+                        {(analysisResult.detailedAnalysis.standalone_analysis.action_verb_score * 100).toFixed(0)}%
+                      </span>
+                    </div>
+                    <div className="ats-metric">
+                      <span>Experience Level</span>
+                      <span className="metric-score">
+                        {(analysisResult.detailedAnalysis.standalone_analysis.experience_score * 100).toFixed(0)}%
+                      </span>
+                    </div>
+                  </div>
+                  
+                  {analysisResult.detailedAnalysis.standalone_analysis.found_skills.length > 0 && (
+                    <div className="ats-details">
+                      <h4>Detected Skills:</h4>
+                      <div className="action-verbs">
+                        {analysisResult.detailedAnalysis.standalone_analysis.found_skills.slice(0, 8).map((skill, index) => (
+                          <span key={index} className="verb-tag">{skill}</span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
             </>

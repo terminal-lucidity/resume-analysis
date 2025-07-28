@@ -11,29 +11,32 @@ import time
 from pathlib import Path
 
 def run_command(cmd, description):
-    """Run a command and handle errors"""
+    """Run a command and handle the result"""
     print(f"\n🔄 {description}")
     print(f"Command: {' '.join(cmd)}")
     
-    start_time = time.time()
-    result = subprocess.run(cmd, capture_output=True, text=True)
-    end_time = time.time()
-    
-    if result.returncode == 0:
-        print(f"✅ {description} completed successfully in {end_time - start_time:.2f}s")
-        if result.stdout:
-            print("Output:")
-            print(result.stdout)
-    else:
-        print(f"❌ {description} failed")
-        if result.stderr:
-            print("Error:")
-            print(result.stderr)
-        if result.stdout:
-            print("Output:")
-            print(result.stdout)
-    
-    return result.returncode == 0
+    try:
+        # Use the correct Python path
+        if cmd[0] == "python":
+            cmd[0] = "/Library/Frameworks/Python.framework/Versions/3.12/bin/python3"
+        
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=300)
+        
+        if result.returncode == 0:
+            print(f"✅ {description} completed successfully")
+            if result.stdout:
+                print(result.stdout)
+            return True
+        else:
+            print(f"❌ {description} failed")
+            print(f"Error:\n{result.stderr}")
+            return False
+    except subprocess.TimeoutExpired:
+        print(f"❌ {description} timed out")
+        return False
+    except Exception as e:
+        print(f"❌ {description} failed with exception: {e}")
+        return False
 
 def main():
     parser = argparse.ArgumentParser(description="Run resume analysis backend tests")

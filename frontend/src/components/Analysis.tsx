@@ -414,9 +414,9 @@ const Analysis: React.FC = () => {
                 </ul>
               </div>
 
-              {/* ATS Optimization Section */}
+              {/* Comprehensive Metrics Section (Detailed View) */}
               <div className="insights-card ats-card">
-                <h3>ATS Optimization</h3>
+                <h3>Resume Metrics</h3>
                 <div className="ats-metrics">
                   <div className="ats-metric">
                     <span>Action Verbs</span>
@@ -442,6 +442,28 @@ const Analysis: React.FC = () => {
                       {analysisResult.section_completeness ? (analysisResult.section_completeness * 100).toFixed(0) : 'N/A'}%
                     </span>
                   </div>
+                  {showDetailed && analysisResult.detailedAnalysis.standalone_analysis && (
+                    <>
+                      <div className="ats-metric">
+                        <span>Content Quality</span>
+                        <span className="metric-score">
+                          {(analysisResult.detailedAnalysis.standalone_analysis.content_score * 100).toFixed(0)}%
+                        </span>
+                      </div>
+                      <div className="ats-metric">
+                        <span>Skills Diversity</span>
+                        <span className="metric-score">
+                          {(analysisResult.detailedAnalysis.standalone_analysis.skills_diversity * 100).toFixed(0)}%
+                        </span>
+                      </div>
+                      <div className="ats-metric">
+                        <span>Experience Level</span>
+                        <span className="metric-score">
+                          {(analysisResult.detailedAnalysis.standalone_analysis.experience_score * 100).toFixed(0)}%
+                        </span>
+                      </div>
+                    </>
+                  )}
                 </div>
                 
                 {analysisResult.detailedAnalysis.ats_analysis && (
@@ -494,6 +516,18 @@ const Analysis: React.FC = () => {
                     )}
                   </div>
                 )}
+
+                {showDetailed && analysisResult.detailedAnalysis.standalone_analysis && 
+                 analysisResult.detailedAnalysis.standalone_analysis.found_skills.length > 0 && (
+                  <div className="ats-details">
+                    <h4>Detected Skills:</h4>
+                    <div className="action-verbs">
+                      {analysisResult.detailedAnalysis.standalone_analysis.found_skills.slice(0, 8).map((skill, index) => (
+                        <span key={index} className="verb-tag">{skill}</span>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
 
               {analysisResult.skillGapAnalysis.missing_skills.length > 0 && (
@@ -504,49 +538,6 @@ const Analysis: React.FC = () => {
                       <span key={index} className="skill-tag">{skill}</span>
                     ))}
                   </div>
-                </div>
-              )}
-
-              {showDetailed && analysisResult.detailedAnalysis.standalone_analysis && (
-                <div className="insights-card">
-                  <h3>Standalone Analysis</h3>
-                  <div className="ats-metrics">
-                    <div className="ats-metric">
-                      <span>Content Quality</span>
-                      <span className="metric-score">
-                        {(analysisResult.detailedAnalysis.standalone_analysis.content_score * 100).toFixed(0)}%
-                      </span>
-                    </div>
-                    <div className="ats-metric">
-                      <span>Skills Diversity</span>
-                      <span className="metric-score">
-                        {(analysisResult.detailedAnalysis.standalone_analysis.skills_diversity * 100).toFixed(0)}%
-                      </span>
-                    </div>
-                    <div className="ats-metric">
-                      <span>Action Verbs</span>
-                      <span className="metric-score">
-                        {(analysisResult.detailedAnalysis.standalone_analysis.action_verb_score * 100).toFixed(0)}%
-                      </span>
-                    </div>
-                    <div className="ats-metric">
-                      <span>Experience Level</span>
-                      <span className="metric-score">
-                        {(analysisResult.detailedAnalysis.standalone_analysis.experience_score * 100).toFixed(0)}%
-                      </span>
-                    </div>
-                  </div>
-                  
-                  {analysisResult.detailedAnalysis.standalone_analysis.found_skills.length > 0 && (
-                    <div className="ats-details">
-                      <h4>Detected Skills:</h4>
-                      <div className="action-verbs">
-                        {analysisResult.detailedAnalysis.standalone_analysis.found_skills.slice(0, 8).map((skill, index) => (
-                          <span key={index} className="verb-tag">{skill}</span>
-                        ))}
-                      </div>
-                    </div>
-                  )}
                 </div>
               )}
             </>
@@ -563,6 +554,38 @@ const Analysis: React.FC = () => {
                     <li key={index}>{suggestion}</li>
                   ))}
                 </ul>
+              </div>
+            </div>
+          )}
+
+          {!showDetailed && (
+            <div className="insights-card">
+              <h3>Key Metrics</h3>
+              <div className="ats-metrics">
+                <div className="ats-metric">
+                  <span>Overall Score</span>
+                  <span className="metric-score">
+                    {(analysisResult.overallScore * 100).toFixed(0)}%
+                  </span>
+                </div>
+                <div className="ats-metric">
+                  <span>ATS Optimization</span>
+                  <span className="metric-score">
+                    {analysisResult.section_completeness ? (analysisResult.section_completeness * 100).toFixed(0) : 'N/A'}%
+                  </span>
+                </div>
+                <div className="ats-metric">
+                  <span>Action Verbs</span>
+                  <span className="metric-score">
+                    {analysisResult.ats_score ? (analysisResult.ats_score * 100).toFixed(0) : 'N/A'}%
+                  </span>
+                </div>
+                <div className="ats-metric">
+                  <span>Achievements</span>
+                  <span className="metric-score">
+                    {analysisResult.achievement_score ? (analysisResult.achievement_score * 100).toFixed(0) : 'N/A'}%
+                  </span>
+                </div>
               </div>
             </div>
           )}

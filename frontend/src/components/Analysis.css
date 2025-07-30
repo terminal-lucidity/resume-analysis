@@ -629,27 +629,29 @@
 }
 
 .resume-header {
-  background: rgba(79, 70, 229, 0.1);
-  padding: 16px 24px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   display: flex;
   align-items: center;
   gap: 12px;
+  padding: 16px 24px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 12px 12px 0 0;
 }
 
 .dark .resume-header {
-  background: rgba(99, 102, 241, 0.15);
-  border-bottom-color: rgba(255, 255, 255, 0.08);
+  background: rgba(15, 15, 35, 0.8);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .resume-icon {
-  width: 20px;
-  height: 20px;
-  color: #4f46e5;
+  width: 24px;
+  height: 24px;
+  color: #6b7280;
 }
 
 .dark .resume-icon {
-  color: #818cf8;
+  color: #9ca3af;
 }
 
 .resume-header h2 {
@@ -657,10 +659,17 @@
   font-weight: 600;
   color: #1f2937;
   margin: 0;
+  flex: 1;
 }
 
 .dark .resume-header h2 {
   color: #f8fafc;
+}
+
+.resume-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .resume-container {
@@ -684,37 +693,51 @@
 .resume-line {
   position: relative;
   padding: 2px 0;
-  border-radius: 4px;
-  transition: background-color 0.2s ease;
+  line-height: 1.5;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 0.875rem;
+  color: #374151;
+  border-left: 2px solid transparent;
+  transition: all 0.2s ease;
 }
 
 .resume-line.has-issue {
-  background: rgba(239, 68, 68, 0.1);
-  border-left: 3px solid #ef4444;
+  border-left-color: rgba(239, 68, 68, 0.3);
+  background: rgba(239, 68, 68, 0.05);
   padding-left: 8px;
 }
 
 .dark .resume-line.has-issue {
-  background: rgba(239, 68, 68, 0.2);
-  border-left-color: #f87171;
+  border-left-color: rgba(248, 113, 113, 0.3);
+  background: rgba(248, 113, 113, 0.05);
 }
 
 .line-text {
-  display: inline;
+  display: block;
+  padding-right: 24px;
 }
 
 .issue-indicator {
   position: absolute;
-  right: 8px;
+  right: -8px;
   top: 50%;
   transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  background: rgba(239, 68, 68, 0.1);
+  border-radius: 50%;
   cursor: pointer;
+  transition: all 0.2s ease;
 }
 
 .issue-icon {
-  width: 16px;
-  height: 16px;
+  width: 10px;
+  height: 10px;
   color: #ef4444;
+  opacity: 0.8;
 }
 
 .dark .issue-icon {
@@ -726,24 +749,24 @@
   right: 24px;
   top: 50%;
   transform: translateY(-50%);
-  background: #1f2937;
+  background: rgba(0, 0, 0, 0.9);
   color: white;
   padding: 8px 12px;
-  border-radius: 8px;
+  border-radius: 6px;
   font-size: 0.75rem;
   white-space: nowrap;
   opacity: 0;
   visibility: hidden;
   transition: all 0.2s ease;
-  z-index: 10;
+  z-index: 1000;
   max-width: 200px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  word-wrap: break-word;
+  white-space: normal;
 }
 
 .dark .issue-tooltip {
-  background: #0f0f23;
+  background: rgba(15, 15, 35, 0.95);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
 }
 
 .issue-tooltip::after {
@@ -754,13 +777,13 @@
   transform: translateY(-50%);
   width: 0;
   height: 0;
-  border-left: 4px solid #1f2937;
+  border-left: 4px solid rgba(0, 0, 0, 0.9);
   border-top: 4px solid transparent;
   border-bottom: 4px solid transparent;
 }
 
 .dark .issue-tooltip::after {
-  border-left-color: #0f0f23;
+  border-left-color: rgba(15, 15, 35, 0.95);
 }
 
 .issue-indicator:hover .issue-tooltip {
@@ -770,6 +793,7 @@
 
 .issue-message {
   margin-bottom: 4px;
+  line-height: 1.3;
 }
 
 .issue-message:last-child {

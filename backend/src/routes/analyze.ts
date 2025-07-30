@@ -96,7 +96,12 @@ router.post("/", auth, async (req, res) => {
       skillGapAnalysis: analysisResult.skill_gap_analysis,
       improvementSuggestions: analysisResult.improvement_suggestions,
       detailedAnalysis: analysisResult.detailed_analysis,
-      standaloneScore: analysisResult.standalone_score, // Add this line
+      standaloneScore: analysisResult.standalone_score,
+      // Add ATS-specific fields for frontend compatibility
+      ats_score: analysisResult.ats_score,
+      achievement_score: analysisResult.achievement_score,
+      format_score: analysisResult.format_score,
+      section_completeness: analysisResult.section_completeness,
     });
   } catch (err) {
     console.error("Analysis error:", err);
@@ -147,7 +152,12 @@ router.post("/test", async (req, res) => {
       skillGapAnalysis: analysisResult.skill_gap_analysis,
       improvementSuggestions: analysisResult.improvement_suggestions,
       detailedAnalysis: analysisResult.detailed_analysis,
-      standaloneScore: analysisResult.standalone_score, // Add this line
+      standaloneScore: analysisResult.standalone_score,
+      // Add ATS-specific fields for frontend compatibility
+      ats_score: analysisResult.ats_score,
+      achievement_score: analysisResult.achievement_score,
+      format_score: analysisResult.format_score,
+      section_completeness: analysisResult.section_completeness,
     });
   } catch (err) {
     console.error("Test analysis error:", err);

@@ -60,6 +60,9 @@ interface AnalysisResult {
       format_score: number;
       ats_friendly: boolean;
     };
+    ats_analysis?: {
+      found_action_verbs: string[];
+    };
   };
   ats_score?: number;
   achievement_score?: number;
@@ -78,6 +81,7 @@ const Analysis: React.FC = () => {
   const [showDetailed, setShowDetailed] = useState(false);
   const [resumeText, setResumeText] = useState<string>('');
   const [issues, setIssues] = useState<Array<{start: number, end: number, message: string}>>([]);
+  const [showIssues, setShowIssues] = useState(false);
 
   useEffect(() => {
     console.log('Analysis component mounted');
@@ -238,27 +242,22 @@ const Analysis: React.FC = () => {
   const generateIssues = (text: string, result: AnalysisResult) => {
     const newIssues: Array<{start: number, end: number, message: string}> = [];
     
-    // Add issues based on missing skills
-    if (result.skillGapAnalysis?.missing_skills) {
-      result.skillGapAnalysis.missing_skills.forEach(skill => {
-        // Find if the skill is mentioned in the resume
-        const skillIndex = text.toLowerCase().indexOf(skill.toLowerCase());
-        if (skillIndex === -1) {
-          // Skill not found, add a general issue
-          newIssues.push({
-            start: 0,
-            end: 50,
-            message: `Missing skill: ${skill}`
-          });
-        }
+    // Only generate issues if there are significant problems
+    if (result.skillGapAnalysis?.missing_skills && result.skillGapAnalysis.missing_skills.length > 0) {
+      // Add a single issue for missing skills instead of multiple
+      newIssues.push({
+        start: 0,
+        end: 100,
+        message: `Missing skills: ${result.skillGapAnalysis.missing_skills.slice(0, 3).join(', ')}`
       });
     }
 
-    // Add issues based on improvement suggestions
-    result.improvementSuggestions?.forEach((suggestion, index) => {
+    // Add issues based on improvement suggestions (limit to 2-3 most important)
+    const importantSuggestions = result.improvementSuggestions?.slice(0, 2) || [];
+    importantSuggestions.forEach((suggestion, index) => {
       newIssues.push({
-        start: Math.min(index * 100, text.length - 50),
-        end: Math.min(index * 100 + 50, text.length),
+        start: Math.min(index * 200, text.length - 100),
+        end: Math.min(index * 200 + 100, text.length),
         message: suggestion
       });
     });
@@ -278,9 +277,11 @@ const Analysis: React.FC = () => {
     return (
       <div className="resume-content">
         {lines.map((line, lineIndex) => {
-          const lineIssues = issues.filter(issue => 
+          // Only show issues for lines that actually have content and if showIssues is enabled
+          const hasContent = line.trim().length > 0;
+          const lineIssues = (hasContent && showIssues) ? issues.filter(issue => 
             issue.start <= lineIndex * 50 && issue.end >= lineIndex * 50
-          );
+          ) : [];
 
           return (
             <div key={lineIndex} className={`resume-line ${lineIssues.length > 0 ? 'has-issue' : ''}`}>
@@ -471,7 +472,7 @@ const Analysis: React.FC = () => {
                     {analysisResult.detailedAnalysis.section_analysis.detected_sections && 
                      analysisResult.detailedAnalysis.section_analysis.detected_sections.length > 0 && (
                       <div>
-                        <h4>Detected Sections:</h4>
+                        <h4>✅ Detected Sections:</h4>
                         <div className="detected-sections">
                           {analysisResult.detailedAnalysis.section_analysis.detected_sections.map((section, index) => (
                             <span key={index} className="section-tag detected">{section}</span>
@@ -483,7 +484,7 @@ const Analysis: React.FC = () => {
                     {analysisResult.detailedAnalysis.section_analysis.missing_sections && 
                      analysisResult.detailedAnalysis.section_analysis.missing_sections.length > 0 && (
                       <div>
-                        <h4>Missing Sections:</h4>
+                        <h4>❌ Missing Sections:</h4>
                         <div className="missing-sections">
                           {analysisResult.detailedAnalysis.section_analysis.missing_sections.map((section, index) => (
                             <span key={index} className="section-tag missing">{section}</span>
@@ -571,6 +572,16 @@ const Analysis: React.FC = () => {
           <div className="resume-header">
             <FileText className="resume-icon" />
             <h2>{analysisData.selectedResume.fileName}</h2>
+            <div className="resume-controls">
+              <button
+                className={`toggle-button ${showIssues ? 'active' : ''}`}
+                onClick={() => setShowIssues(!showIssues)}
+                title={showIssues ? "Hide Issues" : "Show Issues"}
+              >
+                {showIssues ? <EyeOff className="button-icon" /> : <AlertCircle className="button-icon" />}
+                {showIssues ? "Hide Issues" : "Show Issues"}
+              </button>
+            </div>
           </div>
           <div className="resume-container">
             {renderResumeWithIssues()}

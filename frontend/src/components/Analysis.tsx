@@ -482,9 +482,17 @@ const Analysis: React.FC = () => {
                   <div className="ats-details">
                     <h4>Quantifiable Achievements:</h4>
                     <ul className="achievements-list">
-                      {analysisResult.detailedAnalysis.achievements_analysis.quantifiable_achievements.slice(0, 3).map((achievement, index) => (
-                        <li key={index}>{achievement}</li>
-                      ))}
+                      {analysisResult.detailedAnalysis.achievements_analysis.quantifiable_achievements
+                        .filter(achievement => 
+                          // Filter out standalone percentages and keep only meaningful achievements
+                          achievement.length > 10 && 
+                          !/^\d+%$/.test(achievement.trim()) &&
+                          !/^\d+\.\d+%$/.test(achievement.trim())
+                        )
+                        .slice(0, 3)
+                        .map((achievement, index) => (
+                          <li key={index}>{achievement}</li>
+                        ))}
                     </ul>
                   </div>
                 )}

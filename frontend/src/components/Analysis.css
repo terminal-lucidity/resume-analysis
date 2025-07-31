@@ -781,22 +781,29 @@
   white-space: pre-wrap;
   word-wrap: break-word;
   max-width: 100%;
+  margin: 0;
+  padding: 0;
 }
 
 .dark .resume-content {
-  color: #e2e8f0;
+  color: #e5e7eb;
 }
 
 .resume-line {
   position: relative;
-  padding: 4px 0;
+  padding: 2px 0;
   line-height: 1.6;
   font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
   font-size: 0.875rem;
   color: #374151;
   border-left: 2px solid transparent;
   transition: all 0.2s ease;
-  margin-bottom: 2px;
+  margin: 0;
+  min-height: 1.6em;
+}
+
+.dark .resume-line {
+  color: #e5e7eb;
 }
 
 .resume-line.has-issue {
@@ -816,6 +823,8 @@
   padding-right: 24px;
   word-break: break-word;
   hyphens: auto;
+  margin: 0;
+  line-height: inherit;
 }
 
 .issue-indicator {

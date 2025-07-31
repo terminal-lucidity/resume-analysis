@@ -273,7 +273,10 @@ const Analysis: React.FC = () => {
   const renderResumeWithIssues = () => {
     if (!resumeText) return <div className="no-resume-text">No resume text available</div>;
 
-    const lines = resumeText.split('\n');
+    const lines = resumeText.split('\n')
+      .map(line => line.trim()) // Remove leading/trailing whitespace
+      .filter(line => line.length > 0); // Remove empty lines
+    
     return (
       <div className="resume-content">
         {lines.map((line, lineIndex) => {

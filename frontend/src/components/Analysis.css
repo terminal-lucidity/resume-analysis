@@ -732,17 +732,55 @@
 }
 
 .resume-container {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 0 0 12px 12px;
   padding: 24px;
-  max-height: calc(100vh - 200px);
+  height: 600px;
   overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+}
+
+.dark .resume-container {
+  background: rgba(15, 15, 35, 0.3);
+}
+
+.resume-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.resume-container::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 4px;
+}
+
+.resume-container::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  transition: background 0.2s ease;
+}
+
+.resume-container::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.dark .resume-container::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.dark .resume-container::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
 }
 
 .resume-content {
-  font-family: 'Courier New', monospace;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
   font-size: 0.875rem;
   line-height: 1.6;
-  color: #1f2937;
+  color: #374151;
   white-space: pre-wrap;
+  word-wrap: break-word;
+  max-width: 100%;
 }
 
 .dark .resume-content {
@@ -751,19 +789,21 @@
 
 .resume-line {
   position: relative;
-  padding: 2px 0;
-  line-height: 1.5;
+  padding: 4px 0;
+  line-height: 1.6;
   font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
   font-size: 0.875rem;
   color: #374151;
   border-left: 2px solid transparent;
   transition: all 0.2s ease;
+  margin-bottom: 2px;
 }
 
 .resume-line.has-issue {
   border-left-color: rgba(239, 68, 68, 0.3);
   background: rgba(239, 68, 68, 0.05);
   padding-left: 8px;
+  border-radius: 4px;
 }
 
 .dark .resume-line.has-issue {
@@ -774,6 +814,8 @@
 .line-text {
   display: block;
   padding-right: 24px;
+  word-break: break-word;
+  hyphens: auto;
 }
 
 .issue-indicator {

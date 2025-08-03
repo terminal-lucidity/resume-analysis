@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Upload, FileText, Trash2, Plus, CheckCircle, AlertCircle, Search, ArrowRight } from 'lucide-react';
+import { Upload, FileText, Trash2, Plus, CheckCircle, AlertCircle, Search, ArrowRight, Building2, Briefcase } from 'lucide-react';
 import './Dashboard.css';
 
 interface Resume {
@@ -279,6 +279,26 @@ const Dashboard: React.FC = () => {
       </div>
 
       <div className="dashboard-content">
+        {/* Quick Access Section */}
+        <div className="quick-access-section">
+          <div className="quick-access-card">
+            <div className="quick-access-icon">
+              <Building2 className="quick-access-icon-svg" />
+            </div>
+            <div className="quick-access-content">
+              <h3>Company Tracker</h3>
+              <p>Track your job applications and manage companies you're interested in.</p>
+              <button 
+                className="quick-access-btn"
+                onClick={() => window.location.href = '/tracker'}
+              >
+                <Briefcase className="btn-icon" />
+                Open Company Tracker
+              </button>
+            </div>
+          </div>
+        </div>
+
         <div className="dashboard-panel">
           {/* Column 1: Info Section (Upload or Analyze) */}
           <div className="upload-info-section">

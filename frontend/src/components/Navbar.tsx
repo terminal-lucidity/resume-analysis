@@ -151,6 +151,26 @@ const Navbar: React.FC<NavbarProps> = ({ className = '' }) => {
               Features
             </button>
           </li>
+          {isAuthenticated && (
+            <li className="navbar-item">
+              <button 
+                className="navbar-link"
+                onClick={() => handleLinkClick('/dashboard')}
+              >
+                Dashboard
+              </button>
+            </li>
+          )}
+          {isAuthenticated && (
+            <li className="navbar-item">
+              <button 
+                className="navbar-link"
+                onClick={() => handleLinkClick('/tracker')}
+              >
+                Company Tracker
+              </button>
+            </li>
+          )}
           <li className="navbar-item">
             <button 
               className="navbar-link"

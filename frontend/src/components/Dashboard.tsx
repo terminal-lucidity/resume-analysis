@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Upload, FileText, Trash2, Plus, CheckCircle, AlertCircle, Search, ArrowRight } from 'lucide-react';
+import { Upload, FileText, Trash2, Plus, AlertCircle, Search, ArrowRight, Loader2, Check } from 'lucide-react';
 import './Dashboard.css';
 
 interface Resume {
@@ -32,6 +32,10 @@ const Dashboard: React.FC = () => {
   const [showResumeModal, setShowResumeModal] = useState(false);
   const [selectedResumeId, setSelectedResumeId] = useState<string | null>(null);
   const [jobLevel, setJobLevel] = useState('');
+  
+  // Smart button states
+  const [loadingResumeId, setLoadingResumeId] = useState<string | null>(null);
+  const [buttonStates, setButtonStates] = useState<{[key: string]: 'idle' | 'hover' | 'pressed' | 'loading'}>({});
 
   // Refs for scroll animations
   const headerRef = useRef<HTMLDivElement>(null);
@@ -177,8 +181,38 @@ const Dashboard: React.FC = () => {
     }
   };
 
+  const handleActivate = async (resumeId: string) => {
+    setLoadingResumeId(resumeId);
+    setButtonStates(prev => ({ ...prev, [`activate-${resumeId}`]: 'loading' }));
+    
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`http://localhost:3000/api/resumes/${resumeId}/activate`, {
+        method: 'PATCH',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Activation failed');
+      }
+
+      fetchResumes(); // Refresh the resumes list
+    } catch (error) {
+      console.error('Activation error:', error);
+      setError('Activation failed. Please try again.');
+    } finally {
+      setLoadingResumeId(null);
+      setButtonStates(prev => ({ ...prev, [`activate-${resumeId}`]: 'idle' }));
+    }
+  };
+
   const handleDelete = async (resumeId: string) => {
     if (!confirm('Are you sure you want to delete this resume?')) return;
+
+    setLoadingResumeId(resumeId);
+    setButtonStates(prev => ({ ...prev, [`delete-${resumeId}`]: 'loading' }));
 
     try {
       const token = localStorage.getItem('token');
@@ -197,28 +231,27 @@ const Dashboard: React.FC = () => {
     } catch (error) {
       console.error('Delete error:', error);
       setError('Delete failed. Please try again.');
+    } finally {
+      setLoadingResumeId(null);
+      setButtonStates(prev => ({ ...prev, [`delete-${resumeId}`]: 'idle' }));
     }
   };
 
-  const handleActivate = async (resumeId: string) => {
-    try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:3000/api/resumes/${resumeId}/activate`, {
-        method: 'PATCH',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
+  // Smart button interaction handlers
+  const handleButtonMouseEnter = (resumeId: string, buttonType: 'activate' | 'delete') => {
+    setButtonStates(prev => ({ ...prev, [`${buttonType}-${resumeId}`]: 'hover' }));
+  };
 
-      if (!response.ok) {
-        throw new Error('Activation failed');
-      }
+  const handleButtonMouseLeave = (resumeId: string, buttonType: 'activate' | 'delete') => {
+    setButtonStates(prev => ({ ...prev, [`${buttonType}-${resumeId}`]: 'idle' }));
+  };
 
-      fetchResumes(); // Refresh the resumes list
-    } catch (error) {
-      console.error('Activation error:', error);
-      setError('Activation failed. Please try again.');
-    }
+  const handleButtonMouseDown = (resumeId: string, buttonType: 'activate' | 'delete') => {
+    setButtonStates(prev => ({ ...prev, [`${buttonType}-${resumeId}`]: 'pressed' }));
+  };
+
+  const handleButtonMouseUp = (resumeId: string, buttonType: 'activate' | 'delete') => {
+    setButtonStates(prev => ({ ...prev, [`${buttonType}-${resumeId}`]: 'hover' }));
   };
 
   const handleAnalyzeJob = async (e: React.FormEvent) => {
@@ -526,24 +559,50 @@ const Dashboard: React.FC = () => {
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
-                              if (!resume.isActive) {
+                              if (!resume.isActive && loadingResumeId !== resume.id) {
                                 handleActivate(resume.id);
                               }
                             }}
-                            className={`active-toggle ${resume.isActive ? 'active' : 'inactive'}`}
+                            onMouseEnter={() => handleButtonMouseEnter(resume.id, 'activate')}
+                            onMouseLeave={() => handleButtonMouseLeave(resume.id, 'activate')}
+                            onMouseDown={() => handleButtonMouseDown(resume.id, 'activate')}
+                            onMouseUp={() => handleButtonMouseUp(resume.id, 'activate')}
+                            className={`active-toggle ${resume.isActive ? 'active' : 'inactive'} ${
+                              buttonStates[`activate-${resume.id}`] || 'idle'
+                            } ${loadingResumeId === resume.id ? 'loading' : ''}`}
                             title={resume.isActive ? 'Active Resume' : 'Set as Active'}
+                            disabled={loadingResumeId === resume.id}
                           >
-                            <CheckCircle className="active-icon" />
+                            {loadingResumeId === resume.id ? (
+                              <Loader2 className="active-icon animate-spin" />
+                            ) : (
+                              <div className={`checkmark-container ${resume.isActive ? 'active' : ''}`}>
+                                <Check className="checkmark-icon" strokeWidth={2.5} />
+                              </div>
+                            )}
                           </button>
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
-                              handleDelete(resume.id);
+                              if (loadingResumeId !== resume.id) {
+                                handleDelete(resume.id);
+                              }
                             }}
-                            className="delete-toggle"
+                            onMouseEnter={() => handleButtonMouseEnter(resume.id, 'delete')}
+                            onMouseLeave={() => handleButtonMouseLeave(resume.id, 'delete')}
+                            onMouseDown={() => handleButtonMouseDown(resume.id, 'delete')}
+                            onMouseUp={() => handleButtonMouseUp(resume.id, 'delete')}
+                            className={`delete-toggle ${buttonStates[`delete-${resume.id}`] || 'idle'} ${
+                              loadingResumeId === resume.id ? 'loading' : ''
+                            }`}
                             title="Delete Resume"
+                            disabled={loadingResumeId === resume.id}
                           >
-                            <Trash2 className="delete-icon" />
+                            {loadingResumeId === resume.id ? (
+                              <Loader2 className="delete-icon animate-spin" />
+                            ) : (
+                              <Trash2 className="delete-icon" />
+                            )}
                           </button>
                         </div>
                       </div>
@@ -597,7 +656,11 @@ const Dashboard: React.FC = () => {
                         <h4>{resume.fileName}</h4>
                         <p>{formatFileSize(resume.fileSize)} • {formatDate(resume.createdAt)}</p>
                       </div>
-                      {resume.isActive && <CheckCircle className="active-icon" />}
+                      {resume.isActive && 
+                        <div className="checkmark-container active">
+                          <Check className="checkmark-icon" strokeWidth={2.5} />
+                        </div>
+                      }
                     </div>
                   ))}
                 </div>

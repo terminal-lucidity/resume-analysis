@@ -1996,103 +1996,7 @@
   gap: 8px;
 }
 
-.active-toggle {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 4px;
-  border-radius: 50%;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-}
-
-.active-toggle.active {
-  color: #10b981;
-  background: rgba(16, 185, 129, 0.1);
-}
-
-.active-toggle.inactive {
-  color: #9ca3af;
-  background: rgba(156, 163, 175, 0.1);
-  opacity: 0.6;
-}
-
-.active-toggle:hover {
-  transform: scale(1.1);
-  background: rgba(16, 185, 129, 0.2);
-  color: #10b981;
-}
-
-.active-toggle.inactive:hover {
-  opacity: 1;
-  background: rgba(16, 185, 129, 0.15);
-  color: #10b981;
-}
-
-.delete-toggle {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 4px;
-  border-radius: 50%;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  color: #9ca3af;
-  background: rgba(156, 163, 175, 0.1);
-  opacity: 0.6;
-}
-
-.delete-toggle:hover {
-  transform: scale(1.1);
-  background: rgba(239, 68, 68, 0.15);
-  color: #ef4444;
-  opacity: 1;
-}
-
-.delete-icon {
-  width: 14px;
-  height: 14px;
-}
-
-.dark .active-toggle.active {
-  color: #34d399;
-  background: rgba(52, 211, 153, 0.1);
-}
-
-.dark .active-toggle.inactive {
-  color: #6b7280;
-  background: rgba(107, 114, 128, 0.1);
-}
-
-.dark .active-toggle:hover {
-  background: rgba(52, 211, 153, 0.2);
-  color: #34d399;
-}
-
-.dark .active-toggle.inactive:hover {
-  background: rgba(52, 211, 153, 0.15);
-  color: #34d399;
-}
-
-.dark .delete-toggle {
-  color: #6b7280;
-  background: rgba(107, 114, 128, 0.1);
-}
-
-.dark .delete-toggle:hover {
-  background: rgba(239, 68, 68, 0.2);
-  color: #f87171;
-}
-
-.active-icon {
-  width: 16px;
-  height: 16px;
-}
+/* Old button styles removed - replaced with modern clean design */
 
 /* Removed selected indicator - redundant with active checkmark */
 
@@ -2195,6 +2099,346 @@
   background: linear-gradient(135deg, #065f46 0%, #047857 100%);
   box-shadow: 0 4px 12px rgba(110, 231, 183, 0.2);
   border-color: rgba(110, 231, 183, 0.3);
+} 
+
+/* Ultra Minimalist Button Styles */
+.active-toggle,
+.delete-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: 1px solid transparent;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 6px;
+  transition: all 0.15s ease;
+  position: relative;
+  min-width: 28px;
+  min-height: 28px;
+}
+
+.active-toggle.active {
+  background: rgba(99, 102, 241, 0.04);
+  border-color: rgba(99, 102, 241, 0.15);
+}
+
+.active-toggle.inactive {
+  background: rgba(156, 163, 175, 0.03);
+  border-color: rgba(156, 163, 175, 0.1);
+  opacity: 0.7;
+}
+
+.active-toggle.hover {
+  background: rgba(99, 102, 241, 0.06);
+  border-color: rgba(99, 102, 241, 0.2);
+}
+
+.active-toggle.inactive.hover {
+  opacity: 1;
+  background: rgba(99, 102, 241, 0.04);
+  border-color: rgba(99, 102, 241, 0.15);
+}
+
+.active-toggle.pressed {
+  background: rgba(99, 102, 241, 0.08);
+  border-color: rgba(99, 102, 241, 0.25);
+}
+
+.active-toggle.loading {
+  cursor: not-allowed;
+  opacity: 0.7;
+  background: rgba(99, 102, 241, 0.04);
+  border-color: rgba(99, 102, 241, 0.15);
+}
+
+.delete-toggle {
+  color: #d1d5db;
+  border-color: rgba(209, 213, 219, 0.15);
+  opacity: 0.5;
+}
+
+.delete-toggle.hover {
+  background: rgba(239, 68, 68, 0.04);
+  border-color: rgba(239, 68, 68, 0.3);
+  color: #ef4444;
+  opacity: 1;
+}
+
+.delete-toggle.pressed {
+  background: rgba(239, 68, 68, 0.08);
+  border-color: rgba(239, 68, 68, 0.4);
+}
+
+.delete-toggle.loading {
+  cursor: not-allowed;
+  opacity: 0.7;
+  color: #ef4444;
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+.active-icon,
+.delete-icon {
+  width: 14px;
+  height: 14px;
+  transition: all 0.15s ease;
+  stroke-width: 2;
+}
+
+.active-icon {
+  stroke: currentColor;
+  fill: none;
+}
+
+/* Custom Checkmark Container */
+.checkmark-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  background: rgba(99, 102, 241, 0.1);
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.checkmark-container.active {
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  border-color: #6366f1;
+  box-shadow: 0 2px 4px rgba(99, 102, 241, 0.2);
+}
+
+.checkmark-icon {
+  width: 10px;
+  height: 10px;
+  stroke: #6366f1;
+  fill: none;
+  stroke-width: 2.5;
+  transition: all 0.2s ease;
+}
+
+.checkmark-container.active .checkmark-icon {
+  stroke: #ffffff;
+}
+
+/* Hover states for checkmark container */
+.active-toggle:hover .checkmark-container {
+  background: rgba(99, 102, 241, 0.15);
+  border-color: rgba(99, 102, 241, 0.3);
+  transform: scale(1.05);
+}
+
+.active-toggle:hover .checkmark-container.active {
+  background: linear-gradient(135deg, #5855eb 0%, #7c3aed 100%);
+  box-shadow: 0 3px 6px rgba(99, 102, 241, 0.3);
+}
+
+.active-toggle.pressed .checkmark-container {
+  transform: scale(0.95);
+}
+
+.active-toggle:hover .delete-icon,
+.delete-toggle:hover .delete-icon {
+  opacity: 1;
+  stroke-width: 2.5;
+}
+
+.active-toggle.pressed .delete-icon,
+.delete-toggle.pressed .delete-icon {
+  opacity: 0.9;
+  stroke-width: 3;
+}
+
+/* Dark mode styles for checkmark container */
+.dark .checkmark-container {
+  background: rgba(129, 140, 248, 0.12);
+  border-color: rgba(129, 140, 248, 0.25);
+}
+
+.dark .checkmark-container.active {
+  background: linear-gradient(135deg, #818cf8 0%, #a78bfa 100%);
+  border-color: #818cf8;
+  box-shadow: 0 2px 4px rgba(129, 140, 248, 0.3);
+}
+
+.dark .checkmark-icon {
+  stroke: #818cf8;
+}
+
+.dark .checkmark-container.active .checkmark-icon {
+  stroke: #ffffff;
+}
+
+.dark .active-toggle:hover .checkmark-container {
+  background: rgba(129, 140, 248, 0.18);
+  border-color: rgba(129, 140, 248, 0.35);
+}
+
+.dark .active-toggle:hover .checkmark-container.active {
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  box-shadow: 0 3px 6px rgba(129, 140, 248, 0.4);
+}
+
+/* Dark mode button styles */
+.dark .active-toggle.active {
+  background: rgba(129, 140, 248, 0.06);
+  border-color: rgba(129, 140, 248, 0.2);
+}
+
+.dark .active-toggle.inactive {
+  background: rgba(107, 114, 128, 0.05);
+  border-color: rgba(107, 114, 128, 0.15);
+  opacity: 0.7;
+}
+
+.dark .active-toggle.hover {
+  background: rgba(129, 140, 248, 0.08);
+  border-color: rgba(129, 140, 248, 0.25);
+}
+
+.dark .active-toggle.inactive.hover {
+  background: rgba(129, 140, 248, 0.06);
+  border-color: rgba(129, 140, 248, 0.2);
+  opacity: 1;
+}
+
+.dark .active-toggle.pressed {
+  background: rgba(129, 140, 248, 0.1);
+  border-color: rgba(129, 140, 248, 0.3);
+}
+
+.dark .delete-toggle {
+  color: #6b7280;
+  border-color: rgba(107, 114, 128, 0.25);
+  opacity: 0.5;
+}
+
+.dark .delete-toggle.hover {
+  background: rgba(248, 113, 113, 0.06);
+  border-color: rgba(248, 113, 113, 0.4);
+  color: #f87171;
+  opacity: 1;
+}
+
+.dark .delete-toggle.pressed {
+  background: rgba(248, 113, 113, 0.1);
+  border-color: rgba(248, 113, 113, 0.5);
+}
+
+/* Loading animation */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* Enhanced resume item interactions */
+.resume-item {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.resume-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(79, 70, 229, 0.12);
+}
+
+.resume-item:hover .status-indicators {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.status-indicators {
+  opacity: 0.7;
+  transform: translateY(2px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Removed ripple effect for cleaner design */
+
+/* Minimal focus states for accessibility */
+.active-toggle:focus,
+.delete-toggle:focus {
+  outline: none;
+  box-shadow: 0 0 0 1px rgba(99, 102, 241, 0.5);
+}
+
+.dark .active-toggle:focus,
+.dark .delete-toggle:focus {
+  box-shadow: 0 0 0 1px rgba(139, 92, 246, 0.5);
+}
+
+/* Minimal disabled state */
+.active-toggle:disabled,
+.delete-toggle:disabled {
+  cursor: not-allowed;
+  opacity: 0.3;
+  border-color: transparent;
+}
+
+.active-toggle:disabled:hover,
+.delete-toggle:disabled:hover {
+  background: none;
+  color: inherit;
+  border-color: transparent;
+}
+
+/* Enhanced analysis badge */
+.analysis-badge {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.analysis-badge::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.analysis-badge:hover::before {
+  left: 100%;
+}
+
+.analysis-badge:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(5, 150, 105, 0.2);
+}
+
+/* Resume item selection feedback */
+.resume-item.selected {
+  border-color: #4f46e5;
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  box-shadow: 0 4px 16px rgba(79, 70, 229, 0.15);
+}
+
+.resume-item.selected:hover {
+  background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+  box-shadow: 0 8px 24px rgba(79, 70, 229, 0.2);
+}
+
+.dark .resume-item.selected {
+  border-color: #818cf8;
+  background: linear-gradient(135deg, #0a0a1a 0%, #1a1a3a 100%);
+  box-shadow: 0 4px 16px rgba(129, 140, 248, 0.2);
+}
+
+.dark .resume-item.selected:hover {
+  background: linear-gradient(135deg, #1a1a3a 0%, #2d2d5a 100%);
+  box-shadow: 0 8px 24px rgba(129, 140, 248, 0.25);
 } 
 
  

@@ -91,11 +91,45 @@ const CompanyTracker: React.FC = () => {
       localStorage.setItem('hasVisitedTracker', 'true');
     }
 
-    // Initialize theme
+    // Initialize theme immediately
     const savedTheme = localStorage.getItem('theme') as 'light' | 'dark';
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     const initialTheme = savedTheme || (prefersDark ? 'dark' : 'light');
+    
+    // Apply theme to document and body
+    document.documentElement.setAttribute('data-theme', initialTheme);
     document.body.setAttribute('data-theme', initialTheme);
+    
+    // Apply theme to the component container
+    const container = document.querySelector('.company-tracker');
+    if (container) {
+      container.setAttribute('data-theme', initialTheme);
+    }
+
+    // Listen for theme changes
+    const handleThemeChange = () => {
+      const currentTheme = localStorage.getItem('theme') as 'light' | 'dark';
+      const theme = currentTheme || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      
+      document.documentElement.setAttribute('data-theme', theme);
+      document.body.setAttribute('data-theme', theme);
+      
+      if (container) {
+        container.setAttribute('data-theme', theme);
+      }
+    };
+
+    // Listen for storage changes (theme changes from other components)
+    window.addEventListener('storage', handleThemeChange);
+    
+    // Listen for theme preference changes
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    mediaQuery.addEventListener('change', handleThemeChange);
+
+    return () => {
+      window.removeEventListener('storage', handleThemeChange);
+      mediaQuery.removeEventListener('change', handleThemeChange);
+    };
   }, []);
 
   // Intersection Observer for scroll animations
@@ -325,6 +359,8 @@ const CompanyTracker: React.FC = () => {
   const handleOnboardingSkip = () => {
     setShowOnboarding(false);
   };
+
+
 
   if (isLoading) {
     return (

@@ -28,8 +28,8 @@ body {
 }
 
 .dark body {
-  background-color: #0a0f1c;
-  color: #f8fafc;
+  background: linear-gradient(135deg, #0a0b0d 0%, #12141a 100%);
+  color: #ffffff;
 }
 
 code {
@@ -42,8 +42,8 @@ code {
 }
 
 .dark ::selection {
-  background-color: #60a5fa;
-  color: #0a0f1c;
+  background-color: #4f6bff;
+  color: #0a0b0d;
 }
 
 /* Focus styles for better accessibility */
@@ -112,7 +112,7 @@ html {
 }
 
 .dark ::-webkit-scrollbar-track {
-  background: #0a0f1c;
+  background: #0a0b0d;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -139,7 +139,7 @@ html {
 }
 
 .dark * {
-  scrollbar-color: #4a5568 #0a0f1c;
+  scrollbar-color: #4a5568 #0a0b0d;
 }
 
 /* Utility classes */

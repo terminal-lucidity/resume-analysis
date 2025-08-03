@@ -10,8 +10,8 @@
 }
 
 .dark .navbar {
-    background: rgba(10, 15, 28, 0.95);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(26, 29, 35, 0.85);
+    border-bottom: 1px solid var(--border-subtle);
     backdrop-filter: blur(20px);
 }
 
@@ -21,8 +21,8 @@
 }
 
 .dark .navbar.scrolled {
-    background: rgba(10, 15, 28, 0.98);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    background: rgba(26, 29, 35, 0.98);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 }
 
 .navbar-container {
@@ -54,11 +54,17 @@
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     font-weight: 600;
     letter-spacing: -0.02em;
-    color: #4f46e5;
+    background: linear-gradient(135deg, #4f6bff, #64ffda);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
 .dark .brand-text {
-    color: #818cf8;
+    background: linear-gradient(135deg, #4f6bff, #64ffda);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
 .navbar-menu {
@@ -103,8 +109,9 @@
 }
 
 .dark .navbar-link:hover {
-    color: #f8fafc;
-    background: rgba(129, 140, 248, 0.12);
+    color: var(--text-primary);
+    background: var(--surface-elevated);
+    transform: translateY(-1px);
 }
 
 .navbar-link:focus {
@@ -133,31 +140,31 @@
 }
 
 .navbar-cta .navbar-link {
-    background: #4f46e5;
+    background: linear-gradient(135deg, #4f6bff, #6b7fff);
     color: white;
     padding: 12px 24px;
-    border-radius: 8px;
+    border-radius: 12px;
     font-weight: 600;
     margin-left: 8px;
-    box-shadow: 0 2px 8px rgba(79, 70, 229, 0.2);
-    transition: all 0.2s ease;
+    box-shadow: 0 4px 16px rgba(79, 107, 255, 0.3);
+    transition: all 0.3s ease;
 }
 
 .dark .navbar-cta .navbar-link {
-    background: #6366f1;
-    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+    background: linear-gradient(135deg, #4f6bff, #6b7fff);
+    box-shadow: 0 4px 16px rgba(79, 107, 255, 0.3);
 }
 
 .navbar-cta .navbar-link:hover {
-    background: #4338ca;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+    background: linear-gradient(135deg, #4f6bff, #6b7fff);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(79, 107, 255, 0.4);
     color: white;
 }
 
 .dark .navbar-cta .navbar-link:hover {
-    background: #4f46e5;
-    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4);
+    background: linear-gradient(135deg, #4f6bff, #6b7fff);
+    box-shadow: 0 8px 24px rgba(79, 107, 255, 0.4);
 }
 
 .navbar-cta .navbar-link:active {
@@ -173,32 +180,34 @@
     align-items: center;
     gap: 8px;
     padding: 8px 12px;
-    background: rgba(79, 70, 229, 0.1);
-    border: 1px solid rgba(79, 70, 229, 0.2);
-    border-radius: 8px;
-    color: #4f46e5;
+    background: var(--surface-elevated);
+    border: 1px solid var(--border-interactive);
+    border-radius: 12px;
+    color: var(--text-primary);
     font-size: 14px;
     font-weight: 500;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
     margin-left: 8px;
 }
 
 .dark .navbar-profile-button {
-    background: rgba(129, 140, 248, 0.1);
-    border-color: rgba(129, 140, 248, 0.2);
-    color: #818cf8;
+    background: var(--surface-elevated);
+    border-color: var(--border-interactive);
+    color: var(--text-primary);
 }
 
 .navbar-profile-button:hover {
-    background: rgba(79, 70, 229, 0.15);
-    border-color: rgba(79, 70, 229, 0.3);
+    background: var(--surface-hover);
+    border-color: var(--border-interactive);
     transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .dark .navbar-profile-button:hover {
-    background: rgba(129, 140, 248, 0.15);
-    border-color: rgba(129, 140, 248, 0.3);
+    background: var(--surface-hover);
+    border-color: var(--border-interactive);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .profile-avatar {
@@ -238,9 +247,10 @@
 }
 
 .dark .profile-dropdown {
-    background: #1e2a42;
-    border-color: rgba(255, 255, 255, 0.1);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+    background: var(--surface-elevated);
+    border: 1px solid var(--border-interactive);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
 }
 
 .profile-dropdown-header {
@@ -506,8 +516,9 @@
     }
 
     .dark .navbar-menu {
-        background: #1e2a42;
-        box-shadow: -4px 0 20px rgba(0, 0, 0, 0.4);
+        background: var(--surface-elevated);
+        box-shadow: -4px 0 20px rgba(0, 0, 0, 0.3);
+        backdrop-filter: blur(10px);
     }
 
     .navbar-menu.active {

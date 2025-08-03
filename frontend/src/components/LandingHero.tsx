@@ -108,6 +108,7 @@ function LandingHero() {
             <button className="btn btn-secondary btn-large">See Demo</button>
           </div>
         </div>
+        <div className="scroll-indicator"></div>
       </main>
 
       {/* Stats Section */}

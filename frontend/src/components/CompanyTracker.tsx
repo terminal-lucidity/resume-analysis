@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Building2, Plus, Search, MapPin, Globe, Users, Star, Edit, Trash2, Briefcase, Calendar, DollarSign, CheckCircle, AlertCircle, ArrowRight } from 'lucide-react';
+import { Building2, MapPin, Globe, Star, Briefcase, DollarSign } from 'lucide-react';
 import './CompanyTracker.css';
 
 interface Company {
@@ -36,32 +36,19 @@ interface Application {
 }
 
 const CompanyTracker: React.FC = () => {
-  // Core data states
   const [companies, setCompanies] = useState<Company[]>([]);
   const [applications, setApplications] = useState<Application[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  // UI control states
   const [showAddCompany, setShowAddCompany] = useState(false);
   const [showAddApplication, setShowAddApplication] = useState(false);
   const [selectedCompany, setSelectedCompany] = useState<Company | null>(null);
-  const [selectedApplication, setSelectedApplication] = useState<Application | null>(null);
-  const [showSuccessMessage, setShowSuccessMessage] = useState<string | null>(null);
-
-  // Filter and search states
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
-  const [sortBy, setSortBy] = useState<'date' | 'company' | 'status'>('date');
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
-
-  // Onboarding states
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
-
-  // Refs for virtualization
-  const companiesListRef = useRef<HTMLDivElement>(null);
-  const applicationsListRef = useRef<HTMLDivElement>(null);
+  const [showSuccessMessage, setShowSuccessMessage] = useState<string | null>(null);
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
 
   // Refs for scroll animations
   const headerRef = useRef<HTMLDivElement>(null);
@@ -105,6 +92,13 @@ const CompanyTracker: React.FC = () => {
       setShowOnboarding(true);
       localStorage.setItem('hasVisitedTracker', 'true');
     }
+
+    // Initialize theme
+    const savedTheme = localStorage.getItem('theme') as 'light' | 'dark';
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const initialTheme = savedTheme || (prefersDark ? 'dark' : 'light');
+    setTheme(initialTheme);
+    document.body.setAttribute('data-theme', initialTheme);
   }, []);
 
   // Intersection Observer for scroll animations
@@ -295,38 +289,19 @@ const CompanyTracker: React.FC = () => {
     }
   };
 
-  // Utility functions for data handling
-  const filterAndSortApplications = () => {
-    return applications
-      .filter(app => {
-        const searchLower = searchTerm.toLowerCase();
-        const matchesSearch = 
-          app.position.toLowerCase().includes(searchLower) ||
-          app.company.name.toLowerCase().includes(searchLower) ||
-          app.location?.toLowerCase().includes(searchLower) ||
-          app.status.toLowerCase().includes(searchLower);
-        const matchesStatus = filterStatus === 'all' || app.status === filterStatus;
-        return matchesSearch && matchesStatus;
-      })
-      .sort((a, b) => {
-        if (sortBy === 'date') {
-          const dateA = new Date(a.appliedDate || a.createdAt).getTime();
-          const dateB = new Date(b.appliedDate || b.createdAt).getTime();
-          return sortOrder === 'asc' ? dateA - dateB : dateB - dateA;
-        }
-        if (sortBy === 'company') {
-          return sortOrder === 'asc' 
-            ? a.company.name.localeCompare(b.company.name)
-            : b.company.name.localeCompare(a.company.name);
-        }
-        // status
-        return sortOrder === 'asc'
-          ? a.status.localeCompare(b.status)
-          : b.status.localeCompare(a.status);
-      });
+  const toggleTheme = () => {
+    const newTheme = theme === 'light' ? 'dark' : 'light';
+    setTheme(newTheme);
+    document.body.setAttribute('data-theme', newTheme);
+    localStorage.setItem('theme', newTheme);
   };
 
-  const filteredApplications = filterAndSortApplications();
+  const filteredApplications = applications.filter(app => {
+    const matchesSearch = app.position.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         app.company.name.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStatus = filterStatus === 'all' || app.status === filterStatus;
+    return matchesSearch && matchesStatus;
+  });
 
   const getStatusColor = (status: string) => {
     const colors: { [key: string]: string } = {
@@ -375,6 +350,13 @@ const CompanyTracker: React.FC = () => {
 
   return (
     <div className="company-tracker">
+      {/* Floating Elements */}
+      <div className="floating-elements">
+        <div className="floating-circle"></div>
+        <div className="floating-circle"></div>
+        <div className="floating-circle"></div>
+      </div>
+
       {/* Success Notification */}
       {showSuccessMessage && (
         <div className="success-notification">
@@ -385,6 +367,7 @@ const CompanyTracker: React.FC = () => {
         </div>
       )}
 
+      {/* Header */}
       <div className="company-tracker-header" ref={headerRef}>
         <div className="company-tracker-welcome">
           <h1>Company Tracker</h1>
@@ -392,40 +375,37 @@ const CompanyTracker: React.FC = () => {
         </div>
       </div>
 
+      {/* Main Content */}
       <div className="company-tracker-content">
-        <div className="company-tracker-panel" ref={panelRef}>
-          {/* Column 1: Companies Section */}
-          <div className="companies-section" ref={companiesSectionRef}>
-            <div className="companies-header">
-              <div className="companies-header-content">
-                <div className="companies-icon-container">
-                  <Building2 className="companies-icon" />
-                </div>
-                <div>
-                  <h2>Companies</h2>
-                  <p>Manage companies you're interested in working for</p>
-                </div>
+        <div className="main-grid">
+          {/* Companies Card */}
+          <div className="card" ref={companiesSectionRef}>
+            <div className="card-header">
+              <div className="card-title">
+                <div className="card-icon companies-icon">🏢</div>
+                <h2>Companies</h2>
               </div>
-              <button
-                className="add-company-btn"
+              <button 
+                className="add-btn"
                 onClick={() => setShowAddCompany(true)}
               >
-                <Plus className="button-icon" />
                 Add Company
               </button>
             </div>
-
+            <p className="card-description">
+              Manage companies you're interested in working for
+            </p>
+            
             {companies.length === 0 ? (
               <div className="empty-state">
-                <Building2 className="empty-icon" />
-                <h3>No companies yet</h3>
-                <p>Add companies you're interested in working for. Track their details, mark favorites, and organize your job search.</p>
+                <p className="empty-state-text">
+                  Add companies you're interested in working for. Track their details, mark favorites, and organize your job search.
+                </p>
                 <button 
                   onClick={() => setShowAddCompany(true)}
-                  className="empty-state-cta"
+                  className="primary-btn"
                 >
-                  <Plus className="cta-icon" />
-                  Add Your First Company
+                  + Add Your First Company
                 </button>
               </div>
             ) : (
@@ -479,42 +459,36 @@ const CompanyTracker: React.FC = () => {
             )}
           </div>
 
-          {/* Column 2: Applications Section */}
-          <div className="applications-section" ref={applicationsSectionRef}>
-            <div className="applications-header">
-              <div className="applications-header-content">
-                <div className="applications-icon-container">
-                  <Briefcase className="applications-icon" />
-                </div>
-                <div>
-                  <h2>Applications</h2>
-                  <p>Track your job applications and their progress</p>
-                </div>
+          {/* Applications Card */}
+          <div className="card" ref={applicationsSectionRef}>
+            <div className="card-header">
+              <div className="card-title">
+                <div className="card-icon applications-icon">📋</div>
+                <h2>Applications</h2>
               </div>
-              <button
-                className="add-application-btn"
+              <button 
+                className="add-btn applications-btn"
                 onClick={() => setShowAddApplication(true)}
               >
-                <Plus className="button-icon" />
                 Add Application
               </button>
             </div>
-
-            <div className="applications-filters">
-              <div className="search-box">
-                <Search className="search-icon" />
-                <input
-                  type="text"
-                  placeholder="Search applications..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="search-input"
-                />
-              </div>
+            <p className="card-description">
+              Track your job applications and their progress
+            </p>
+            
+            <div className="search-filter">
+              <input
+                type="text"
+                className="search-input"
+                placeholder="Search applications..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
               <select
+                className="filter-select"
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value)}
-                className="status-filter"
               >
                 <option value="all">All Status</option>
                 <option value="draft">Draft</option>
@@ -531,15 +505,14 @@ const CompanyTracker: React.FC = () => {
 
             {applications.length === 0 ? (
               <div className="empty-state">
-                <Briefcase className="empty-icon" />
-                <h3>No applications yet</h3>
-                <p>Keep organized by tracking every application from draft to offer. Monitor your progress and never miss a follow-up.</p>
+                <p className="empty-state-text">
+                  Keep organized by tracking every application from draft to offer. Monitor your progress and never miss a follow-up.
+                </p>
                 <button 
                   onClick={() => setShowAddApplication(true)}
-                  className="empty-state-cta"
+                  className="primary-btn secondary-btn"
                 >
-                  <Plus className="cta-icon" />
-                  Add Your First Application
+                  + Add Your First Application
                 </button>
               </div>
             ) : (
@@ -611,78 +584,24 @@ const CompanyTracker: React.FC = () => {
               </div>
             )}
           </div>
+        </div>
 
-          {/* Column 3: Stats Section */}
-          <div className="stats-section">
-            <div className="stats-header">
-              <h2>Overview</h2>
-              <span className="stats-count">{applications.length} total applications</span>
+        {/* Overview Section */}
+        <div className="overview-section">
+          <h3 className="overview-header">📊 Overview</h3>
+          <div className="stats-grid">
+            <div className="stat-card">
+              <div className="stat-icon total-icon">📊</div>
+              <div className="stat-number">{applications.length}</div>
+              <div className="stat-label">Total Applications</div>
             </div>
-
-            <div className="stats-grid">
-              <div className="stat-card">
-                <div className="stat-icon-container">
-                  <Briefcase className="stat-icon" />
-                </div>
-                <div className="stat-content">
-                  <span className="stat-number">{applications.length}</span>
-                  <span className="stat-label">Total Applications</span>
-                </div>
+            <div className="stat-card">
+              <div className="stat-icon active-icon">✅</div>
+              <div className="stat-number">
+                {applications.filter(app => ['applied', 'under_review', 'interview_scheduled', 'interview_completed', 'offer_received'].includes(app.status)).length}
               </div>
-
-              <div className="stat-card">
-                <div className="stat-icon-container">
-                  <CheckCircle className="stat-icon" />
-                </div>
-                <div className="stat-content">
-                  <span className="stat-number">
-                    {applications.filter(app => ['applied', 'under_review', 'interview_scheduled', 'interview_completed', 'offer_received'].includes(app.status)).length}
-                  </span>
-                  <span className="stat-label">Active Applications</span>
-                </div>
-              </div>
-
-              <div className="stat-card">
-                <div className="stat-icon-container">
-                  <Star className="stat-icon" />
-                </div>
-                <div className="stat-content">
-                  <span className="stat-number">
-                    {applications.filter(app => app.status === 'offer_received' || app.status === 'offer_accepted').length}
-                  </span>
-                  <span className="stat-label">Offers Received</span>
-                </div>
-              </div>
-
-              <div className="stat-card">
-                <div className="stat-icon-container">
-                  <Building2 className="stat-icon" />
-                </div>
-                <div className="stat-content">
-                  <span className="stat-number">{companies.length}</span>
-                  <span className="stat-label">Companies Tracked</span>
-                </div>
-              </div>
+              <div className="stat-label">Active Applications</div>
             </div>
-
-            {applications.length > 0 && (
-              <div className="recent-activity">
-                <h3>Recent Activity</h3>
-                <div className="activity-list">
-                  {applications.slice(0, 3).map((app) => (
-                    <div key={app.id} className="activity-item">
-                      <div className="activity-dot" style={{ backgroundColor: getStatusColor(app.status) }}></div>
-                      <div className="activity-content">
-                        <span className="activity-text">
-                          Applied to <strong>{app.position}</strong> at {app.company.name}
-                        </span>
-                        <span className="activity-time">{formatDate(app.appliedDate)}</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
           </div>
         </div>
       </div>

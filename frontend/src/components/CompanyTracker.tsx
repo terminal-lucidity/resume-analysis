@@ -39,16 +39,14 @@ const CompanyTracker: React.FC = () => {
   const [companies, setCompanies] = useState<Company[]>([]);
   const [applications, setApplications] = useState<Application[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [showAddCompany, setShowAddCompany] = useState(false);
   const [showAddApplication, setShowAddApplication] = useState(false);
-  const [selectedCompany, setSelectedCompany] = useState<Company | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
   const [showSuccessMessage, setShowSuccessMessage] = useState<string | null>(null);
-  const [theme, setTheme] = useState<'light' | 'dark'>('light');
+
 
   // Refs for scroll animations
   const headerRef = useRef<HTMLDivElement>(null);
@@ -97,7 +95,6 @@ const CompanyTracker: React.FC = () => {
     const savedTheme = localStorage.getItem('theme') as 'light' | 'dark';
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     const initialTheme = savedTheme || (prefersDark ? 'dark' : 'light');
-    setTheme(initialTheme);
     document.body.setAttribute('data-theme', initialTheme);
   }, []);
 
@@ -164,7 +161,6 @@ const CompanyTracker: React.FC = () => {
       setApplications(applicationsData.applications);
     } catch (error) {
       console.error('Error fetching data:', error);
-      setError('Failed to load data');
     } finally {
       setIsLoading(false);
     }
@@ -203,7 +199,6 @@ const CompanyTracker: React.FC = () => {
       fetchData();
     } catch (error) {
       console.error('Error creating company:', error);
-      setError('Failed to create company');
     }
   };
 
@@ -243,7 +238,6 @@ const CompanyTracker: React.FC = () => {
       fetchData();
     } catch (error) {
       console.error('Error creating application:', error);
-      setError('Failed to create application');
     }
   };
 
@@ -262,7 +256,6 @@ const CompanyTracker: React.FC = () => {
       fetchData();
     } catch (error) {
       console.error('Error toggling favorite:', error);
-      setError('Failed to update favorite status');
     }
   };
 
@@ -285,16 +278,10 @@ const CompanyTracker: React.FC = () => {
       fetchData();
     } catch (error) {
       console.error('Error updating status:', error);
-      setError('Failed to update application status');
     }
   };
 
-  const toggleTheme = () => {
-    const newTheme = theme === 'light' ? 'dark' : 'light';
-    setTheme(newTheme);
-    document.body.setAttribute('data-theme', newTheme);
-    localStorage.setItem('theme', newTheme);
-  };
+
 
   const filteredApplications = applications.filter(app => {
     const matchesSearch = app.position.toLowerCase().includes(searchTerm.toLowerCase()) ||

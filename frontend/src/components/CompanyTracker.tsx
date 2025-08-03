@@ -45,6 +45,8 @@ const CompanyTracker: React.FC = () => {
   const [selectedCompany, setSelectedCompany] = useState<Company | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  const [currentStep, setCurrentStep] = useState(1);
 
   // Form states
   const [newCompany, setNewCompany] = useState({
@@ -75,6 +77,13 @@ const CompanyTracker: React.FC = () => {
       return;
     }
     fetchData();
+    
+    // Check if this is the user's first visit to tracker
+    const hasVisitedTracker = localStorage.getItem('hasVisitedTracker');
+    if (!hasVisitedTracker) {
+      setShowOnboarding(true);
+      localStorage.setItem('hasVisitedTracker', 'true');
+    }
   }, []);
 
   const fetchData = async () => {
@@ -252,6 +261,18 @@ const CompanyTracker: React.FC = () => {
       month: 'short',
       day: 'numeric'
     });
+  };
+
+  const handleOnboardingNext = () => {
+    if (currentStep < 3) {
+      setCurrentStep(currentStep + 1);
+    } else {
+      setShowOnboarding(false);
+    }
+  };
+
+  const handleOnboardingSkip = () => {
+    setShowOnboarding(false);
   };
 
   if (isLoading) {
@@ -674,6 +695,69 @@ const CompanyTracker: React.FC = () => {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Onboarding Modal */}
+      {showOnboarding && (
+        <div className="modal-overlay">
+          <div className="modal-content onboarding-modal">
+            <div className="onboarding-header">
+              <h2>Welcome to Company Tracker! 🎉</h2>
+              <p>Let's get you started with tracking your job applications</p>
+            </div>
+            
+            <div className="onboarding-steps">
+              {currentStep === 1 && (
+                <div className="onboarding-step">
+                  <div className="step-icon">🏢</div>
+                  <h3>Step 1: Add Companies</h3>
+                  <p>Start by adding companies you're interested in working for. You can include details like industry, location, and company size.</p>
+                </div>
+              )}
+              
+              {currentStep === 2 && (
+                <div className="onboarding-step">
+                  <div className="step-icon">📝</div>
+                  <h3>Step 2: Track Applications</h3>
+                  <p>For each company, add your job applications and track their status from draft to offer received.</p>
+                </div>
+              )}
+              
+              {currentStep === 3 && (
+                <div className="onboarding-step">
+                  <div className="step-icon">📊</div>
+                  <h3>Step 3: Stay Organized</h3>
+                  <p>Use search and filters to manage your applications, and keep track of your progress throughout your job search.</p>
+                </div>
+              )}
+            </div>
+            
+            <div className="onboarding-progress">
+              <div className="progress-bar">
+                <div 
+                  className="progress-fill" 
+                  style={{ width: `${(currentStep / 3) * 100}%` }}
+                ></div>
+              </div>
+              <span className="progress-text">{currentStep} of 3</span>
+            </div>
+            
+            <div className="onboarding-actions">
+              <button 
+                className="skip-btn"
+                onClick={handleOnboardingSkip}
+              >
+                Skip Tour
+              </button>
+              <button 
+                className="next-btn"
+                onClick={handleOnboardingNext}
+              >
+                {currentStep === 3 ? 'Get Started' : 'Next'}
+              </button>
+            </div>
           </div>
         </div>
       )}

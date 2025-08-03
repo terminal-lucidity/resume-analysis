@@ -636,4 +636,126 @@
     margin: 1rem;
     max-width: none;
   }
+}
+
+/* Onboarding Modal Styles */
+.onboarding-modal {
+  max-width: 600px !important;
+  text-align: center;
+}
+
+.onboarding-header {
+  padding: 2rem 2rem 1rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.onboarding-header h2 {
+  color: #111827;
+  margin: 0 0 0.5rem 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.onboarding-header p {
+  color: #6b7280;
+  margin: 0;
+  font-size: 1rem;
+}
+
+.onboarding-steps {
+  padding: 2rem;
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.onboarding-step {
+  max-width: 400px;
+}
+
+.step-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.onboarding-step h3 {
+  color: #111827;
+  margin: 0 0 1rem 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.onboarding-step p {
+  color: #6b7280;
+  margin: 0;
+  line-height: 1.6;
+  font-size: 1rem;
+}
+
+.onboarding-progress {
+  padding: 0 2rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.progress-bar {
+  flex: 1;
+  height: 8px;
+  background: #e5e7eb;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+  transition: width 0.3s ease;
+}
+
+.progress-text {
+  color: #6b7280;
+  font-size: 0.9rem;
+  font-weight: 500;
+  min-width: 60px;
+}
+
+.onboarding-actions {
+  padding: 1rem 2rem 2rem;
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.skip-btn {
+  padding: 0.75rem 1.5rem;
+  border: 1px solid #d1d5db;
+  background: white;
+  color: #6b7280;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.skip-btn:hover {
+  background: #f9fafb;
+  border-color: #9ca3af;
+}
+
+.next-btn {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.next-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
 } 

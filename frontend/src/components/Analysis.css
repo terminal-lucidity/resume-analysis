@@ -1,13 +1,13 @@
 /* Analysis.css */
 .analysis-page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #f8fafc 0%, #e0e7ff 100%);
+  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 25%, #bfdbfe 50%, #93c5fd 75%, #3b82f6 100%);
   padding: 0;
   position: relative;
 }
 
 .dark .analysis-page {
-  background: linear-gradient(135deg, #0a0a1a 0%, #0f0f23 50%, #1a1a3a 100%);
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 25%, #334155 50%, #475569 75%, #64748b 100%);
 }
 
 .analysis-loading {
@@ -16,12 +16,12 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
   color: white;
 }
 
 .dark .analysis-loading {
-  background: linear-gradient(135deg, #0f0f23 0%, #1a1a3a 50%, #1e1e4a 100%);
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
 }
 
 .loading-spinner {
@@ -47,11 +47,11 @@
   justify-content: center;
   text-align: center;
   padding: 24px;
-  background: linear-gradient(135deg, #f8fafc 0%, #e0e7ff 100%);
+  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 25%, #bfdbfe 50%, #93c5fd 75%, #3b82f6 100%);
 }
 
 .dark .analysis-error {
-  background: linear-gradient(135deg, #0a0a1a 0%, #0f0f23 50%, #1a1a3a 100%);
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 25%, #334155 50%, #475569 75%, #64748b 100%);
 }
 
 .error-icon {

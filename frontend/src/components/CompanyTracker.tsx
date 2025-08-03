@@ -47,6 +47,7 @@ const CompanyTracker: React.FC = () => {
   const [filterStatus, setFilterStatus] = useState('all');
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
+  const [showSuccessMessage, setShowSuccessMessage] = useState<string | null>(null);
 
   // Form states
   const [newCompany, setNewCompany] = useState({
@@ -145,6 +146,8 @@ const CompanyTracker: React.FC = () => {
         description: ''
       });
       setShowAddCompany(false);
+      setShowSuccessMessage('Company added successfully! 🎉');
+      setTimeout(() => setShowSuccessMessage(null), 3000);
       fetchData();
     } catch (error) {
       console.error('Error creating company:', error);
@@ -183,6 +186,8 @@ const CompanyTracker: React.FC = () => {
         notes: ''
       });
       setShowAddApplication(false);
+      setShowSuccessMessage('Application added successfully! 📝');
+      setTimeout(() => setShowSuccessMessage(null), 3000);
       fetchData();
     } catch (error) {
       console.error('Error creating application:', error);
@@ -286,6 +291,15 @@ const CompanyTracker: React.FC = () => {
 
   return (
     <div className="company-tracker">
+      {/* Success Notification */}
+      {showSuccessMessage && (
+        <div className="success-notification">
+          <div className="success-content">
+            <span className="success-icon">✅</span>
+            <span className="success-text">{showSuccessMessage}</span>
+          </div>
+        </div>
+      )}
       <div className="company-tracker-header">
         <div className="header-content">
           <div className="header-icon">
@@ -297,6 +311,26 @@ const CompanyTracker: React.FC = () => {
           </div>
         </div>
         <div className="header-actions">
+          {applications.length > 0 && (
+            <div className="progress-stats">
+              <div className="stat-item">
+                <span className="stat-number">{applications.length}</span>
+                <span className="stat-label">Total Apps</span>
+              </div>
+              <div className="stat-item">
+                <span className="stat-number">
+                  {applications.filter(app => ['applied', 'under_review', 'interview_scheduled', 'interview_completed', 'offer_received'].includes(app.status)).length}
+                </span>
+                <span className="stat-label">Active</span>
+              </div>
+              <div className="stat-item">
+                <span className="stat-number">
+                  {applications.filter(app => app.status === 'offer_received' || app.status === 'offer_accepted').length}
+                </span>
+                <span className="stat-label">Offers</span>
+              </div>
+            </div>
+          )}
           <button
             className="add-company-btn"
             onClick={() => setShowAddCompany(true)}
@@ -323,9 +357,25 @@ const CompanyTracker: React.FC = () => {
           
           {companies.length === 0 ? (
             <div className="empty-state">
-              <Building2 className="empty-icon" />
-              <h3>No companies yet</h3>
-              <p>Add companies you're interested in to start tracking applications.</p>
+              <div className="empty-state-icon">
+                <Building2 className="empty-icon" />
+              </div>
+              <h3>Start Your Company Collection</h3>
+              <p>Add companies you're interested in working for. Track their details, mark favorites, and organize your job search.</p>
+              <div className="empty-state-features">
+                <div className="feature-item">
+                  <span className="feature-icon">🏢</span>
+                  <span>Company profiles with industry & location</span>
+                </div>
+                <div className="feature-item">
+                  <span className="feature-icon">⭐</span>
+                  <span>Mark favorite companies</span>
+                </div>
+                <div className="feature-item">
+                  <span className="feature-icon">📊</span>
+                  <span>Track application progress</span>
+                </div>
+              </div>
               <button 
                 onClick={() => setShowAddCompany(true)}
                 className="empty-state-cta"
@@ -421,9 +471,25 @@ const CompanyTracker: React.FC = () => {
 
           {applications.length === 0 ? (
             <div className="empty-state">
-              <Briefcase className="empty-icon" />
-              <h3>No applications yet</h3>
-              <p>Start tracking your job applications to stay organized.</p>
+              <div className="empty-state-icon">
+                <Briefcase className="empty-icon" />
+              </div>
+              <h3>Track Your Job Applications</h3>
+              <p>Keep organized by tracking every application from draft to offer. Monitor your progress and never miss a follow-up.</p>
+              <div className="empty-state-features">
+                <div className="feature-item">
+                  <span className="feature-icon">📝</span>
+                  <span>Detailed application tracking</span>
+                </div>
+                <div className="feature-item">
+                  <span className="feature-icon">🎯</span>
+                  <span>Status updates with color coding</span>
+                </div>
+                <div className="feature-item">
+                  <span className="feature-icon">📅</span>
+                  <span>Interview scheduling & notes</span>
+                </div>
+              </div>
               <button 
                 onClick={() => setShowAddApplication(true)}
                 className="empty-state-cta"

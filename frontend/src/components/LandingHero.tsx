@@ -1,4 +1,4 @@
-import { Upload, Target, Zap, ArrowRight, BarChart3, CheckCircle, Users, Shield, Search } from "lucide-react";
+import { Upload, Target, Zap, ArrowRight, BarChart3, CheckCircle, Users, Shield, Search, Star, Clock, TrendingUp } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 
@@ -16,176 +16,178 @@ function LandingHero() {
     navigate('/dashboard');
   };
 
-  const mainFeatures = [
-    {
-      step: 'Step 1',
-      icon: Target,
-      title: "AI-Powered Analysis",
-      description: "Advanced AI algorithms analyze your resume against job requirements and industry standards.",
-      benefits: ["Keyword optimization", "Skills gap analysis", "Industry benchmarking"]
+  const stats = [
+    { 
+      number: "50K+", 
+      label: "Resumes Analyzed",
+      icon: <BarChart3 className="w-6 h-6" />
     },
-    {
-      step: 'Step 2',
-      icon: BarChart3,
-      title: "Detailed Insights",
-      description: "Get comprehensive feedback on strengths, weaknesses, and specific improvement recommendations.",
-      benefits: ["Score breakdown", "Actionable suggestions", "Progress tracking"]
+    { 
+      number: "95%", 
+      label: "Accuracy Rate",
+      icon: <Star className="w-6 h-6" />
     },
-    {
-      step: 'Step 3',
-      icon: Users,
-      title: "Interview Prep",
-      description: "Practice with AI-generated interview questions tailored to your resume and target roles. Get tips and feedback to boost your confidence.",
-      benefits: ["Role-specific questions", "AI feedback", "Confidence building"]
+    { 
+      number: "30s", 
+      label: "Analysis Time",
+      icon: <Clock className="w-6 h-6" />
     },
-    {
-      step: 'Step 4',
-      icon: Search,
-      title: "Personalized Job Matching",
-      description: "We help you find jobs that match your resume and skills, connecting you with opportunities tailored to your profile.",
-      benefits: ["Curated job listings", "Resume-based recommendations", "Direct application links"]
-    },
+    { 
+      number: "10K+", 
+      label: "Happy Users",
+      icon: <TrendingUp className="w-6 h-6" />
+    }
   ];
 
-  const keyBenefits = [
+  const features = [
     {
-      icon: Zap,
+      icon: <Target className="w-8 h-8" />,
+      title: "AI-Powered Analysis",
+      description: "Advanced algorithms analyze your resume against job requirements and industry standards.",
+      highlights: ["Keyword optimization", "Skills gap analysis", "Industry benchmarking"]
+    },
+    {
+      icon: <BarChart3 className="w-8 h-8" />,
+      title: "Detailed Insights",
+      description: "Get comprehensive feedback on strengths, weaknesses, and specific improvement recommendations.",
+      highlights: ["Score breakdown", "Actionable suggestions", "Progress tracking"]
+    },
+    {
+      icon: <Users className="w-8 h-8" />,
+      title: "Interview Prep",
+      description: "Practice with AI-generated questions tailored to your resume and target roles.",
+      highlights: ["Role-specific questions", "AI feedback", "Confidence building"]
+    },
+    {
+      icon: <Search className="w-8 h-8" />,
+      title: "Job Matching",
+      description: "Find jobs that match your skills and get personalized recommendations.",
+      highlights: ["Curated listings", "Resume-based matches", "Direct applications"]
+    }
+  ];
+
+  const benefits = [
+    {
+      icon: <Zap className="w-6 h-6" />,
       title: "Lightning Fast",
       description: "Get your analysis in under 30 seconds"
     },
     {
-      icon: CheckCircle,
+      icon: <CheckCircle className="w-6 h-6" />,
       title: "Accurate Results",
       description: "95% accuracy rate in resume analysis"
     },
     {
-      icon: Users,
+      icon: <Users className="w-6 h-6" />,
       title: "Recruiter Insights",
       description: "See what recruiters actually look for"
     },
     {
-      icon: Shield,
+      icon: <Shield className="w-6 h-6" />,
       title: "Privacy First",
       description: "Your data is encrypted and secure"
     }
   ];
 
-  const stats = [
-    { number: "50K+", label: "Resumes Analyzed" },
-    { number: "95%", label: "Accuracy Rate" },
-    { number: "30s", label: "Average Analysis Time" },
-    { number: "10K+", label: "Happy Users" }
-  ];
-
   return (
-    <div>
+    <div className="landing-page">
       {/* Hero Section */}
-      <main className="hero-background section-hero text-center">
+      <section className="hero-section">
         <div className="container">
-          <h1 className="heading-primary mb-lg">
-            Vet your Resume,
-            <span className="heading-accent block">Get Hired Faster.</span>
-          </h1>
-          <p className="text-large mb-xl max-w-2xl mx-auto">
-            Upload your resume and job description. Let Vettly spot what recruiters are looking for — and what you're missing.
-          </p>
-          <div className="btn-group flex flex-wrap justify-center gap-md">
-            {isAuthenticated ? (
-              <button 
-                onClick={handleDashboardClick}
-                className="btn btn-primary btn-large flex items-center gap-sm group"
-              >
-                <BarChart3 className="w-5 h-5" />
-                Go to Dashboard
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </button>
-            ) : (
-              <button className="btn btn-primary btn-large flex items-center gap-sm group">
-                Try Vettly for Free
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </button>
-            )}
-            <button className="btn btn-secondary btn-large">See Demo</button>
+          <div className="hero-content">
+            <h1 className="hero-title">
+              Vet your Resume,
+              <span className="hero-accent">Get Hired Faster.</span>
+            </h1>
+            <p className="hero-description">
+              Upload your resume and job description. Let Vettly spot what recruiters are looking for — and what you're missing.
+            </p>
+            <div className="hero-actions">
+              {isAuthenticated ? (
+                <button 
+                  onClick={handleDashboardClick}
+                  className="btn-primary"
+                >
+                  <BarChart3 className="w-5 h-5" />
+                  Go to Dashboard
+                  <ArrowRight className="w-5 h-5" />
+                </button>
+              ) : (
+                <button className="btn-primary">
+                  Try Vettly for Free
+                  <ArrowRight className="w-5 h-5" />
+                </button>
+              )}
+              <button className="btn-secondary">See Demo</button>
+            </div>
           </div>
         </div>
         <div className="scroll-indicator"></div>
-      </main>
+      </section>
 
       {/* Stats Section */}
-      <section className="section bg-white dark:bg-gray-900">
+      <section className="stats-section">
         <div className="container">
-          <div className="features-stats">
+          <div className="stats-grid">
             {stats.map((stat, index) => (
-              <div key={index} className="features-stat-card">
-                <div className="features-stat-number">{stat.number}</div>
-                <div className="features-stat-label">{stat.label}</div>
+              <div key={index} className="stat-card">
+                <div className="stat-icon">{stat.icon}</div>
+                <div className="stat-number">{stat.number}</div>
+                <div className="stat-label">{stat.label}</div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Main Features Section */}
-      <section className="section bg-gray-50 dark:bg-gray-800">
+      {/* Features Section */}
+      <section className="features-section">
         <div className="container">
-          <div className="text-center mb-xl max-w-2xl mx-auto">
-            <h2 className="heading-secondary mb-md">Everything You Need to Succeed</h2>
-            <p className="text-large">
+          <div className="section-header">
+            <h2 className="section-title">Everything You Need to Succeed</h2>
+            <p className="section-subtitle">
               Our comprehensive suite of tools helps you create resumes that stand out
             </p>
           </div>
-
-          <div className="features-steps-flow">
-            {mainFeatures.map((feature, idx) => {
-              const IconComponent = feature.icon;
-              return (
-                <div
-                  key={idx}
-                  className={`features-step-card${idx === 0 ? ' clickable' : ''}`}
-                  onClick={idx === 0 ? () => navigate(isAuthenticated ? '/dashboard' : '/signin') : undefined}
-                >
-                  <div className="features-icon">
-                    <IconComponent size={28} />
-                  </div>
-                  <h3 className="step-title">{feature.title}</h3>
-                  <p className="step-desc">{feature.description}</p>
-                  <ul className="step-benefits">
-                    {feature.benefits.map((b, i) => (
-                      <li key={i}>
-                        <CheckCircle size={18} /> {b}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              );
-            })}
+          
+          <div className="features-grid">
+            {features.map((feature, index) => (
+              <div key={index} className="feature-card">
+                <div className="feature-icon">{feature.icon}</div>
+                <h3 className="feature-title">{feature.title}</h3>
+                <p className="feature-description">{feature.description}</p>
+                <ul className="feature-highlights">
+                  {feature.highlights.map((highlight, i) => (
+                    <li key={i}>
+                      <CheckCircle className="w-4 h-4" />
+                      {highlight}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Key Benefits Section */}
-      <section className="section bg-white dark:bg-gray-900">
+      {/* Benefits Section */}
+      <section className="benefits-section">
         <div className="container">
-          <div className="text-center mb-xl max-w-2xl mx-auto">
-            <h2 className="heading-secondary mb-md">Why Choose Vettly?</h2>
-            <p className="text-large">
+          <div className="section-header">
+            <h2 className="section-title">Why Choose Vettly?</h2>
+            <p className="section-subtitle">
               Join thousands of job seekers who've improved their resumes with our platform
             </p>
           </div>
-
+          
           <div className="benefits-grid">
-            {keyBenefits.map((benefit, index) => {
-              const IconComponent = benefit.icon;
-              return (
-                <div key={index} className="benefit-card">
-                  <div className="benefit-icon">
-                    <IconComponent size={28} />
-                  </div>
-                  <h3 className="benefit-title">{benefit.title}</h3>
-                  <p className="benefit-desc">{benefit.description}</p>
-                </div>
-              );
-            })}
+            {benefits.map((benefit, index) => (
+              <div key={index} className="benefit-card">
+                <div className="benefit-icon">{benefit.icon}</div>
+                <h3 className="benefit-title">{benefit.title}</h3>
+                <p className="benefit-description">{benefit.description}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -193,20 +195,22 @@ function LandingHero() {
       {/* CTA Section */}
       <section className="cta-section">
         <div className="container">
-          <h2 className="text-4xl font-bold mb-md">Ready to Get Started?</h2>
-          <p className="text-xl mb-xl max-w-2xl mx-auto">
+          <h2 className="cta-title">Ready to Get Started?</h2>
+          <p className="cta-description">
             Join thousands of job seekers who've improved their resumes with Vettly.
           </p>
           {isAuthenticated ? (
             <button 
               onClick={handleDashboardClick}
-              className="btn btn-primary btn-large flex items-center gap-sm mx-auto"
+              className="btn-primary btn-large"
             >
               <BarChart3 className="w-5 h-5" />
               Go to Dashboard
             </button>
           ) : (
-            <button className="btn btn-primary btn-large">Start Your Analysis</button>
+            <button className="btn-primary btn-large">
+              Start Your Analysis
+            </button>
           )}
         </div>
       </section>
@@ -216,30 +220,28 @@ function LandingHero() {
         <div className="container">
           <div className="footer-content">
             <div className="footer-section">
-              <h3 className="text-xl font-bold text-blue-400 mb-md">Vettly</h3>
-              <p>
-                AI-powered resume analysis to help you land your dream job.
-              </p>
+              <h3 className="footer-brand">Vettly</h3>
+              <p>AI-powered resume analysis to help you land your dream job.</p>
             </div>
             <div className="footer-section">
-              <h4 className="mb-md">Product</h4>
-              <ul className="space-y-2">
+              <h4>Product</h4>
+              <ul>
                 <li><a href="#">Features</a></li>
                 <li><a href="#">Pricing</a></li>
                 <li><a href="#">Demo</a></li>
               </ul>
             </div>
             <div className="footer-section">
-              <h4 className="mb-md">Company</h4>
-              <ul className="space-y-2">
+              <h4>Company</h4>
+              <ul>
                 <li><a href="#">About</a></li>
                 <li><a href="#">Contact</a></li>
                 <li><a href="#">Blog</a></li>
               </ul>
             </div>
             <div className="footer-section">
-              <h4 className="mb-md">Support</h4>
-              <ul className="space-y-2">
+              <h4>Support</h4>
+              <ul>
                 <li><a href="#">Help Center</a></li>
                 <li><a href="#">Privacy</a></li>
                 <li><a href="#">Terms</a></li>

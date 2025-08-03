@@ -10,7 +10,7 @@
 }
 
 .dark .navbar {
-    background: rgba(15, 15, 35, 0.95);
+    background: rgba(10, 15, 28, 0.95);
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     backdrop-filter: blur(20px);
 }
@@ -21,8 +21,8 @@
 }
 
 .dark .navbar.scrolled {
-    background: rgba(15, 15, 35, 0.98);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    background: rgba(10, 15, 28, 0.98);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
 }
 
 .navbar-container {
@@ -238,9 +238,9 @@
 }
 
 .dark .profile-dropdown {
-    background: #1f2937;
+    background: #1e2a42;
     border-color: rgba(255, 255, 255, 0.1);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
 }
 
 .profile-dropdown-header {
@@ -506,8 +506,8 @@
     }
 
     .dark .navbar-menu {
-        background: #1f2937;
-        box-shadow: -4px 0 20px rgba(0, 0, 0, 0.3);
+        background: #1e2a42;
+        box-shadow: -4px 0 20px rgba(0, 0, 0, 0.4);
     }
 
     .navbar-menu.active {

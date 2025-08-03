@@ -14,16 +14,19 @@
   --color-error: #ef4444;
 
   --bg-light: #f0f4ff;
-  --bg-dark: #0f172a;
-  --bg-section-dark: #1e293b;
-  --bg-card-dark: #334155;
+  --bg-dark: #0a0f1c;
+  --bg-section-dark: #141b2e;
+  --bg-card-dark: #1e2a42;
   --bg-hover-light: #f8fafc;
-  --bg-hover-dark: #475569;
+  --bg-hover-dark: #334155;
 
   --text-dark: #1e293b;
-  --text-light: #f1f5f9;
+  --text-light: #f8fafc;
   --text-muted: #64748b;
-  --text-muted-dark: #94a3b8;
+  --text-muted-dark: #cbd5e1;
+
+  --border-subtle: #1e293b;
+  --border-interactive: #334155;
 
   --spacing-xs: 0.25rem;
   --spacing-sm: 0.5rem;
@@ -128,8 +131,8 @@ body {
 }
 
 .dark .hero-background::before {
-  background: radial-gradient(circle at 20% 50%, rgba(96, 165, 250, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(59, 130, 246, 0.1) 0%, transparent 50%);
+  background: radial-gradient(circle at 20% 50%, rgba(96, 165, 250, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(59, 130, 246, 0.08) 0%, transparent 50%);
 }
 
 
@@ -303,12 +306,13 @@ body {
 
 .dark .card {
   background-color: var(--bg-card-dark);
-  border-color: var(--bg-hover-dark);
+  border-color: var(--border-subtle);
 }
 
 .dark .card:hover {
-  border-color: var(--bg-hover-dark);
-  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.3);
+  border-color: var(--border-interactive);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+  background-color: #1e2a42;
 }
 
 .card-compact {
@@ -696,6 +700,24 @@ body {
   box-shadow: var(--shadow-xl);
 }
 
+/* Enhanced dark mode gradients */
+.dark .card {
+  background: linear-gradient(135deg, var(--bg-card-dark) 0%, #1e2a42 100%);
+}
+
+.dark .card:hover {
+  background: linear-gradient(135deg, #1e2a42 0%, #1e2a42 100%);
+}
+
+/* Improved text contrast in dark mode */
+.dark .text-large {
+  color: #cbd5e1;
+}
+
+.dark .text-muted {
+  color: #94a3b8;
+}
+
 /* Icon container styling */
 .card .w-16.h-16 {
   background: linear-gradient(135deg, #f8fafc 0%, white 100%);
@@ -726,6 +748,10 @@ body {
 /* Enhanced CTA section */
 .cta-section {
   background: linear-gradient(135deg, var(--color-primary), #7c3aed);
+}
+
+.dark .cta-section {
+  background: linear-gradient(135deg, #1e40af, var(--color-primary));
 }
 
 .cta-section h2,
@@ -795,6 +821,21 @@ body {
 
 .dark .text-large {
   color: var(--text-muted-dark);
+}
+
+/* Enhanced borders for dark mode */
+.dark .card {
+  border-color: var(--border-subtle);
+}
+
+.dark .card:hover {
+  border-color: var(--border-interactive);
+}
+
+/* Improved focus states for dark mode */
+.dark .btn:focus-visible {
+  outline: 2px solid var(--color-primary-light);
+  outline-offset: 2px;
 }
 
 /* Icon colors for better visibility */

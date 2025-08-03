@@ -23,16 +23,125 @@
 }
 
 .dark .dashboard {
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 25%, #334155 50%, #475569 75%, #64748b 100%);
+  background: linear-gradient(135deg, #0a0a1a 0%, #1a1a3a 25%, #2d2d5a 50%, #3d3d7a 75%, #4a4a8a 100%);
 }
 
 .dark .dashboard::before {
   background: 
-    radial-gradient(circle at 10% 10%, rgba(99, 102, 241, 0.2) 0%, transparent 70%),
-    radial-gradient(circle at 90% 20%, rgba(139, 92, 246, 0.15) 0%, transparent 70%),
-    radial-gradient(circle at 50% 50%, rgba(236, 72, 153, 0.1) 0%, transparent 70%);
-  filter: blur(60px);
-  animation: heroGlowDark 10s ease-in-out infinite alternate;
+    radial-gradient(circle at 10% 10%, rgba(99, 102, 241, 0.25) 0%, transparent 70%),
+    radial-gradient(circle at 90% 20%, rgba(139, 92, 246, 0.2) 0%, transparent 70%),
+    radial-gradient(circle at 50% 50%, rgba(236, 72, 153, 0.15) 0%, transparent 70%),
+    radial-gradient(circle at 80% 80%, rgba(59, 130, 246, 0.1) 0%, transparent 70%);
+  filter: blur(80px);
+  animation: heroGlowDark 12s ease-in-out infinite alternate;
+}
+
+/* Scroll Animation Classes - Simplified */
+.dashboard-header,
+.dashboard-panel,
+.upload-info-section,
+.resumes-section {
+  opacity: 1;
+  transform: translateY(0);
+  transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Animation only applies when explicitly triggered */
+.dashboard-header.animate-in,
+.dashboard-panel.animate-in,
+.upload-info-section.animate-in,
+.resumes-section.animate-in {
+  animation: slideInFromBottom 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slideInFromBottom {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Staggered animation for resume items */
+.resume-item {
+  opacity: 1;
+  transform: translateX(0);
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.resume-item.animate-in {
+  animation: slideInFromLeft 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slideInFromLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Add animation delay to resume items when parent is animated */
+.resumes-section.animate-in .resume-item {
+  animation: slideInResume 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* Staggered animation for resume items */
+.resumes-section.animate-in .resume-item:nth-child(1) { animation-delay: 0.1s; }
+.resumes-section.animate-in .resume-item:nth-child(2) { animation-delay: 0.2s; }
+.resumes-section.animate-in .resume-item:nth-child(3) { animation-delay: 0.3s; }
+.resumes-section.animate-in .resume-item:nth-child(4) { animation-delay: 0.4s; }
+.resumes-section.animate-in .resume-item:nth-child(5) { animation-delay: 0.5s; }
+.resumes-section.animate-in .resume-item:nth-child(6) { animation-delay: 0.6s; }
+.resumes-section.animate-in .resume-item:nth-child(7) { animation-delay: 0.7s; }
+.resumes-section.animate-in .resume-item:nth-child(8) { animation-delay: 0.8s; }
+
+@keyframes slideInResume {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Enhanced glow animations */
+@keyframes heroGlow {
+  0%, 100% { 
+    opacity: 0.8;
+    transform: scale(1);
+  }
+  50% { 
+    opacity: 1;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes heroGlowDark {
+  0%, 100% { 
+    opacity: 0.7;
+    transform: scale(1);
+  }
+  25% {
+    opacity: 0.9;
+    transform: scale(1.02);
+  }
+  50% { 
+    opacity: 1;
+    transform: scale(1.1);
+  }
+  75% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
 }
 
 .dashboard-loading {
@@ -46,7 +155,7 @@
 }
 
 .dark .dashboard-loading {
-  background: linear-gradient(135deg, #0f0f23 0%, #1a1a3a 50%, #1e1e4a 100%);
+  background: linear-gradient(135deg, #0a0a1a 0%, #1a1a3a 50%, #2d2d5a 100%);
 }
 
 .loading-spinner {
@@ -62,28 +171,6 @@
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
-}
-
-@keyframes heroGlow {
-  0%, 100% { 
-    opacity: 0.8;
-    transform: scale(1);
-  }
-  50% { 
-    opacity: 1;
-    transform: scale(1.05);
-  }
-}
-
-@keyframes heroGlowDark {
-  0%, 100% { 
-    opacity: 0.6;
-    transform: scale(1);
-  }
-  50% { 
-    opacity: 0.9;
-    transform: scale(1.1);
-  }
 }
 
 .dashboard-header {
@@ -106,7 +193,7 @@
 }
 
 .dark .dashboard-header {
-  background: rgba(15, 15, 35, 0.4);
+  background: rgba(10, 10, 26, 0.4);
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(10px);
 }
@@ -188,7 +275,7 @@
 }
 
 .dark .dashboard-panel {
-  background: #0f0f23;
+  background: #0a0a1a;
   border: 1.5px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
   backdrop-filter: blur(20px);
@@ -264,7 +351,7 @@
 }
 
 .dark .resumes-section {
-  background: #0f0f23;
+  background: #0a0a1a;
   border-left: 1px solid rgba(255, 255, 255, 0.08);
 }
 
@@ -334,7 +421,7 @@
 }
 
 .dark .upload-card {
-  background: rgba(15, 15, 35, 0.95);
+  background: rgba(10, 10, 26, 0.95);
   border-color: rgba(255, 255, 255, 0.08);
   box-shadow: 
     0 20px 40px rgba(0, 0, 0, 0.4),
@@ -1367,7 +1454,7 @@
 }
 
 .dark .modal-content {
-  background: #0f0f23;
+  background: #0a0a1a;
   border-color: rgba(255, 255, 255, 0.08);
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
 }
@@ -1449,7 +1536,7 @@
 }
 
 .dark .resume-selection-item {
-  background: #0f0f23;
+  background: #0a0a1a;
   border-color: rgba(255, 255, 255, 0.08);
 }
 
@@ -1737,7 +1824,7 @@
 }
 
 .dark .resume-item {
-  background: #0f0f23;
+  background: #0a0a1a;
   border-color: rgba(255, 255, 255, 0.08);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
@@ -1777,21 +1864,21 @@
 }
 
 .dark .resume-item.active:hover {
-  background: linear-gradient(135deg, #0f0f23 0%, #1a1a3a 100%);
+  background: linear-gradient(135deg, #0a0a1a 0%, #1a1a3a 100%);
   border-color: #34d399;
   transform: translateY(-2px);
   box-shadow: 0 8px 24px rgba(52, 211, 153, 0.25);
 }
 
 .dark .resume-item.selected:hover {
-  background: linear-gradient(135deg, #0f0f23 0%, #1a1a3a 100%);
+  background: linear-gradient(135deg, #0a0a1a 0%, #1a1a3a 100%);
   border-color: #818cf8;
   transform: translateY(-2px);
   box-shadow: 0 8px 24px rgba(129, 140, 248, 0.25);
 }
 
 .dark .resume-item.active.selected:hover {
-  background: linear-gradient(135deg, #0f0f23 0%, #1a1a3a 100%);
+  background: linear-gradient(135deg, #0a0a1a 0%, #1a1a3a 100%);
   border-color: #34d399;
   transform: translateY(-2px);
   box-shadow: 0 8px 24px rgba(52, 211, 153, 0.25);
@@ -1805,7 +1892,7 @@
 
 .dark .resume-item.active {
   border-color: #34d399;
-  background: linear-gradient(135deg, #0f0f23 0%, #1a1a3a 100%);
+  background: linear-gradient(135deg, #0a0a1a 0%, #1a1a3a 100%);
   box-shadow: 0 4px 16px rgba(52, 211, 153, 0.2);
 }
 
@@ -1823,13 +1910,13 @@
 
 .dark .resume-item.selected {
   border-color: #818cf8;
-  background: linear-gradient(135deg, #0f0f23 0%, #1a1a3a 100%);
+  background: linear-gradient(135deg, #0a0a1a 0%, #1a1a3a 100%);
   box-shadow: 0 4px 16px rgba(129, 140, 248, 0.2);
 }
 
 .dark .resume-item.active.selected {
   border-color: #34d399;
-  background: linear-gradient(135deg, #0f0f23 0%, #1a1a3a 100%);
+  background: linear-gradient(135deg, #0a0a1a 0%, #1a1a3a 100%);
   box-shadow: 0 4px 16px rgba(52, 211, 153, 0.2);
 }
 

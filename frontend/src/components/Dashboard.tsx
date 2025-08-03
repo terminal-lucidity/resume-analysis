@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Upload, FileText, Trash2, Plus, CheckCircle, AlertCircle, Search, ArrowRight } from 'lucide-react';
 import './Dashboard.css';
 
@@ -33,6 +33,12 @@ const Dashboard: React.FC = () => {
   const [selectedResumeId, setSelectedResumeId] = useState<string | null>(null);
   const [jobLevel, setJobLevel] = useState('');
 
+  // Refs for scroll animations
+  const headerRef = useRef<HTMLDivElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const uploadSectionRef = useRef<HTMLDivElement>(null);
+  const resumesSectionRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     const token = localStorage.getItem('token');
     const userData = localStorage.getItem('user');
@@ -49,6 +55,44 @@ const Dashboard: React.FC = () => {
       console.error('Error parsing user data:', error);
       window.location.href = '/signin';
     }
+  }, []);
+
+  // Intersection Observer for scroll animations
+  useEffect(() => {
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('animate-in');
+        }
+      });
+    }, observerOptions);
+
+    // Observe elements for animations
+    const elementsToObserve = [
+      headerRef.current,
+      panelRef.current,
+      uploadSectionRef.current,
+      resumesSectionRef.current
+    ].filter(Boolean);
+
+    elementsToObserve.forEach((element) => {
+      if (element) {
+        observer.observe(element);
+      }
+    });
+
+    return () => {
+      elementsToObserve.forEach((element) => {
+        if (element) {
+          observer.unobserve(element);
+        }
+      });
+    };
   }, []);
 
   const fetchResumes = async () => {
@@ -271,7 +315,7 @@ const Dashboard: React.FC = () => {
 
   return (
     <div className="dashboard">
-      <div className="dashboard-header">
+      <div className="dashboard-header" ref={headerRef}>
         <div className="dashboard-welcome">
           <h1>Welcome back, {user?.name || user?.email?.split('@')[0] || 'User'}!</h1>
           <p>Manage your resumes and get insights to improve your job applications.</p>
@@ -279,9 +323,9 @@ const Dashboard: React.FC = () => {
       </div>
 
       <div className="dashboard-content">
-        <div className="dashboard-panel">
+        <div className="dashboard-panel" ref={panelRef}>
           {/* Column 1: Info Section (Upload or Analyze) */}
-          <div className="upload-info-section">
+          <div className="upload-info-section" ref={uploadSectionRef}>
             {showJobAnalysis ? (
               <div className="job-analysis-header">
                 <div className="job-analysis-icon-container">
@@ -439,7 +483,7 @@ const Dashboard: React.FC = () => {
           </div>
 
           {/* Column 3: Previous Resumes */}
-          <div className="resumes-section">
+          <div className="resumes-section" ref={resumesSectionRef}>
             <div className="resumes-header">
               <h2>Your Resumes</h2>
               <span className="resume-count">{resumes.length} resume{resumes.length !== 1 ? 's' : ''}</span>
@@ -460,11 +504,12 @@ const Dashboard: React.FC = () => {
               </div>
             ) : (
               <div className="resumes-list">
-                {resumes.map((resume) => (
+                {resumes.map((resume, index) => (
                   <div 
                     key={resume.id} 
                     className={`resume-item ${resume.isActive ? 'active' : ''} ${selectedResumeId === resume.id ? 'selected' : ''}`}
                     onClick={() => handleResumeSelectFromSidebar(resume.id)}
+                    style={{ animationDelay: `${index * 0.1}s` }}
                   >
                     <div className="resume-item-header">
                       <div className="resume-item-info">

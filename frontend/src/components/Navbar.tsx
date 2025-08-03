@@ -194,30 +194,17 @@ const Navbar: React.FC<NavbarProps> = ({ className = '' }) => {
                   <div className="profile-dropdown">
                     <div className="profile-dropdown-header">
                       <div className="profile-dropdown-avatar">
-                        <User className="w-5 h-5" />
+                        <User className="w-4 h-4" />
                       </div>
                       <div className="profile-dropdown-info">
                         <p className="profile-dropdown-name">
-                          {user?.name || 'User'}
+                          {user?.name || user?.email?.split('@')[0] || 'User'}
                         </p>
                         <p className="profile-dropdown-email">
                           {user?.email}
                         </p>
                       </div>
                     </div>
-                    <div className="profile-dropdown-divider"></div>
-                    <button 
-                      className="profile-dropdown-item"
-                      onClick={() => handleLinkClick('/dashboard')}
-                    >
-                      <span>Dashboard</span>
-                    </button>
-                    <button 
-                      className="profile-dropdown-item"
-                      onClick={() => handleLinkClick('/tracker')}
-                    >
-                      <span>Company Tracker</span>
-                    </button>
                     <div className="profile-dropdown-divider"></div>
                     <button 
                       className="profile-dropdown-item"

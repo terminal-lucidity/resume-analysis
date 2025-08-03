@@ -1,4 +1,4 @@
-import { Upload, Target, Zap, ArrowRight, BarChart3, CheckCircle, Users, Shield, Search, Star, Clock, TrendingUp } from "lucide-react";
+import { Upload, Target, Zap, ArrowRight, BarChart3, CheckCircle, Users, Shield, Search, Star, Clock, TrendingUp, FileText, Brain } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 
@@ -41,28 +41,32 @@ function LandingHero() {
 
   const features = [
     {
-      icon: <Target className="w-8 h-8" />,
+      icon: <Brain className="w-8 h-8" />,
       title: "AI-Powered Analysis",
       description: "Advanced algorithms analyze your resume against job requirements and industry standards.",
-      highlights: ["Keyword optimization", "Skills gap analysis", "Industry benchmarking"]
+      highlights: ["Keyword optimization", "Skills gap analysis", "Industry benchmarking"],
+      color: "blue"
     },
     {
       icon: <BarChart3 className="w-8 h-8" />,
       title: "Detailed Insights",
       description: "Get comprehensive feedback on strengths, weaknesses, and specific improvement recommendations.",
-      highlights: ["Score breakdown", "Actionable suggestions", "Progress tracking"]
+      highlights: ["Score breakdown", "Actionable suggestions", "Progress tracking"],
+      color: "purple"
     },
     {
       icon: <Users className="w-8 h-8" />,
       title: "Interview Prep",
       description: "Practice with AI-generated questions tailored to your resume and target roles.",
-      highlights: ["Role-specific questions", "AI feedback", "Confidence building"]
+      highlights: ["Role-specific questions", "AI feedback", "Confidence building"],
+      color: "green"
     },
     {
       icon: <Search className="w-8 h-8" />,
-      title: "Job Matching",
+      title: "Smart Job Matching",
       description: "Find jobs that match your skills and get personalized recommendations.",
-      highlights: ["Curated listings", "Resume-based matches", "Direct applications"]
+      highlights: ["Curated listings", "Resume-based matches", "Direct applications"],
+      color: "orange"
     }
   ];
 
@@ -152,9 +156,13 @@ function LandingHero() {
           
           <div className="features-grid">
             {features.map((feature, index) => (
-              <div key={index} className="feature-card">
-                <div className="feature-icon">{feature.icon}</div>
-                <h3 className="feature-title">{feature.title}</h3>
+              <div key={index} className={`feature-card feature-card-${feature.color}`}>
+                <div className="feature-header">
+                  <div className={`feature-icon feature-icon-${feature.color}`}>
+                    {feature.icon}
+                  </div>
+                  <h3 className="feature-title">{feature.title}</h3>
+                </div>
                 <p className="feature-description">{feature.description}</p>
                 <ul className="feature-highlights">
                   {feature.highlights.map((highlight, i) => (

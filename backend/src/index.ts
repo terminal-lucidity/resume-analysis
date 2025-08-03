@@ -5,8 +5,12 @@ import { postgresConnection, connectMongoDB } from "./config/database";
 import authRoutes from "./routes/auth";
 import resumeRoutes from "./routes/resume";
 import analyzeRoutes from "./routes/analyze";
+import companyRoutes from "./routes/company";
+import applicationRoutes from "./routes/application";
 import passport from "./passport";
 import "./entities/Resume"; // Register Resume entity with TypeORM
+import "./entities/Company"; // Register Company entity with TypeORM
+import "./entities/Application"; // Register Application entity with TypeORM
 
 config();
 
@@ -21,6 +25,8 @@ app.use(passport.initialize());
 app.use("/api/auth", authRoutes);
 app.use("/api/resumes", resumeRoutes);
 app.use("/api/analyze", analyzeRoutes);
+app.use("/api/companies", companyRoutes);
+app.use("/api/applications", applicationRoutes);
 
 // Health check
 app.get("/health", (req, res) => {

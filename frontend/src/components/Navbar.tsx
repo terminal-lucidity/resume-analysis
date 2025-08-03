@@ -220,6 +220,19 @@ const Navbar: React.FC<NavbarProps> = ({ className = '' }) => {
                     <div className="profile-dropdown-divider"></div>
                     <button 
                       className="profile-dropdown-item"
+                      onClick={() => handleLinkClick('/dashboard')}
+                    >
+                      <span>Dashboard</span>
+                    </button>
+                    <button 
+                      className="profile-dropdown-item"
+                      onClick={() => handleLinkClick('/tracker')}
+                    >
+                      <span>Company Tracker</span>
+                    </button>
+                    <div className="profile-dropdown-divider"></div>
+                    <button 
+                      className="profile-dropdown-item"
                       onClick={handleLogout}
                     >
                       <LogOut className="w-4 h-4" />

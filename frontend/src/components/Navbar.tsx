@@ -143,14 +143,6 @@ const Navbar: React.FC<NavbarProps> = ({ className = '' }) => {
         </div>
 
         <ul className={`navbar-menu ${isMenuOpen ? 'active' : ''}`}>
-          <li className="navbar-item">
-            <button 
-              className="navbar-link"
-              onClick={() => handleLinkClick('/features')}
-            >
-              Features
-            </button>
-          </li>
           {isAuthenticated && (
             <li className="navbar-item">
               <button 
@@ -171,30 +163,6 @@ const Navbar: React.FC<NavbarProps> = ({ className = '' }) => {
               </button>
             </li>
           )}
-          <li className="navbar-item">
-            <button 
-              className="navbar-link"
-              onClick={() => handleLinkClick('/pricing')}
-            >
-              Pricing
-            </button>
-          </li>
-          <li className="navbar-item">
-            <button 
-              className="navbar-link"
-              onClick={() => handleLinkClick('/about')}
-            >
-              About
-            </button>
-          </li>
-          <li className="navbar-item">
-            <button 
-              className="navbar-link"
-              onClick={() => handleLinkClick('/contact')}
-            >
-              Contact
-            </button>
-          </li>
 
           <li className="navbar-item">
             <button 

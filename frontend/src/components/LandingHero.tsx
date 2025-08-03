@@ -1,4 +1,4 @@
-import { Upload, Target, Zap, ArrowRight, BarChart3 } from "lucide-react";
+import { Upload, Target, Zap, ArrowRight, BarChart3, CheckCircle, Users, Shield, Search } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 
@@ -15,22 +15,66 @@ function LandingHero() {
   const handleDashboardClick = () => {
     navigate('/dashboard');
   };
-  const features = [
+
+  const mainFeatures = [
     {
-      icon: <Upload className="w-8 h-8 text-blue-500" />,
-      title: "Smart Upload",
-      description: "Upload your resume and job description with drag-and-drop simplicity",
+      step: 'Step 1',
+      icon: Target,
+      title: "AI-Powered Analysis",
+      description: "Advanced AI algorithms analyze your resume against job requirements and industry standards.",
+      benefits: ["Keyword optimization", "Skills gap analysis", "Industry benchmarking"]
     },
     {
-      icon: <Target className="w-8 h-8 text-green-500" />,
-      title: "AI Analysis",
-      description: "Get instant feedback on what recruiters are looking for in your resume",
+      step: 'Step 2',
+      icon: BarChart3,
+      title: "Detailed Insights",
+      description: "Get comprehensive feedback on strengths, weaknesses, and specific improvement recommendations.",
+      benefits: ["Score breakdown", "Actionable suggestions", "Progress tracking"]
     },
     {
-      icon: <Zap className="w-8 h-8 text-yellow-500" />,
-      title: "Quick Results",
-      description: "Receive actionable insights in seconds, not hours",
+      step: 'Step 3',
+      icon: Users,
+      title: "Interview Prep",
+      description: "Practice with AI-generated interview questions tailored to your resume and target roles. Get tips and feedback to boost your confidence.",
+      benefits: ["Role-specific questions", "AI feedback", "Confidence building"]
     },
+    {
+      step: 'Step 4',
+      icon: Search,
+      title: "Personalized Job Matching",
+      description: "We help you find jobs that match your resume and skills, connecting you with opportunities tailored to your profile.",
+      benefits: ["Curated job listings", "Resume-based recommendations", "Direct application links"]
+    },
+  ];
+
+  const keyBenefits = [
+    {
+      icon: Zap,
+      title: "Lightning Fast",
+      description: "Get your analysis in under 30 seconds"
+    },
+    {
+      icon: CheckCircle,
+      title: "Accurate Results",
+      description: "95% accuracy rate in resume analysis"
+    },
+    {
+      icon: Users,
+      title: "Recruiter Insights",
+      description: "See what recruiters actually look for"
+    },
+    {
+      icon: Shield,
+      title: "Privacy First",
+      description: "Your data is encrypted and secure"
+    }
+  ];
+
+  const stats = [
+    { number: "50K+", label: "Resumes Analyzed" },
+    { number: "95%", label: "Accuracy Rate" },
+    { number: "30s", label: "Average Analysis Time" },
+    { number: "10K+", label: "Happy Users" }
   ];
 
   return (
@@ -66,30 +110,81 @@ function LandingHero() {
         </div>
       </main>
 
-      {/* Features Section */}
+      {/* Stats Section */}
+      <section className="section bg-white dark:bg-gray-900">
+        <div className="container">
+          <div className="features-stats">
+            {stats.map((stat, index) => (
+              <div key={index} className="features-stat-card">
+                <div className="features-stat-number">{stat.number}</div>
+                <div className="features-stat-label">{stat.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Main Features Section */}
+      <section className="section bg-gray-50 dark:bg-gray-800">
+        <div className="container">
+          <div className="text-center mb-xl max-w-2xl mx-auto">
+            <h2 className="heading-secondary mb-md">Everything You Need to Succeed</h2>
+            <p className="text-large">
+              Our comprehensive suite of tools helps you create resumes that stand out
+            </p>
+          </div>
+
+          <div className="features-steps-flow">
+            {mainFeatures.map((feature, idx) => {
+              const IconComponent = feature.icon;
+              return (
+                <div
+                  key={idx}
+                  className={`features-step-card${idx === 0 ? ' clickable' : ''}`}
+                  onClick={idx === 0 ? () => navigate(isAuthenticated ? '/dashboard' : '/signin') : undefined}
+                >
+                  <div className="features-icon">
+                    <IconComponent size={28} />
+                  </div>
+                  <h3 className="step-title">{feature.title}</h3>
+                  <p className="step-desc">{feature.description}</p>
+                  <ul className="step-benefits">
+                    {feature.benefits.map((b, i) => (
+                      <li key={i}>
+                        <CheckCircle size={18} /> {b}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* Key Benefits Section */}
       <section className="section bg-white dark:bg-gray-900">
         <div className="container">
           <div className="text-center mb-xl max-w-2xl mx-auto">
             <h2 className="heading-secondary mb-md">Why Choose Vettly?</h2>
             <p className="text-large">
-              Get the edge you need in today's competitive job market with AI-powered resume analysis.
+              Join thousands of job seekers who've improved their resumes with our platform
             </p>
           </div>
 
-          <div className="grid grid-cols-3 gap-xl">
-            {features.map((feature, index) => (
-              <div key={index} className="card card-feature fade-in">
-                <div className="flex items-center justify-center w-24 h-24 bg-white dark:bg-gray-600 rounded-xl mb-lg mx-auto">
-                  {feature.icon}
+          <div className="benefits-grid">
+            {keyBenefits.map((benefit, index) => {
+              const IconComponent = benefit.icon;
+              return (
+                <div key={index} className="benefit-card">
+                  <div className="benefit-icon">
+                    <IconComponent size={28} />
+                  </div>
+                  <h3 className="benefit-title">{benefit.title}</h3>
+                  <p className="benefit-desc">{benefit.description}</p>
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-md">
-                  {feature.title}
-                </h3>
-                <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
-                  {feature.description}
-                </p>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>

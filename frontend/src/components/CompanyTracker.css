@@ -139,7 +139,7 @@ html {
   background: rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-  padding: 16px 0;
+  padding: 24px 0;
   position: relative;
 }
 
@@ -264,14 +264,14 @@ html {
 }
 
 .company-tracker-welcome h1 {
-  font-size: 1.25rem;
+  font-size: 1.5rem;
   font-weight: 600;
-  margin: 0 0 4px 0;
+  margin: 0 0 6px 0;
   color: #374151;
 }
 
 .company-tracker-welcome p {
-  font-size: 0.875rem;
+  font-size: 1rem;
   color: #6b7280;
   margin: 0;
   opacity: 0.8;

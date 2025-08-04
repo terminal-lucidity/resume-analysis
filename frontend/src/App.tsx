@@ -9,6 +9,7 @@ import OAuthSuccess from './components/auth/OAuthSuccess';
 import Dashboard from './components/Dashboard';
 import Analysis from './components/Analysis';
 import CompanyTracker from './components/CompanyTracker';
+import JobSearch from './components/JobSearch';
 import './App.css';
 
 function App() {
@@ -25,6 +26,7 @@ function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/analysis" element={<Analysis />} />
           <Route path="/tracker" element={<CompanyTracker />} />
+          <Route path="/jobs" element={<JobSearch />} />
         </Routes>
       </div>
     </Router>

@@ -157,6 +157,16 @@ const Navbar: React.FC<NavbarProps> = ({ className = '' }) => {
             <li className="navbar-item">
               <button 
                 className="navbar-link"
+                onClick={() => handleLinkClick('/jobs')}
+              >
+                Job Search
+              </button>
+            </li>
+          )}
+          {isAuthenticated && (
+            <li className="navbar-item">
+              <button 
+                className="navbar-link"
                 onClick={() => handleLinkClick('/tracker')}
               >
                 Company Tracker

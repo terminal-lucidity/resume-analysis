@@ -7,10 +7,12 @@ import resumeRoutes from "./routes/resume";
 import analyzeRoutes from "./routes/analyze";
 import companyRoutes from "./routes/company";
 import applicationRoutes from "./routes/application";
+import jobRoutes from "./routes/jobs";
 import passport from "./passport";
 import "./entities/Resume"; // Register Resume entity with TypeORM
 import "./entities/Company"; // Register Company entity with TypeORM
 import "./entities/Application"; // Register Application entity with TypeORM
+import "./entities/Job"; // Register Job entity with TypeORM
 
 config();
 
@@ -27,6 +29,7 @@ app.use("/api/resumes", resumeRoutes);
 app.use("/api/analyze", analyzeRoutes);
 app.use("/api/companies", companyRoutes);
 app.use("/api/applications", applicationRoutes);
+app.use("/api/jobs", jobRoutes);
 
 // Health check
 app.get("/health", (req, res) => {

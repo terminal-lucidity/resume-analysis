@@ -50,9 +50,9 @@ const CompanyTracker: React.FC = () => {
 
   // Refs for scroll animations
   const headerRef = useRef<HTMLDivElement>(null);
-  const panelRef = useRef<HTMLDivElement>(null);
-  const companiesSectionRef = useRef<HTMLDivElement>(null);
-  const applicationsSectionRef = useRef<HTMLDivElement>(null);
+  const mainGridRef = useRef<HTMLDivElement>(null);
+  const companiesCardRef = useRef<HTMLDivElement>(null);
+  const applicationsCardRef = useRef<HTMLDivElement>(null);
 
   // Form states
   const [newCompany, setNewCompany] = useState({
@@ -132,7 +132,7 @@ const CompanyTracker: React.FC = () => {
     };
   }, []);
 
-  // Intersection Observer for scroll animations
+  // Intersection Observer for scroll animations - EXACT COPY FROM DASHBOARD
   useEffect(() => {
     const observerOptions = {
       threshold: 0.1,
@@ -150,9 +150,9 @@ const CompanyTracker: React.FC = () => {
     // Observe elements for animations
     const elementsToObserve = [
       headerRef.current,
-      panelRef.current,
-      companiesSectionRef.current,
-      applicationsSectionRef.current
+      mainGridRef.current,
+      companiesCardRef.current,
+      applicationsCardRef.current
     ].filter(Boolean);
 
     elementsToObserve.forEach((element) => {
@@ -400,9 +400,9 @@ const CompanyTracker: React.FC = () => {
 
       {/* Main Content */}
       <div className="company-tracker-content">
-        <div className="main-grid">
+        <div className="main-grid" ref={mainGridRef}>
           {/* Companies Card */}
-          <div className="card" ref={companiesSectionRef}>
+          <div className="card" ref={companiesCardRef}>
             <div className="card-header">
               <div className="card-title">
                 <div className="card-icon companies-icon">🏢</div>
@@ -483,7 +483,7 @@ const CompanyTracker: React.FC = () => {
           </div>
 
           {/* Applications Card */}
-          <div className="card" ref={applicationsSectionRef}>
+          <div className="card" ref={applicationsCardRef}>
             <div className="card-header">
               <div className="card-title">
                 <div className="card-icon applications-icon">📋</div>

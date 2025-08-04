@@ -4,6 +4,8 @@ import { postgresConnection } from "../config/database";
 import { Job, JobLevel, JobType } from "../entities/Job";
 import { Company } from "../entities/Company";
 import { Resume } from "../entities/Resume";
+import { User } from "../entities/User";
+import { JobRecommendationService } from "../services/jobRecommendations";
 
 const router = express.Router();
 
@@ -82,10 +84,38 @@ router.get("/", authenticateToken, async (req, res) => {
 // Get job recommendations based on user's resume
 router.get("/recommendations", authenticateToken, async (req, res) => {
   try {
-    const userId = req.user.id;
+    if (!req.user) {
+      return res.status(401).json({ error: "User not authenticated" });
+    }
+
+    const user = req.user as User;
+    const userId = user.id;
     const { limit = 10 } = req.query;
 
-    // Get user's active resume
+    // Use the improved recommendation service
+    const recommendedJobs = await JobRecommendationService.getRecommendations(
+      userId,
+      Number(limit)
+    );
+
+    res.json({ jobs: recommendedJobs });
+  } catch (error) {
+    console.error("Error fetching job recommendations:", error);
+    res.status(500).json({ error: "Failed to fetch recommendations" });
+  }
+});
+
+// Get recommendation insights for a user
+router.get("/recommendations/insights", authenticateToken, async (req, res) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json({ error: "User not authenticated" });
+    }
+
+    const user = req.user as User;
+    const userId = user.id;
+
+    // Get user's resume
     const resume = await postgresConnection
       .createQueryBuilder(Resume, "resume")
       .where("resume.userId = :userId AND resume.isActive = :isActive", {
@@ -94,64 +124,73 @@ router.get("/recommendations", authenticateToken, async (req, res) => {
       })
       .getOne();
 
-    if (!resume) {
+    if (!resume || !resume.parsedData) {
       return res.status(404).json({ error: "No active resume found" });
     }
 
-    // Extract skills and experience from resume
-    const resumeSkills = resume.skills || [];
-    const resumeExperience = resume.experience || [];
-    const resumeLevel = resume.level || JobLevel.MID;
+    const { skills, experience } = resume.parsedData;
 
-    // Build recommendation query
-    const queryBuilder = postgresConnection
+    // Analyze skills gap
+    const allJobs = await postgresConnection
       .createQueryBuilder(Job, "job")
       .leftJoinAndSelect("job.company", "company")
-      .where("job.isActive = :isActive", { isActive: true });
-
-    // Match by skills (if available)
-    if (resumeSkills.length > 0) {
-      const skillConditions = resumeSkills
-        .map((_, index) => `job.skills @> :skill${index}`)
-        .join(" OR ");
-
-      queryBuilder.andWhere(`(${skillConditions})`);
-
-      resumeSkills.forEach((skill, index) => {
-        queryBuilder.setParameter(`skill${index}`, JSON.stringify([skill]));
-      });
-    }
-
-    // Match by level
-    queryBuilder.andWhere("job.level = :level", { level: resumeLevel });
-
-    // Get recommended jobs
-    const recommendedJobs = await queryBuilder
-      .orderBy("job.createdAt", "DESC")
-      .limit(Number(limit))
+      .where("job.isActive = :isActive", { isActive: true })
       .getMany();
 
-    // If not enough recommendations, get more jobs with broader criteria
-    if (recommendedJobs.length < Number(limit)) {
-      const remainingLimit = Number(limit) - recommendedJobs.length;
-      const additionalJobs = await postgresConnection
-        .createQueryBuilder(Job, "job")
-        .leftJoinAndSelect("job.company", "company")
-        .where("job.isActive = :isActive", { isActive: true })
-        .andWhere("job.id NOT IN (:...jobIds)", {
-          jobIds: recommendedJobs.map((job) => job.id),
-        })
-        .orderBy("job.createdAt", "DESC")
-        .limit(remainingLimit)
-        .getMany();
+    const topSkills = JobRecommendationService.getTopSkills(allJobs);
+    const missingSkills = topSkills.filter(
+      (skill) =>
+        !skills?.some(
+          (userSkill) =>
+            userSkill.toLowerCase().includes(skill.toLowerCase()) ||
+            skill.toLowerCase().includes(userSkill.toLowerCase())
+        )
+    );
 
-      recommendedJobs.push(...additionalJobs);
-    }
+    // Get experience level
+    const experienceLevel = JobRecommendationService.determineExperienceLevel(
+      experience || []
+    );
 
-    res.json({ jobs: recommendedJobs });
+    // Get industry preferences
+    const preferredIndustries = JobRecommendationService.extractIndustries(
+      experience || []
+    );
+
+    res.json({
+      insights: {
+        skills: {
+          current: skills || [],
+          topDemanded: topSkills.slice(0, 10),
+          missing: missingSkills.slice(0, 5),
+          gapAnalysis: `You have ${
+            skills?.length || 0
+          } skills, but the market demands ${
+            topSkills.length
+          } key skills. Consider learning: ${missingSkills
+            .slice(0, 3)
+            .join(", ")}`,
+        },
+        experience: {
+          level: experienceLevel,
+          years: JobRecommendationService.extractYearsFromDuration(
+            experience?.[0]?.duration || "0 years"
+          ),
+          recommendations:
+            JobRecommendationService.getLevelRecommendations(experienceLevel),
+        },
+        industries: {
+          preferred: preferredIndustries,
+          recommendations:
+            JobRecommendationService.getIndustryRecommendations(
+              preferredIndustries
+            ),
+        },
+      },
+    });
   } catch (error) {
-    console.error("Error fetching job recommendations:", error);
-    res.status(500).json({ error: "Failed to fetch recommendations" });
+    console.error("Error fetching recommendation insights:", error);
+    res.status(500).json({ error: "Failed to fetch insights" });
   }
 });
 

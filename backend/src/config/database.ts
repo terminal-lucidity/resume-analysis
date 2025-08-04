@@ -5,6 +5,7 @@ import { User } from "../entities/User";
 import { Resume } from "../entities/Resume";
 import { Company } from "../entities/Company";
 import { Application } from "../entities/Application";
+import { Job } from "../entities/Job";
 import "reflect-metadata";
 
 config();
@@ -22,7 +23,7 @@ export const postgresConnection = new DataSource({
   url: process.env.POSTGRES_URL,
   synchronize: process.env.NODE_ENV === "development", // Don't use in production
   logging: process.env.NODE_ENV === "development",
-  entities: [User, Resume, Company, Application],
+  entities: [User, Resume, Company, Application, Job],
   migrations: ["src/migrations/**/*.ts"],
   subscribers: ["src/subscribers/**/*.ts"],
   ssl:

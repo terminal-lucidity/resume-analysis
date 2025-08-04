@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Search, MapPin, Building2, Briefcase, DollarSign, Clock, Star, Filter, ExternalLink, Bookmark, BookmarkCheck } from 'lucide-react';
 import './JobSearch.css';
 
@@ -24,6 +24,24 @@ interface Job {
   applicationUrl?: string;
 }
 
+interface JobInsights {
+  skills: {
+    current: string[];
+    topDemanded: string[];
+    missing: string[];
+    gapAnalysis: string;
+  };
+  experience: {
+    level: string;
+    years: number;
+    recommendations: string[];
+  };
+  industries: {
+    preferred: string[];
+    recommendations: string[];
+  };
+}
+
 interface JobSearchProps {
   onJobSelect?: (job: Job) => void;
 }
@@ -40,8 +58,9 @@ const JobSearch: React.FC<JobSearchProps> = ({ onJobSelect }) => {
     remote: false,
   });
   const [showFilters, setShowFilters] = useState(false);
-  const [activeTab, setActiveTab] = useState<'search' | 'recommendations'>('recommendations');
+  const [activeTab, setActiveTab] = useState<'search' | 'recommendations' | 'insights'>('recommendations');
   const [savedJobs, setSavedJobs] = useState<string[]>([]);
+  const [insights, setInsights] = useState<JobInsights | null>(null);
 
   // Refs for animations
   const headerRef = useRef<HTMLDivElement>(null);
@@ -57,6 +76,7 @@ const JobSearch: React.FC<JobSearchProps> = ({ onJobSelect }) => {
 
     fetchRecommendations();
     fetchSavedJobs();
+    fetchInsights();
 
     // Add scroll animations
     const observerOptions = {
@@ -94,20 +114,16 @@ const JobSearch: React.FC<JobSearchProps> = ({ onJobSelect }) => {
     };
   }, []);
 
-  useEffect(() => {
-    if (activeTab === 'search' && searchTerm) {
-      fetchJobs();
-    }
-  }, [searchTerm, filters, activeTab]);
-
-  const fetchJobs = async () => {
+  const fetchJobs = useCallback(async () => {
     try {
       const token = localStorage.getItem('token');
-      const params = new URLSearchParams({
-        search: searchTerm,
-        ...filters,
-        limit: '20',
-      });
+      const params = new URLSearchParams();
+      params.append('search', searchTerm);
+      params.append('level', filters.level);
+      params.append('type', filters.type);
+      params.append('location', filters.location);
+      params.append('remote', filters.remote.toString());
+      params.append('limit', '20');
 
       const response = await fetch(`/api/jobs?${params}`, {
         headers: {
@@ -122,7 +138,13 @@ const JobSearch: React.FC<JobSearchProps> = ({ onJobSelect }) => {
     } catch (error) {
       console.error('Error fetching jobs:', error);
     }
-  };
+  }, [searchTerm, filters]);
+
+  useEffect(() => {
+    if (activeTab === 'search' && searchTerm) {
+      fetchJobs();
+    }
+  }, [searchTerm, filters, activeTab, fetchJobs]);
 
   const fetchRecommendations = async () => {
     try {
@@ -141,6 +163,24 @@ const JobSearch: React.FC<JobSearchProps> = ({ onJobSelect }) => {
       console.error('Error fetching recommendations:', error);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const fetchInsights = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch('/api/jobs/recommendations/insights', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setInsights(data.insights);
+      }
+    } catch (error) {
+      console.error('Error fetching insights:', error);
     }
   };
 
@@ -309,140 +349,262 @@ const JobSearch: React.FC<JobSearchProps> = ({ onJobSelect }) => {
               <Search className="tab-icon" />
               Search Jobs
             </button>
+            <button
+              className={`tab-button ${activeTab === 'insights' ? 'active' : ''}`}
+              onClick={() => setActiveTab('insights')}
+            >
+              <Briefcase className="tab-icon" />
+              Career Insights
+            </button>
           </div>
         </div>
 
         <div className="jobs-section" ref={jobsRef}>
           {isLoading ? (
-                                    <div className="loading-state">
-                          <div className="loading-spinner"></div>
-                          <p>Finding jobs for you...</p>
-                        </div>
+            <div className="loading-state">
+              <div className="loading-spinner"></div>
+              <p>Finding jobs for you...</p>
+            </div>
           ) : (
             <>
-                                        <div className="jobs-header">
-                            <h2>
-                              {activeTab === 'recommendations' ? 'Recommended for You' : 'Search Results'}
-                            </h2>
-                            <span className="job-count">{currentJobs.length} jobs found</span>
+              {activeTab === 'insights' ? (
+                <div className="insights-section">
+                  <div className="insights-header">
+                    <h2>Career Insights</h2>
+                    <p>Personalized analysis based on your resume</p>
+                  </div>
+                  
+                  {insights ? (
+                    <div className="insights-content">
+                      {/* Skills Analysis */}
+                      <div className="insight-card">
+                        <h3>Skills Analysis</h3>
+                        <div className="skills-gap">
+                          <p className="gap-analysis">{insights.skills.gapAnalysis}</p>
+                        </div>
+                        <div className="skills-breakdown">
+                          <div className="skills-section">
+                            <h4>Your Skills ({insights.skills.current.length})</h4>
+                            <div className="skills-tags">
+                              {insights.skills.current.map((skill, index) => (
+                                <span key={index} className="skill-tag current">{skill}</span>
+                              ))}
+                            </div>
                           </div>
+                          <div className="skills-section">
+                            <h4>Top Demanded Skills</h4>
+                            <div className="skills-tags">
+                              {insights.skills.topDemanded.slice(0, 8).map((skill, index) => (
+                                <span key={index} className="skill-tag demanded">{skill}</span>
+                              ))}
+                            </div>
+                          </div>
+                          <div className="skills-section">
+                            <h4>Skills to Learn</h4>
+                            <div className="skills-tags">
+                              {insights.skills.missing.slice(0, 5).map((skill, index) => (
+                                <span key={index} className="skill-tag missing">{skill}</span>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
 
-              <div className="jobs-list">
-                {currentJobs.length === 0 ? (
-                                                <div className="empty-state">
-                                <Search className="empty-icon" />
-                                <h3>No jobs found</h3>
-                                <p>
-                                  {activeTab === 'recommendations'
-                                    ? 'Upload a resume to get personalized recommendations'
-                                    : 'Try adjusting your search criteria'
-                                  }
-                                </p>
+                      {/* Experience Analysis */}
+                      <div className="insight-card">
+                        <h3>Experience Level</h3>
+                        <div className="experience-info">
+                          <div className="level-badge">
+                            <span className={`level ${insights.experience.level}`}>
+                              {insights.experience.level.charAt(0).toUpperCase() + insights.experience.level.slice(1)} Level
+                            </span>
+                            <span className="years">{insights.experience.years.toFixed(1)} years experience</span>
+                          </div>
+                          <div className="recommendations">
+                            <h4>Career Recommendations</h4>
+                            <ul>
+                              {insights.experience.recommendations.map((rec, index) => (
+                                <li key={index}>{rec}</li>
+                              ))}
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Industry Analysis */}
+                      <div className="insight-card">
+                        <h3>Industry Preferences</h3>
+                        <div className="industry-info">
+                          {insights.industries.preferred.length > 0 ? (
+                            <>
+                              <div className="preferred-industries">
+                                <h4>Your Preferred Industries</h4>
+                                <div className="industry-tags">
+                                  {insights.industries.preferred.map((industry, index) => (
+                                    <span key={index} className="industry-tag">{industry}</span>
+                                  ))}
+                                </div>
                               </div>
-                ) : (
-                  currentJobs.map((job) => (
-                    <div key={job.id} className="job-card" onClick={() => handleJobClick(job)}>
-                      <div className="job-card-header">
-                        <div className="job-title-section">
-                          <h3 className="job-title">{job.title}</h3>
-                          <div className="job-company">
-                            <Building2 className="company-icon" />
-                            <span>{job.company.name}</span>
-                          </div>
-                        </div>
-                        <button
-                          className="save-job-button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleSaveJob(job.id);
-                          }}
-                        >
-                          {savedJobs.includes(job.id) ? (
-                            <BookmarkCheck className="save-icon saved" />
+                              <div className="industry-recommendations">
+                                <h4>Industry Recommendations</h4>
+                                <ul>
+                                  {insights.industries.recommendations.map((rec, index) => (
+                                    <li key={index}>{rec}</li>
+                                  ))}
+                                </ul>
+                              </div>
+                            </>
                           ) : (
-                            <Bookmark className="save-icon" />
-                          )}
-                        </button>
-                      </div>
-
-                      <div className="job-meta">
-                        <div className="job-badges">
-                          <span className={`job-badge level ${getLevelColor(job.level)}`}>
-                            {job.level.replace('_', ' ')}
-                          </span>
-                          <span className={`job-badge type ${getTypeColor(job.type)}`}>
-                            {job.type.replace('_', ' ')}
-                          </span>
-                          {job.remote && (
-                            <span className="job-badge remote">Remote</span>
-                          )}
-                        </div>
-
-                        <div className="job-details">
-                          {job.location && (
-                            <div className="job-detail">
-                              <MapPin className="detail-icon" />
-                              <span>{job.location}</span>
-                            </div>
-                          )}
-                          {job.salary && (
-                            <div className="job-detail">
-                              <DollarSign className="detail-icon" />
-                              <span>{job.salary}</span>
-                            </div>
-                          )}
-                          {job.postedDate && (
-                            <div className="job-detail">
-                              <Clock className="detail-icon" />
-                              <span>{formatDate(job.postedDate)}</span>
+                            <div className="no-industries">
+                              <p>No industry preferences detected from your resume.</p>
+                              <div className="industry-recommendations">
+                                <h4>General Recommendations</h4>
+                                <ul>
+                                  {insights.industries.recommendations.map((rec, index) => (
+                                    <li key={index}>{rec}</li>
+                                  ))}
+                                </ul>
+                              </div>
                             </div>
                           )}
                         </div>
-                      </div>
-
-                      <div className="job-description">
-                        {job.description.length > 200
-                          ? `${job.description.substring(0, 200)}...`
-                          : job.description
-                        }
-                      </div>
-
-                      {job.skills && job.skills.length > 0 && (
-                        <div className="job-skills">
-                          {job.skills.slice(0, 5).map((skill, index) => (
-                            <span key={index} className="skill-tag">
-                              {skill}
-                            </span>
-                          ))}
-                          {job.skills.length > 5 && (
-                            <span className="skill-tag more">
-                              +{job.skills.length - 5} more
-                            </span>
-                          )}
-                        </div>
-                      )}
-
-                      <div className="job-actions">
-                        {job.applicationUrl && (
-                          <a
-                            href={job.applicationUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="apply-button"
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            <ExternalLink className="apply-icon" />
-                            Apply Now
-                          </a>
-                        )}
-                        <button className="view-details-button">
-                          View Details
-                        </button>
                       </div>
                     </div>
-                  ))
-                )}
-              </div>
+                  ) : (
+                    <div className="empty-state">
+                      <Briefcase className="empty-icon" />
+                      <h3>No insights available</h3>
+                      <p>Upload a resume to get personalized career insights</p>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <>
+                  <div className="jobs-header">
+                    <h2>
+                      {activeTab === 'recommendations' ? 'Recommended for You' : 'Search Results'}
+                    </h2>
+                    <span className="job-count">{currentJobs.length} jobs found</span>
+                  </div>
+
+                  <div className="jobs-list">
+                    {currentJobs.length === 0 ? (
+                      <div className="empty-state">
+                        <Search className="empty-icon" />
+                        <h3>No jobs found</h3>
+                        <p>
+                          {activeTab === 'recommendations'
+                            ? 'Upload a resume to get personalized recommendations'
+                            : 'Try adjusting your search criteria'
+                          }
+                        </p>
+                      </div>
+                    ) : (
+                      currentJobs.map((job) => (
+                        <div key={job.id} className="job-card" onClick={() => handleJobClick(job)}>
+                          <div className="job-card-header">
+                            <div className="job-title-section">
+                              <h3 className="job-title">{job.title}</h3>
+                              <div className="job-company">
+                                <Building2 className="company-icon" />
+                                <span>{job.company.name}</span>
+                              </div>
+                            </div>
+                            <button
+                              className="save-job-button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleSaveJob(job.id);
+                              }}
+                            >
+                              {savedJobs.includes(job.id) ? (
+                                <BookmarkCheck className="save-icon saved" />
+                              ) : (
+                                <Bookmark className="save-icon" />
+                              )}
+                            </button>
+                          </div>
+
+                          <div className="job-meta">
+                            <div className="job-badges">
+                              <span className={`job-badge level ${getLevelColor(job.level)}`}>
+                                {job.level.replace('_', ' ')}
+                              </span>
+                              <span className={`job-badge type ${getTypeColor(job.type)}`}>
+                                {job.type.replace('_', ' ')}
+                              </span>
+                              {job.remote && (
+                                <span className="job-badge remote">Remote</span>
+                              )}
+                            </div>
+
+                            <div className="job-details">
+                              {job.location && (
+                                <div className="job-detail">
+                                  <MapPin className="detail-icon" />
+                                  <span>{job.location}</span>
+                                </div>
+                              )}
+                              {job.salary && (
+                                <div className="job-detail">
+                                  <DollarSign className="detail-icon" />
+                                  <span>{job.salary}</span>
+                                </div>
+                              )}
+                              {job.postedDate && (
+                                <div className="job-detail">
+                                  <Clock className="detail-icon" />
+                                  <span>{formatDate(job.postedDate)}</span>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+
+                          <div className="job-description">
+                            {job.description.length > 200
+                              ? `${job.description.substring(0, 200)}...`
+                              : job.description
+                            }
+                          </div>
+
+                          {job.skills && job.skills.length > 0 && (
+                            <div className="job-skills">
+                              {job.skills.slice(0, 5).map((skill, index) => (
+                                <span key={index} className="skill-tag">
+                                  {skill}
+                                </span>
+                              ))}
+                              {job.skills.length > 5 && (
+                                <span className="skill-tag more">
+                                  +{job.skills.length - 5} more
+                                </span>
+                              )}
+                            </div>
+                          )}
+
+                          <div className="job-actions">
+                            {job.applicationUrl && (
+                              <a
+                                href={job.applicationUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="apply-button"
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                <ExternalLink className="apply-icon" />
+                                Apply Now
+                              </a>
+                            )}
+                            <button className="view-details-button">
+                              View Details
+                            </button>
+                          </div>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </>
+              )}
             </>
           )}
         </div>

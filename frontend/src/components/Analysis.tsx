@@ -88,6 +88,17 @@ const Analysis: React.FC = () => {
   const sidebarRef = useRef<HTMLDivElement>(null);
   const resumeRef = useRef<HTMLDivElement>(null);
 
+  // Debug logging for state (only in development)
+  if (process.env.NODE_ENV === 'development') {
+    console.log('Analysis component state:', {
+      analysisData: !!analysisData,
+      analysisResult: !!analysisResult,
+      isLoading,
+      error,
+      resumeText: resumeText.length
+    });
+  }
+
   useEffect(() => {
     console.log('Analysis component mounted');
     const token = localStorage.getItem('token');
@@ -105,52 +116,56 @@ const Analysis: React.FC = () => {
       return;
     }
 
-    // Add scroll animations
-    const observerOptions = {
-      threshold: 0.1,
-      rootMargin: '0px 0px -50px 0px'
-    };
-
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('animate-in');
-        }
-      });
-    }, observerOptions);
-
-    // Observe elements for animations
-    const elementsToObserve = [
-      headerRef.current,
-      sidebarRef.current,
-      resumeRef.current
-    ].filter(Boolean);
-
-    elementsToObserve.forEach((element) => {
-      if (element) {
-        observer.observe(element);
-      }
-    });
-
-    return () => {
-      elementsToObserve.forEach((element) => {
-        if (element) {
-          observer.unobserve(element);
-        }
-      });
-    };
-  }, []);
-
-  useEffect(() => {
+    // Parse the stored data
     try {
       const data = JSON.parse(storedData);
       console.log('Parsed analysis data:', data);
       setAnalysisData(data);
-      performAnalysis(data);
+      // Call performAnalysis and handle any errors
+      performAnalysis(data).catch((error) => {
+        console.error('Error in performAnalysis:', error);
+        setError(error.message || 'Analysis failed');
+        setIsLoading(false);
+      });
     } catch (error) {
       console.error('Error parsing analysis data:', error);
       setError('Invalid analysis data');
       setIsLoading(false);
+      return;
+    }
+
+    // Add scroll animations (simplified to avoid interference)
+    try {
+      setTimeout(() => {
+        const observerOptions = {
+          threshold: 0.1,
+          rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('animate-in');
+            }
+          });
+        }, observerOptions);
+
+        // Observe elements for animations
+        const elementsToObserve = [
+          headerRef.current,
+          sidebarRef.current,
+          resumeRef.current
+        ].filter(Boolean);
+
+        elementsToObserve.forEach((element) => {
+          if (element) {
+            observer.observe(element);
+          }
+        });
+      }, 100); // Small delay to ensure component is rendered
+    } catch (animationError) {
+      console.warn('Animation setup failed:', animationError);
+      // Continue without animations
     }
   }, []);
 
@@ -315,16 +330,12 @@ const Analysis: React.FC = () => {
   const renderResumeWithIssues = () => {
     if (!resumeText) return <div className="no-resume-text">No resume text available</div>;
 
-    const lines = resumeText.split('\n')
-      .map(line => line.trim()) // Remove leading/trailing whitespace
-      .filter(line => line.length > 0); // Remove empty lines
+    const lines = resumeText.split('\n');
     
     return (
       <div className="resume-content">
         {lines.map((line, lineIndex) => {
-          // Only show issues for lines that actually have content and if showIssues is enabled
-          const hasContent = line.trim().length > 0;
-          const lineIssues = (hasContent && showIssues) ? issues.filter(issue => 
+          const lineIssues = showIssues ? issues.filter(issue => 
             issue.start <= lineIndex * 50 && issue.end >= lineIndex * 50
           ) : [];
 
@@ -384,6 +395,8 @@ const Analysis: React.FC = () => {
       </div>
     );
   }
+
+
 
   return (
     <div className="analysis-page">
@@ -666,6 +679,19 @@ const Analysis: React.FC = () => {
           </div>
         </div>
       </div>
+    </div>
+  );
+
+  // Comprehensive fallback for any unexpected state
+  return (
+    <div className="analysis-error">
+      <AlertCircle className="error-icon" />
+      <h2>Unexpected State</h2>
+      <p>Something went wrong. Please try again or go back to the dashboard.</p>
+      <button onClick={handleBackToDashboard} className="back-button">
+        <ArrowLeft className="button-icon" />
+        Back to Dashboard
+      </button>
     </div>
   );
 };

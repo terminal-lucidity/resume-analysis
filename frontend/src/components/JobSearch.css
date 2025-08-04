@@ -43,57 +43,73 @@
 }
 
 .job-search-header {
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  padding: 48px 0;
-  text-align: center;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  padding: 16px 0;
   position: relative;
-  z-index: 1;
+}
+
+.job-search-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(99, 102, 241, 0.03) 50%, transparent 100%);
+  animation: shimmer 6s ease-in-out infinite;
 }
 
 .dark .job-search-header {
-  background: rgba(0, 0, 0, 0.2);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  background: rgba(10, 10, 26, 0.4);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
 }
 
-.job-search-header h1 {
-  font-size: 3rem;
-  font-weight: 800;
-  background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  margin: 0 0 16px 0;
-  letter-spacing: -0.02em;
-  line-height: 1.1;
+.dark .job-search-header::before {
+  background: linear-gradient(90deg, transparent 0%, rgba(129, 140, 248, 0.04) 50%, transparent 100%);
 }
 
-.dark .job-search-header h1 {
-  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+@keyframes shimmer {
+  0%, 100% { transform: translateX(-100%); }
+  50% { transform: translateX(100%); }
 }
 
-.job-search-header p {
-  font-size: 1.125rem;
-  color: rgba(255, 255, 255, 0.7);
-  margin: 0;
-  max-width: 600px;
+.job-search-welcome {
+  max-width: 1200px;
   margin: 0 auto;
-  font-weight: 400;
-  line-height: 1.6;
+  padding: 0 24px;
+  text-align: center;
+  color: #4b5563;
 }
 
-.dark .job-search-header p {
-  color: rgba(248, 250, 252, 0.7);
+.job-search-welcome h1 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0 0 4px 0;
+  color: #374151;
+}
+
+.job-search-welcome p {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin: 0;
+  opacity: 0.8;
+}
+
+.dark .job-search-welcome h1 {
+  color: #e2e8f0;
+}
+
+.dark .job-search-welcome p {
+  color: #9ca3af;
 }
 
 .job-search-content {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 40px 24px;
+  padding: 24px 24px;
   display: grid;
   grid-template-columns: 360px 1fr;
   gap: 32px;

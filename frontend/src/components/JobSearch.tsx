@@ -208,8 +208,10 @@ const JobSearch: React.FC<JobSearchProps> = ({ onJobSelect }) => {
   return (
     <div className="job-search">
                     <div className="job-search-header" ref={headerRef}>
-                <h1>Job Discovery</h1>
-                <p>AI-powered matching for your next career opportunity</p>
+                <div className="job-search-welcome">
+                  <h1>Job Discovery</h1>
+                  <p>AI-powered matching for your next career opportunity</p>
+                </div>
               </div>
 
       <div className="job-search-content">

@@ -346,29 +346,31 @@ const Analysis: React.FC = () => {
   return (
     <div className="analysis-page">
       <div className="analysis-header">
-        <button onClick={handleBackToDashboard} className="back-button">
-          <ArrowLeft className="button-icon" />
-          Back to Dashboard
-        </button>
-        <div className="analysis-title">
-          <h1>Resume Analysis</h1>
-          <p>Analysis for {analysisData.jobTitle} position</p>
-        </div>
-        <div className="analysis-toggle">
-          <button
-            className={`toggle-button ${!showDetailed ? 'active' : ''}`}
-            onClick={() => setShowDetailed(false)}
-          >
-            <Eye className="button-icon" />
-            Brief View
+        <div className="analysis-welcome">
+          <button onClick={handleBackToDashboard} className="back-button">
+            <ArrowLeft className="button-icon" />
+            Back to Dashboard
           </button>
-          <button
-            className={`toggle-button ${showDetailed ? 'active' : ''}`}
-            onClick={() => setShowDetailed(true)}
-          >
-            <BarChart3 className="button-icon" />
-            Detailed View
-          </button>
+          <div className="analysis-title">
+            <h1>Resume Analysis</h1>
+            <p>Analysis for {analysisData.jobTitle} position</p>
+          </div>
+          <div className="analysis-toggle">
+            <button
+              className={`toggle-button ${!showDetailed ? 'active' : ''}`}
+              onClick={() => setShowDetailed(false)}
+            >
+              <Eye className="button-icon" />
+              Brief View
+            </button>
+            <button
+              className={`toggle-button ${showDetailed ? 'active' : ''}`}
+              onClick={() => setShowDetailed(true)}
+            >
+              <BarChart3 className="button-icon" />
+              Detailed View
+            </button>
+          </div>
         </div>
       </div>
 

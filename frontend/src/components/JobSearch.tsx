@@ -208,8 +208,8 @@ const JobSearch: React.FC<JobSearchProps> = ({ onJobSelect }) => {
   return (
     <div className="job-search">
                     <div className="job-search-header" ref={headerRef}>
-                <h1>Professional Job Discovery</h1>
-                <p>AI-powered job matching platform designed for career growth and professional development</p>
+                <h1>Job Discovery</h1>
+                <p>AI-powered matching for your next career opportunity</p>
               </div>
 
       <div className="job-search-content">
@@ -268,26 +268,27 @@ const JobSearch: React.FC<JobSearchProps> = ({ onJobSelect }) => {
                 </select>
               </div>
 
-              <div className="filter-group">
-                <label>Location</label>
-                <input
-                  type="text"
-                  placeholder="City, State, or Remote"
-                  value={filters.location}
-                  onChange={(e) => setFilters({ ...filters, location: e.target.value })}
-                />
-              </div>
-
-              <div className="filter-group">
-                <label className="checkbox-label">
-                  <input
-                    type="checkbox"
-                    checked={filters.remote}
-                    onChange={(e) => setFilters({ ...filters, remote: e.target.checked })}
-                  />
-                  Remote Only
-                </label>
-              </div>
+                                        <div className="filter-group">
+                            <label>Location</label>
+                            <input
+                              type="text"
+                              placeholder="City, State, or Remote"
+                              value={filters.location}
+                              onChange={(e) => setFilters({ ...filters, location: e.target.value })}
+                            />
+                          </div>
+                          <div className="filter-group">
+                            <label>Remote Only</label>
+                            <label htmlFor="remote-toggle" className="toggle-switch">
+                              <input
+                                id="remote-toggle"
+                                type="checkbox"
+                                checked={filters.remote}
+                                onChange={(e) => setFilters({ ...filters, remote: e.target.checked })}
+                              />
+                              <span className="toggle-slider"></span>
+                            </label>
+                          </div>
             </div>
           )}
 
@@ -311,31 +312,31 @@ const JobSearch: React.FC<JobSearchProps> = ({ onJobSelect }) => {
 
         <div className="jobs-section" ref={jobsRef}>
           {isLoading ? (
-            <div className="loading-state">
-              <div className="loading-spinner"></div>
-              <p>Finding the perfect jobs for you...</p>
-            </div>
+                                    <div className="loading-state">
+                          <div className="loading-spinner"></div>
+                          <p>Finding jobs for you...</p>
+                        </div>
           ) : (
             <>
                                         <div className="jobs-header">
                             <h2>
-                              {activeTab === 'recommendations' ? 'AI-Recommended Opportunities' : 'Professional Job Search'}
+                              {activeTab === 'recommendations' ? 'Recommended for You' : 'Search Results'}
                             </h2>
-                            <span className="job-count">{currentJobs.length} positions available</span>
+                            <span className="job-count">{currentJobs.length} jobs found</span>
                           </div>
 
               <div className="jobs-list">
                 {currentJobs.length === 0 ? (
-                  <div className="empty-state">
-                    <Search className="empty-icon" />
-                    <h3>No jobs found</h3>
-                    <p>
-                      {activeTab === 'recommendations' 
-                        ? 'Try uploading a resume to get personalized recommendations'
-                        : 'Try adjusting your search criteria or filters'
-                      }
-                    </p>
-                  </div>
+                                                <div className="empty-state">
+                                <Search className="empty-icon" />
+                                <h3>No jobs found</h3>
+                                <p>
+                                  {activeTab === 'recommendations'
+                                    ? 'Upload a resume to get personalized recommendations'
+                                    : 'Try adjusting your search criteria'
+                                  }
+                                </p>
+                              </div>
                 ) : (
                   currentJobs.map((job) => (
                     <div key={job.id} className="job-card" onClick={() => handleJobClick(job)}>

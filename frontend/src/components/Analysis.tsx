@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { ArrowLeft, FileText, AlertCircle, CheckCircle, Info, BarChart3, Eye, EyeOff } from 'lucide-react';
 import './Analysis.css';
 
@@ -83,6 +83,11 @@ const Analysis: React.FC = () => {
   const [issues, setIssues] = useState<Array<{start: number, end: number, message: string}>>([]);
   const [showIssues, setShowIssues] = useState(false);
 
+  // Refs for animations
+  const headerRef = useRef<HTMLDivElement>(null);
+  const sidebarRef = useRef<HTMLDivElement>(null);
+  const resumeRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     console.log('Analysis component mounted');
     const token = localStorage.getItem('token');
@@ -100,6 +105,43 @@ const Analysis: React.FC = () => {
       return;
     }
 
+    // Add scroll animations
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('animate-in');
+        }
+      });
+    }, observerOptions);
+
+    // Observe elements for animations
+    const elementsToObserve = [
+      headerRef.current,
+      sidebarRef.current,
+      resumeRef.current
+    ].filter(Boolean);
+
+    elementsToObserve.forEach((element) => {
+      if (element) {
+        observer.observe(element);
+      }
+    });
+
+    return () => {
+      elementsToObserve.forEach((element) => {
+        if (element) {
+          observer.unobserve(element);
+        }
+      });
+    };
+  }, []);
+
+  useEffect(() => {
     try {
       const data = JSON.parse(storedData);
       console.log('Parsed analysis data:', data);
@@ -345,7 +387,7 @@ const Analysis: React.FC = () => {
 
   return (
     <div className="analysis-page">
-      <div className="analysis-header">
+      <div className="analysis-header" ref={headerRef}>
         <div className="analysis-welcome">
           <button onClick={handleBackToDashboard} className="back-button">
             <ArrowLeft className="button-icon" />
@@ -375,7 +417,7 @@ const Analysis: React.FC = () => {
       </div>
 
       <div className="analysis-content">
-        <div className="analysis-sidebar">
+        <div className="analysis-sidebar" ref={sidebarRef}>
           <div className="score-card">
             <h3>Overall Score</h3>
             <div className="score-circle">
@@ -604,7 +646,7 @@ const Analysis: React.FC = () => {
           )}
         </div>
 
-        <div className="resume-section">
+        <div className="resume-section" ref={resumeRef}>
           <div className="resume-header">
             <FileText className="resume-icon" />
             <h2>{analysisData.selectedResume.fileName}</h2>

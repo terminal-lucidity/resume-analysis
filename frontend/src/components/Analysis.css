@@ -110,6 +110,110 @@
   background: linear-gradient(90deg, transparent 0%, rgba(129, 140, 248, 0.04) 50%, transparent 100%);
 }
 
+@keyframes shimmer {
+  0%, 100% { transform: translateX(-100%); }
+  50% { transform: translateX(100%); }
+}
+
+/* Slide-in animation for page elements */
+.analysis-header,
+.analysis-sidebar,
+.resume-section {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* When animated in */
+.analysis-header.animate-in,
+.analysis-sidebar.animate-in,
+.resume-section.animate-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Animation only applies when explicitly triggered */
+.analysis-header.animate-in,
+.analysis-sidebar.animate-in,
+.resume-section.animate-in {
+  animation: slideInFromBottom 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slideInFromBottom {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Staggered animation for score cards */
+.score-card,
+.insights-card,
+.ats-card {
+  opacity: 1;
+  transform: translateX(0);
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.score-card.animate-in,
+.insights-card.animate-in,
+.ats-card.animate-in {
+  animation: slideInFromLeft 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slideInFromLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Add animation delay to cards when parent is animated */
+.analysis-sidebar.animate-in .score-card,
+.analysis-sidebar.animate-in .insights-card,
+.analysis-sidebar.animate-in .ats-card {
+  animation: slideInCard 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* Staggered animation for cards */
+.analysis-sidebar.animate-in .score-card { animation-delay: 0.1s; }
+.analysis-sidebar.animate-in .insights-card { animation-delay: 0.2s; }
+.analysis-sidebar.animate-in .ats-card { animation-delay: 0.3s; }
+
+/* Ensure cards start with proper initial state */
+.score-card,
+.insights-card,
+.ats-card {
+  opacity: 0;
+  transform: translateX(-20px);
+}
+
+.analysis-sidebar.animate-in .score-card,
+.analysis-sidebar.animate-in .insights-card,
+.analysis-sidebar.animate-in .ats-card {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+@keyframes slideInCard {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
 .analysis-welcome {
   max-width: 1200px;
   margin: 0 auto;

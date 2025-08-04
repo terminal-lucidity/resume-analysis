@@ -150,9 +150,8 @@ html {
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(90deg, transparent 0%, rgba(99, 102, 241, 0.08) 50%, transparent 100%);
+  background: linear-gradient(90deg, transparent 0%, rgba(99, 102, 241, 0.03) 50%, transparent 100%);
   animation: shimmer 6s ease-in-out infinite;
-  pointer-events: none;
 }
 
 .dark .company-tracker-header {
@@ -162,7 +161,7 @@ html {
 }
 
 .dark .company-tracker-header::before {
-  background: linear-gradient(90deg, transparent 0%, rgba(129, 140, 248, 0.12) 50%, transparent 100%);
+  background: linear-gradient(90deg, transparent 0%, rgba(129, 140, 248, 0.04) 50%, transparent 100%);
 }
 
 @keyframes shimmer {

@@ -215,8 +215,8 @@ const JobSearch: React.FC<JobSearchProps> = ({ onJobSelect }) => {
               </div>
 
       <div className="job-search-content">
-        <div className="job-search-sidebar">
-          <div className="search-section" ref={searchRef}>
+        <div className="job-search-sidebar" ref={searchRef}>
+          <div className="search-section">
             <div className="search-input-container">
               <Search className="search-icon" />
               <input

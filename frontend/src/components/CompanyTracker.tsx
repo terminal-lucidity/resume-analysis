@@ -366,7 +366,7 @@ const CompanyTracker: React.FC = () => {
     return (
       <div className="company-tracker-loading">
         <div className="loading-spinner"></div>
-        <p>Loading your company tracker...</p>
+        <p>Loading your applications...</p>
       </div>
     );
   }
@@ -393,7 +393,7 @@ const CompanyTracker: React.FC = () => {
       {/* Header */}
       <div className="company-tracker-header" ref={headerRef}>
         <div className="company-tracker-welcome">
-          <h1>Company Tracker</h1>
+          <h1>Applications</h1>
           <p>Track your job applications and manage companies you're interested in.</p>
         </div>
       </div>
@@ -422,7 +422,7 @@ const CompanyTracker: React.FC = () => {
             {companies.length === 0 ? (
               <div className="empty-state">
                 <p className="empty-state-text">
-                  Add companies you're interested in working for. Track their details, mark favorites, and organize your job search.
+                  Track your job applications and manage companies you're interested in. Keep organized and never lose track of your progress.
                 </p>
                 <button 
                   onClick={() => setShowAddCompany(true)}
@@ -833,7 +833,7 @@ const CompanyTracker: React.FC = () => {
         <div className="modal-overlay">
           <div className="modal-content onboarding-modal">
             <div className="onboarding-header">
-              <h2>Welcome to Company Tracker! 🎉</h2>
+              <h2>Welcome to Applications! 🎉</h2>
               <p>Let's get you started with tracking your job applications</p>
             </div>
             
@@ -858,7 +858,7 @@ const CompanyTracker: React.FC = () => {
                 <div className="onboarding-step">
                   <div className="step-icon">📊</div>
                   <h3>Step 3: Stay Organized</h3>
-                  <p>Use search and filters to manage your applications, and keep track of your progress throughout your job search.</p>
+                  <p>Use search and filters to manage your applications, and keep track of your progress throughout your job search journey.</p>
                 </div>
               )}
             </div>

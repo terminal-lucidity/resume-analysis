@@ -149,7 +149,7 @@ const Navbar: React.FC<NavbarProps> = ({ className = '' }) => {
                 className="navbar-link"
                 onClick={() => handleLinkClick('/dashboard')}
               >
-                Dashboard
+                My Resume
               </button>
             </li>
           )}
@@ -159,7 +159,7 @@ const Navbar: React.FC<NavbarProps> = ({ className = '' }) => {
                 className="navbar-link"
                 onClick={() => handleLinkClick('/jobs')}
               >
-                Job Search
+                Find Jobs
               </button>
             </li>
           )}
@@ -169,7 +169,7 @@ const Navbar: React.FC<NavbarProps> = ({ className = '' }) => {
                 className="navbar-link"
                 onClick={() => handleLinkClick('/tracker')}
               >
-                Company Tracker
+                Applications
               </button>
             </li>
           )}

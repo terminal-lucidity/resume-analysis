@@ -113,7 +113,7 @@ function LandingHero() {
                   className="btn-primary"
                 >
                   <BarChart3 className="w-5 h-5" />
-                  Go to Dashboard
+                  View My Resume
                   <ArrowRight className="w-5 h-5" />
                 </button>
               ) : (
@@ -213,7 +213,7 @@ function LandingHero() {
               className="btn-primary btn-large"
             >
               <BarChart3 className="w-5 h-5" />
-              Go to Dashboard
+              View My Resume
             </button>
           ) : (
             <button className="btn-primary btn-large">

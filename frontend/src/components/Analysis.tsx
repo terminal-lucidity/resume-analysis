@@ -376,7 +376,7 @@ const Analysis: React.FC = () => {
         <p>{error}</p>
         <button onClick={handleBackToDashboard} className="back-button">
           <ArrowLeft className="button-icon" />
-          Back to Dashboard
+          Back to Resume
         </button>
       </div>
     );
@@ -387,10 +387,10 @@ const Analysis: React.FC = () => {
       <div className="analysis-error">
         <AlertCircle className="error-icon" />
         <h2>No Analysis Data</h2>
-        <p>Please start an analysis from the dashboard.</p>
+        <p>Please start an analysis from Resume.</p>
         <button onClick={handleBackToDashboard} className="back-button">
           <ArrowLeft className="button-icon" />
-          Back to Dashboard
+          Back to Resume
         </button>
       </div>
     );
@@ -404,7 +404,7 @@ const Analysis: React.FC = () => {
         <div className="analysis-welcome">
           <button onClick={handleBackToDashboard} className="back-button">
             <ArrowLeft className="button-icon" />
-            Back to Dashboard
+            Back to Resume
           </button>
           <div className="analysis-title">
             <h1>Resume Analysis</h1>
@@ -687,10 +687,10 @@ const Analysis: React.FC = () => {
     <div className="analysis-error">
       <AlertCircle className="error-icon" />
       <h2>Unexpected State</h2>
-      <p>Something went wrong. Please try again or go back to the dashboard.</p>
+      <p>Something went wrong. Please try again or go back to Resume.</p>
       <button onClick={handleBackToDashboard} className="back-button">
         <ArrowLeft className="button-icon" />
-        Back to Dashboard
+        Back to Resume
       </button>
     </div>
   );

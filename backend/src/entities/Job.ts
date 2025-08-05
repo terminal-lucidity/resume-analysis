@@ -103,6 +103,9 @@ export class Job {
   @Column({ type: "date", nullable: true })
   deadline?: Date;
 
+  @Column({ nullable: true })
+  source?: string;
+
   @CreateDateColumn()
   createdAt!: Date;
 

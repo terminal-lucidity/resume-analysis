@@ -81,6 +81,76 @@ router.get("/", authenticateToken, async (req, res) => {
   }
 });
 
+// Submit a community job posting (free)
+router.post("/submit", authenticateToken, async (req, res) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json({ error: "User not authenticated" });
+    }
+
+    const {
+      title,
+      company,
+      location,
+      description,
+      salary,
+      skills,
+      level,
+      type,
+      remote,
+      contactEmail,
+      applicationUrl
+    } = req.body;
+
+    // Basic validation
+    if (!title || !company || !description) {
+      return res.status(400).json({ 
+        error: "Missing required fields: title, company, and description are required" 
+      });
+    }
+
+    // Create or find company
+    let companyEntity = await postgresConnection
+      .createQueryBuilder(Company, "company")
+      .where("company.name = :name", { name: company })
+      .getOne();
+
+    if (!companyEntity) {
+      companyEntity = new Company();
+      companyEntity.name = company;
+      companyEntity.industry = "Technology"; // Default
+      companyEntity.location = location;
+      companyEntity = await postgresConnection.manager.save(companyEntity);
+    }
+
+    // Create job
+    const job = new Job();
+    job.title = title;
+    job.description = description;
+    job.companyId = companyEntity.id;
+    job.location = location || "Remote";
+    job.salary = salary;
+    job.skills = skills || [];
+    job.level = level || JobLevel.MID;
+    job.type = type || JobType.FULL_TIME;
+    job.remote = remote || false;
+    job.postedDate = new Date();
+    job.applicationUrl = applicationUrl;
+    job.isActive = true;
+    job.source = "community";
+
+    const savedJob = await postgresConnection.manager.save(job);
+
+    res.status(201).json({ 
+      job: savedJob,
+      message: "Job posted successfully! It will be visible to all users."
+    });
+  } catch (error) {
+    console.error("Error submitting job:", error);
+    res.status(500).json({ error: "Failed to submit job" });
+  }
+});
+
 // Get job recommendations based on user's resume
 router.get("/recommendations", authenticateToken, async (req, res) => {
   try {

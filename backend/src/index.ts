@@ -1,20 +1,17 @@
 import express from "express";
 import cors from "cors";
-import { config } from "dotenv";
-import { postgresConnection, connectMongoDB } from "./config/database";
+import dotenv from "dotenv";
+import passport from "passport";
+import { postgresConnection } from "./config/database";
 import authRoutes from "./routes/auth";
 import resumeRoutes from "./routes/resume";
 import analyzeRoutes from "./routes/analyze";
 import companyRoutes from "./routes/company";
 import applicationRoutes from "./routes/application";
 import jobRoutes from "./routes/jobs";
-import passport from "./passport";
-import "./entities/Resume"; // Register Resume entity with TypeORM
-import "./entities/Company"; // Register Company entity with TypeORM
-import "./entities/Application"; // Register Application entity with TypeORM
-import "./entities/Job"; // Register Job entity with TypeORM
+import { JobDataService } from "./services/jobDataService";
 
-config();
+dotenv.config();
 
 const app = express();
 
@@ -42,16 +39,22 @@ const startServer = async () => {
   try {
     // Initialize PostgreSQL connection
     await postgresConnection.initialize();
-    console.log("PostgreSQL connected successfully");
+    console.log("✅ PostgreSQL connected successfully");
 
-    // Initialize MongoDB connection
-    await connectMongoDB();
+    // Initialize job data from free sources
+    console.log("🔄 Initializing job data from free sources...");
+    await JobDataService.initializeJobData();
+    
+    // Schedule regular job updates
+    JobDataService.scheduleUpdates();
+    console.log("✅ Job data service initialized");
 
     app.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`);
+      console.log(`🚀 Server running on port ${PORT}`);
+      console.log(`📊 Job search with real-time data ready!`);
     });
   } catch (error) {
-    console.error("Error starting server:", error);
+    console.error("❌ Failed to start server:", error);
     process.exit(1);
   }
 };
